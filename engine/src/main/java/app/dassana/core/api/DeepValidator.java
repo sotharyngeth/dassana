@@ -1,9 +1,9 @@
 package app.dassana.core.api;
 
-import app.dassana.core.util.PolicyValidator;
+import app.dassana.core.api.linter.DassanaLinter;
+import app.dassana.core.api.linter.PolicyLinter;
 
 import javax.inject.Singleton;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -13,13 +13,8 @@ import java.io.IOException;
 @Singleton
 public class DeepValidator {
 
-
   public void validate() throws IOException {
-    String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-    PolicyValidator validator = new PolicyValidator();
-    validator.loadYaml(content + "/schemas/policy-classification/policy-classification.yaml");
-    validator.processFiles(content + "/workflows");
+    DassanaLinter policy = new PolicyLinter();
+    policy.validate();
   }
-
-
 }

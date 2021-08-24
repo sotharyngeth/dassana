@@ -10,7 +10,8 @@ csp: demo-cloud
 # all of the fields such as csp,service etc emitted by normalization workflow are available.
 
 filters:
-  - match-type: all
+  - vendor: foo-cloud
+    match-type: all
     rules:
       - .csp == "demo-cloud" and .service == "some service"
 
