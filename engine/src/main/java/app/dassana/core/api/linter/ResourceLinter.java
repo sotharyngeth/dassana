@@ -4,7 +4,6 @@ import app.dassana.core.api.ValidationException;
 import app.dassana.core.api.linter.pojo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,12 +16,12 @@ public class ResourceLinter extends BaseLinter{
 	Map<String, Set<String>> serviceToResource = new HashMap<>();
 
 	private void addResourcesToMaps(Provider provider){
-		cspToService.put(provider.id, new HashSet<>());
-		for(Service service : provider.services){
-			cspToService.get(provider.id).add(service.id);
-			serviceToResource.put(service.id, new HashSet<>());
-			for(Field resource : service.resources){
-				serviceToResource.get(service.id).add(resource.id);
+		cspToService.put(provider.getId(), new HashSet<>());
+		for(Service service : provider.getServices()){
+			cspToService.get(provider.getId()).add(service.getId());
+			serviceToResource.put(service.getId(), new HashSet<>());
+			for(Field resource : service.getResources()){
+				serviceToResource.get(service.getId()).add(resource.getId());
 			}
 		}
 	}
@@ -32,7 +31,7 @@ public class ResourceLinter extends BaseLinter{
 		ObjectMapper om = new ObjectMapper(new YAMLFactory());
 		Csp csp = om.readValue(new File(path), Csp.class);
 
-		for(Provider provider : csp.providers){
+		for(Provider provider : csp.getProviders()){
 			addResourcesToMaps(provider);
 		}
 	}

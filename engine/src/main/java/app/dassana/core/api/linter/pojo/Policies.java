@@ -6,5 +6,13 @@ import java.util.List;
 
 public class Policies {
 	@JsonProperty
-	public List<Policy> classes;
+	private List<Policy> classes;
+
+	public List<Policy> getClasses() {
+		return classes;
+	}
+
+	public void setClasses(List<Policy> classes) {
+		this.classes = classes;
+	}
 }

@@ -4,5 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Field {
 	@JsonProperty
-	public String id;
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 }

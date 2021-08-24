@@ -4,35 +4,15 @@ import app.dassana.core.api.linter.ActionsLinter;
 import app.dassana.core.api.linter.PolicyLinter;
 import app.dassana.core.api.linter.ResourceLinter;
 import app.dassana.core.api.linter.VendorLinter;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BaseLinter {
 
-
-	@BeforeAll
-	/*
-	public void loadTemplate(){
-		try {
-			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	//req 3 - 64
-	public void validateKeysExist(){
-		try {
-			vendorLinter.validateKeysExist(content + "/workflows/vendors");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	*/
 
 	@Test
 	//req 3 - 64
@@ -41,28 +21,29 @@ public class BaseLinter {
 			VendorLinter vendorLinter = new VendorLinter();
 			vendorLinter.validate();
 		} catch (IOException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 
 	@Test
-	//req 4 - 107
+	//req #107
 	public void actionValidate(){
 		try {
 			ActionsLinter actionsLinter = new ActionsLinter();
 			actionsLinter.validate();
 		} catch (IOException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 
 	@Test
+	//req #88
 	public void policyValidate(){
 		try {
 			PolicyLinter policyLinter = new PolicyLinter();
 			policyLinter.validate();
 		} catch (IOException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 
@@ -72,7 +53,7 @@ public class BaseLinter {
 		try {
 			resourceLinter.validate();
 		} catch (IOException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 

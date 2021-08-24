@@ -9,7 +9,13 @@ import java.util.*;
 
 public class VendorLinter extends BaseLinter {
 
-	Set<String> template = new HashSet<>();
+	Set<String> template = new HashSet<>(), ignore;
+
+	public void buildIgnoreList(){
+		String[] list = new String[]{"config-recording-not-enabled.yaml", "user-has-console-and-access-keys.yaml",
+		"iam-role-not-enabled-for-ec2.yaml", "vpc-route-table-is-overly-permissive.yaml"};
+		ignore = Set.of(list);
+	}
 
 	@Override
 	public void loadTemplate(String path) throws FileNotFoundException {
@@ -17,6 +23,7 @@ public class VendorLinter extends BaseLinter {
 		for(Map<String,String> data : dataArr){
 			template.add(data.get("id"));
 		}
+		buildIgnoreList();
 	}
 
 	@Override
@@ -34,7 +41,7 @@ public class VendorLinter extends BaseLinter {
 	private boolean hasValidFilter(File file) throws FileNotFoundException {
 		boolean isValid = true;
 		Map<String, Object> data = yaml.load(new FileInputStream(file));
-		if("policy-context".equals((String) data.get("type"))) {
+		if("policy-context".equals((String) data.get("type")) && !ignore.contains(file.getName())) {
 			List<Map<String, Object>> filters = (List<Map<String, Object>>) data.get("filters");
 			for (int i = 0; i < filters.size() && isValid; i++) {
 				Map<String, Object> filter = filters.get(i);
@@ -50,6 +57,7 @@ public class VendorLinter extends BaseLinter {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (int i = 0; i < files.size() && containsVendor; i++) {
 			File file = files.get(i);
+			System.out.println("File: " + file.getName());
 			if(!hasValidFilter(file)){
 				throw new ValidationException("Invalid filter setting in file: " + file.getName());
 			}

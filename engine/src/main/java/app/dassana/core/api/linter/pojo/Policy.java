@@ -6,11 +6,23 @@ import java.util.List;
 
 public class Policy {
 	@JsonProperty
-	public String id;
+	private String id;
 	@JsonProperty
-	public List<SubClass> subclasses;
-	//public Object subclasses;
-	//
+	private List<SubClass> subclasses;
 
+	public String getId() {
+		return id;
+	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public List<SubClass> getSubclasses() {
+		return subclasses;
+	}
+
+	public void setSubclasses(List<SubClass> subclasses) {
+		this.subclasses = subclasses;
+	}
 }

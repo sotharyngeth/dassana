@@ -2,7 +2,6 @@ package app.dassana.core.api.linter;
 
 import org.apache.commons.io.FileUtils;
 import org.yaml.snakeyaml.Yaml;
-
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileInputStream;

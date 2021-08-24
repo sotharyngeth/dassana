@@ -6,7 +6,23 @@ import java.util.List;
 
 public class SubClass {
 	@JsonProperty
-	public String id;
+	private String id;
 	@JsonProperty
-	public List<Category> categories;
+	private List<Category> categories;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public List<Category> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
+	}
 }

@@ -2,14 +2,8 @@ package app.dassana.core.api.linter;
 
 import app.dassana.core.api.ValidationException;
 import app.dassana.core.api.linter.pojo.*;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-
 import java.io.*;
 import java.util.*;
 
@@ -20,16 +14,16 @@ public class PolicyLinter extends BaseLinter {
 	Map<String, Set<String>> catToSubCat = new HashMap<>();
 
 	public void addPoliciesToMaps(Policy policy){
-		classToSub.put(policy.id, new HashSet<>());
-		for(SubClass subclass : policy.subclasses){
-			classToSub.get(policy.id).add(subclass.id);
-			subToCat.put(subclass.id, new HashSet<>());
-			for(Category category : subclass.categories){
-				subToCat.get(subclass.id).add(category.id);
-				catToSubCat.put(category.id, new HashSet<>());
-				if(category.subcategories != null) {
-					for (Field field : category.subcategories) {
-						catToSubCat.get(category.id).add(field.id);
+		classToSub.put(policy.getId(), new HashSet<>());
+		for(SubClass subclass : policy.getSubclasses()){
+			classToSub.get(policy.getId()).add(subclass.getId());
+			subToCat.put(subclass.getId(), new HashSet<>());
+			for(Category category : subclass.getCategories()){
+				subToCat.get(subclass.getId()).add(category.getId());
+				catToSubCat.put(category.getId(), new HashSet<>());
+				if(category.getSubcategories() != null) {
+					for (Field field : category.getSubcategories()) {
+						catToSubCat.get(category.getId()).add(field.getId());
 					}
 				}
 			}
@@ -39,7 +33,7 @@ public class PolicyLinter extends BaseLinter {
 	@Override
 	public void loadTemplate(String path) throws IOException{
 		ObjectMapper om = new ObjectMapper(new YAMLFactory());
-		List<Policy> policies = om.readValue(new File(path), Policies.class).classes;
+		List<Policy> policies = om.readValue(new File(path), Policies.class).getClasses();
 
 		for(Policy policy : policies){
 			addPoliciesToMaps(policy);
