@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ActionsLinter extends DassanaLinter{
+public class ActionsLinter extends BaseLinter {
 
 	Set<String> template = new HashSet<>();
 
@@ -38,7 +38,7 @@ public class ActionsLinter extends DassanaLinter{
 			List<Map<String, Object>> steps = (List<Map<String, Object>>) data.get("steps");
 			for(Map<String, Object> step : steps){
 				if(!template.contains(step.get("uses"))){
-					throw new ValidationException("Invalid action: " + step.get("uses"));
+					throw new ValidationException("Invalid action: " + step.get("uses") + " in file: " + file.getName());
 				}
 			}
 		}

@@ -2,19 +2,19 @@ package app.dassana.core.api;
 
 import app.dassana.core.api.linter.ActionsLinter;
 import app.dassana.core.api.linter.PolicyLinter;
+import app.dassana.core.api.linter.ResourceLinter;
+import app.dassana.core.api.linter.VendorLinter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class VendorLinter {
+public class BaseLinter {
 
-	app.dassana.core.api.linter.VendorLinter vendorLinter = new app.dassana.core.api.linter.VendorLinter();
-	String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
 
 	@BeforeAll
+	/*
 	public void loadTemplate(){
 		try {
 			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
@@ -32,11 +32,13 @@ public class VendorLinter {
 			e.printStackTrace();
 		}
 	}
+	*/
 
 	@Test
 	//req 3 - 64
 	public void vendorValidate(){
 		try {
+			VendorLinter vendorLinter = new VendorLinter();
 			vendorLinter.validate();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,7 +50,6 @@ public class VendorLinter {
 	public void actionValidate(){
 		try {
 			ActionsLinter actionsLinter = new ActionsLinter();
-			actionsLinter.loadTemplate(content + "/actions");
 			actionsLinter.validate();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -60,6 +61,16 @@ public class VendorLinter {
 		try {
 			PolicyLinter policyLinter = new PolicyLinter();
 			policyLinter.validate();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void resourceValidate(){
+		ResourceLinter resourceLinter = new ResourceLinter();
+		try {
+			resourceLinter.validate();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

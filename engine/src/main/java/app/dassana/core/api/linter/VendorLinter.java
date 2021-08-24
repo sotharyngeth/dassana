@@ -5,19 +5,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class VendorLinter extends DassanaLinter {
+public class VendorLinter extends BaseLinter {
 
 	Set<String> template = new HashSet<>();
 
 	@Override
 	public void loadTemplate(String path) throws FileNotFoundException {
-		List<String> templateData = yaml.load((new FileInputStream(path)));
-		template.addAll(templateData);
+		List<Map<String, String>> dataArr = yaml.load((new FileInputStream(path)));
+		for(Map<String,String> data : dataArr){
+			template.add(data.get("id"));
+		}
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class VendorLinter extends DassanaLinter {
 		for (int i = 0; i < files.size() && containsVendor; i++) {
 			File file = files.get(i);
 			if(!hasValidFilter(file)){
-				throw new ValidationException("Does not container filter in array, file: " + file.getName());
+				throw new ValidationException("Invalid filter setting in file: " + file.getName());
 			}
 		}
 	}
@@ -73,7 +72,7 @@ public class VendorLinter extends DassanaLinter {
 		for (int i = 0; i < files.size(); i++) {
 			File file = files.get(i);
 			if(!containsVendor(file)){
-				throw new ValidationException("Is not valid normalizer, file: " + file.getName());
+				throw new ValidationException("Is not valid normalizer for file: " + file.getName());
 			}
 		}
 	}
@@ -85,7 +84,7 @@ public class VendorLinter extends DassanaLinter {
 			File file = files.get(i);
 			String name = file.getName().split(".svg")[0];
 			if(!template.contains(name)){
-				throw new ValidationException("Is not valid normalizer, file: " + file.getName());
+				throw new ValidationException("Is missing image for file: " + file.getName());
 			}
 		}
 	}
@@ -99,7 +98,7 @@ public class VendorLinter extends DassanaLinter {
 				vendorIdExists = vendorIdExists || output.containsValue("vendorId");
 			}
 			if(!vendorIdExists){
-				throw new ValidationException("Key missing from, file: " + file.getName());
+				throw new ValidationException("Key missing from file: " + file.getName());
 			}
 		}
 	}

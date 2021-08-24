@@ -1,7 +1,6 @@
 package app.dassana.core.api;
 
-import app.dassana.core.api.linter.DassanaLinter;
-import app.dassana.core.api.linter.PolicyLinter;
+import app.dassana.core.api.linter.*;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -14,7 +13,12 @@ import java.io.IOException;
 public class DeepValidator {
 
   public void validate() throws IOException {
-    DassanaLinter policy = new PolicyLinter();
-    policy.validate();
+    BaseLinter policyLint = new PolicyLinter(), actionsLint = new ActionsLinter(),
+            vendorLint = new VendorLinter(), resourceLint = new ResourceLinter();
+
+    policyLint.validate();
+    vendorLint.validate();
+    actionsLint.validate();
+    resourceLint.validate();
   }
 }

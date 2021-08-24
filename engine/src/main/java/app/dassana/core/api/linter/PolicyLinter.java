@@ -13,7 +13,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import java.io.*;
 import java.util.*;
 
-public class PolicyLinter extends DassanaLinter{
+public class PolicyLinter extends BaseLinter {
 
 	Map<String, Set<String>> classToSub = new HashMap<>();
 	Map<String, Set<String>> subToCat = new HashMap<>();
@@ -38,10 +38,8 @@ public class PolicyLinter extends DassanaLinter{
 
 	@Override
 	public void loadTemplate(String path) throws IOException{
-		File file = new File(path);
 		ObjectMapper om = new ObjectMapper(new YAMLFactory());
-		om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		List<Policy> policies = om.readValue(file, Policies.class).classes;
+		List<Policy> policies = om.readValue(new File(path), Policies.class).classes;
 
 		for(Policy policy : policies){
 			addPoliciesToMaps(policy);
@@ -68,9 +66,7 @@ public class PolicyLinter extends DassanaLinter{
 	}
 
 	public void validatePolicies(String path) throws IOException {
-		File dir = new File(path);
-		IOFileFilter fileFilter = new SuffixFileFilter(".yaml");
-		List<File> files = (List<File>) FileUtils.listFiles(dir, fileFilter, TrueFileFilter.INSTANCE);
+		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (File file : files) {
 			if(file.getCanonicalPath().contains("policy-context")) {
 				Map<String, Object> map = yaml.load(new FileInputStream(file));

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-public abstract class DassanaLinter {
+public abstract class BaseLinter {
 
 	protected Yaml yaml = new Yaml();
 
