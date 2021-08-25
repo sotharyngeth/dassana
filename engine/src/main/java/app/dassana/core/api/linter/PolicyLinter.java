@@ -2,6 +2,7 @@ package app.dassana.core.api.linter;
 
 import app.dassana.core.api.ValidationException;
 import app.dassana.core.api.linter.pojo.*;
+import app.dassana.core.contentmanager.ContentManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.*;
@@ -62,7 +63,7 @@ public class PolicyLinter extends BaseLinter {
 	public void validatePolicies(String path) throws IOException {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (File file : files) {
-			if(file.getCanonicalPath().contains("policy-context")) {
+			if(file.getCanonicalPath().contains(ContentManager.POLICY_CONTEXT)) {
 				Map<String, Object> map = yaml.load(new FileInputStream(file));
 				if(!isValidFields(map)){
 					throw new ValidationException("Not a valid policy file: " + file.getName());

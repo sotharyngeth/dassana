@@ -2,6 +2,7 @@ package app.dassana.core.api.linter;
 
 import app.dassana.core.api.ValidationException;
 import app.dassana.core.api.linter.pojo.*;
+import app.dassana.core.contentmanager.ContentManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.File;
@@ -37,7 +38,7 @@ public class ResourceLinter extends BaseLinter{
 	}
 
 	private boolean isValidPolicy(Map<String, Object> map){
-		boolean validPolicy = "general-context".equals(map.get("type"));
+		boolean validPolicy = ContentManager.GENERAL_CONTEXT.equals(map.get("type"));
 
 		if(map.containsKey("csp") && map.containsKey("service") && map.containsKey("resource-type") && !validPolicy){
 

@@ -1,6 +1,8 @@
 package app.dassana.core.api.linter;
 
 import app.dassana.core.api.ValidationException;
+import app.dassana.core.contentmanager.ContentManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,7 +43,7 @@ public class VendorLinter extends BaseLinter {
 	private boolean hasValidFilter(File file) throws FileNotFoundException {
 		boolean isValid = true;
 		Map<String, Object> data = yaml.load(new FileInputStream(file));
-		if("policy-context".equals((String) data.get("type")) && !ignore.contains(file.getName())) {
+		if(ContentManager.POLICY_CONTEXT.equals((String) data.get("type")) && !ignore.contains(file.getName())) {
 			List<Map<String, Object>> filters = (List<Map<String, Object>>) data.get("filters");
 			for (int i = 0; i < filters.size() && isValid; i++) {
 				Map<String, Object> filter = filters.get(i);
@@ -57,7 +59,6 @@ public class VendorLinter extends BaseLinter {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (int i = 0; i < files.size() && containsVendor; i++) {
 			File file = files.get(i);
-			System.out.println("File: " + file.getName());
 			if(!hasValidFilter(file)){
 				throw new ValidationException("Invalid filter setting in file: " + file.getName());
 			}
