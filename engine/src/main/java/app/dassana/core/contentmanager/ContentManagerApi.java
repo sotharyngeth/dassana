@@ -14,7 +14,7 @@ public interface ContentManagerApi {
    *
    * @return SyncResult which might be helpful for debugging, monitoring etc
    */
-  SyncResult syncRemoteContent(Long lastSuccessfulSync, Request request);
+  SyncResult syncContent(Long lastSuccessfulSync, Request request);
 
   Set<Workflow> getWorkflowSet(Request request) throws IOException, Exception;
 

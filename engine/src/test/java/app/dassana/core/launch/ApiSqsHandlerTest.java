@@ -4,7 +4,9 @@ package app.dassana.core.launch;
 import static app.dassana.core.contentmanager.ContentManager.GENERAL_CONTEXT;
 import static app.dassana.core.contentmanager.ContentManager.NORMALIZE;
 import static app.dassana.core.contentmanager.ContentManager.POLICY_CONTEXT;
+import static app.dassana.core.contentmanager.ContentManager.WORKFLOW_ID;
 import static app.dassana.core.launch.ApiHandler.MISSING_NORMALIZATION_MSG;
+import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
 
 import app.dassana.core.api.DassanaWorkflowValidationException;
 import app.dassana.core.contentmanager.RemoteContentDownloadApi;
@@ -50,7 +52,7 @@ public class ApiSqsHandlerTest {
     queryParams = helper.getQueryParams(false);
     String response = helper.executeRunApi(helper.getFileContent(file), queryParams);
     JSONObject jsonObject = new JSONObject(response);
-    if (jsonObject.has("dassana")) {
+    if (jsonObject.has(DASSANA_KEY)) {
       Assertions.fail("did not expect to see Dassana Key");
     }
 
@@ -111,17 +113,17 @@ public class ApiSqsHandlerTest {
   @Test
   void testWorkflowGet() {
     Map<String, String> queryParams = helper.getQueryParams(false);
-    queryParams.put("workflowId", "foo");
+    queryParams.put(WORKFLOW_ID, "foo");
     APIGatewayProxyResponseEvent apiGatewayProxyResponseEvent = helper.executeRunApiGet(queryParams);
     Assertions.assertEquals(404, (int) apiGatewayProxyResponseEvent.getStatusCode());
-    queryParams.put("workflowId", "foo-cloud-normalize");
+    queryParams.put(WORKFLOW_ID, "foo-cloud-normalize");
     Assertions.assertEquals(200, (int) helper.executeRunApiGet(queryParams).getStatusCode());
   }
 
   @Test
   void handleRunTestForASpecificWorkflow() throws IOException {
     Map<String, String> queryParams = helper.getQueryParams(false);
-    queryParams.put("workflowId", "foo-cloud-normalize");
+    queryParams.put(WORKFLOW_ID, "foo-cloud-normalize");
     String executeRunApiResponse = helper.executeRunApi(helper.getFileContent("inputs/validSecurityHubAlert.json"),
         queryParams);
     Assertions.assertTrue(executeRunApiResponse.contentEquals("{}"));
@@ -148,7 +150,7 @@ public class ApiSqsHandlerTest {
     for (String fileName : fileNames) {
       String response = helper.executeRunApi(helper.getFileContent(fileName), queryParams);
       JSONObject jsonObject = new JSONObject(response);
-      jsonObject.remove("dassana");//this key is always added
+      jsonObject.remove(DASSANA_KEY);//this key is always added
       JSONObject jsonObjectInput = new JSONObject(helper.getFileContent(fileName));
       Assertions.assertEquals(jsonObjectInput.toString(), jsonObject.toString());
     }
@@ -178,16 +180,16 @@ public class ApiSqsHandlerTest {
     String response = helper.executeRunApi(helper.getFileContent("inputs/validSecurityHubAlert.json"),
         queryParams);
     JSONObject responseJsonObj = new JSONObject(response);
-    JSONObject dassana = responseJsonObj.getJSONObject("dassana");
+    JSONObject dassana = responseJsonObj.getJSONObject(DASSANA_KEY);
     JSONObject normalize = dassana.getJSONObject(NORMALIZE);
     JSONObject generalContext = dassana.getJSONObject(GENERAL_CONTEXT);
     JSONObject policyContext = dassana.getJSONObject(POLICY_CONTEXT);
 
-    Assertions.assertTrue(normalize.getString("workflowId").contentEquals("aws-config-via-security-hub"));
-    Assertions.assertTrue(generalContext.getString("workflowId").contentEquals("general-context-aws"));
+    Assertions.assertTrue(normalize.getString(WORKFLOW_ID).contentEquals("aws-config-via-security-hub"));
+    Assertions.assertTrue(generalContext.getString(WORKFLOW_ID).contentEquals("general-context-aws"));
     Assertions.assertTrue(generalContext.getJSONObject("risk").getString("riskValue").contentEquals("low"));
 
-    Assertions.assertTrue(policyContext.getString("workflowId").contentEquals("security-group-wide-open"));
+    Assertions.assertTrue(policyContext.getString(WORKFLOW_ID).contentEquals("security-group-wide-open"));
 
     String response2 = helper.executeRunApi(helper.getFileContent("inputs/validAlertWithNoGeneralContext.json"),
         queryParams);

@@ -22,12 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("multi-region-cloudtrail-enabled"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "36a5345a-230d-438e-a04c-a287a513e3dc"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "36a5345a-230d-438e-a04c-a287a513e3dc"
 
 risk-config:
   default-risk: critical

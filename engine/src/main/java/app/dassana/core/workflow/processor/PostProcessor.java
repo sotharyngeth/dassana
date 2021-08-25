@@ -1,6 +1,7 @@
 package app.dassana.core.workflow.processor;
 
 import static app.dassana.core.contentmanager.ContentManager.NORMALIZE;
+import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
 
 import app.dassana.core.contentmanager.ContentManagerApi;
 import app.dassana.core.launch.model.Request;
@@ -62,10 +63,10 @@ public class PostProcessor {
         logger.info("Post processor {} response :{}", step.getId(), stepOutput);
       }
       JSONObject finalJsonObj = new JSONObject(processedAlertWithS3key);
-      JSONObject normalizeJsonObj = finalJsonObj.getJSONObject("dassana").getJSONObject(NORMALIZE);
+      JSONObject normalizeJsonObj = finalJsonObj.getJSONObject(DASSANA_KEY).getJSONObject(NORMALIZE);
       normalizeJsonObj.put("post-processor", stepIdToResponse);
 
-      JSONObject dassana = finalJsonObj.getJSONObject("dassana");
+      JSONObject dassana = finalJsonObj.getJSONObject(DASSANA_KEY);
       dassana.put("normalize", normalizeJsonObj);
       return finalJsonObj.toString();
     } else {

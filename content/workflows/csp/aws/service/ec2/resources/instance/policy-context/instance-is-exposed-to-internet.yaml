@@ -22,14 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("ec2-instance-no-public-ip"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "0e44dabe-a8b9-401b-936b-bb8a0a80279a"
-#      - "ba9eeea6-782c-45aa-a953-f639582412c7"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "0e44dabe-a8b9-401b-936b-bb8a0a80279a"
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "ba9eeea6-782c-45aa-a953-f639582412c7"
 
 risk-config:
   default-risk: high

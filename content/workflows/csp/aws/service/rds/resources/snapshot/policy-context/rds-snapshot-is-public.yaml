@@ -22,12 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("rds-snapshots-public-prohibited"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "a707de6a-11b7-478a-b636-5e21ee1f6162"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "a707de6a-11b7-478a-b636-5e21ee1f6162"
 
 risk-config:
   default-risk: critical

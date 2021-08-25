@@ -22,14 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("elb-tls-https-listeners-only"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "836a7c8c-34c2-4861-be1e-df2f8cd27aab"
-#      - "dd7588a1-79f0-4b2b-8139-891eb50f570e"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "836a7c8c-34c2-4861-be1e-df2f8cd27aab"
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "dd7588a1-79f0-4b2b-8139-891eb50f570e"
 
 risk-config:
   default-risk: medium

@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,16 +56,22 @@ public class ContentManager implements ContentManagerApi {
   public static final String GENERAL_CONTEXT = "general-context";
   public static final String RESOURCE_CONTEXT = "resource-context";
   public static final String NORMALIZE = "normalize";
+  public static final String WORKFLOW_ID = "workflowId";
 
   private static final Logger logger = LoggerFactory.getLogger(ContentManager.class);
 
 
   public ContentManager(RemoteContentDownloadApi contentDownloader) {
     this.contentDownloader = contentDownloader;
-    syncRemoteContent(0L, null);//because we are in init/constructor, we fetch all workflows from s3
+    processEmbeddedContent();
+    syncContent(0L, null);//because we are in init/constructor, we fetch all workflows from s3
+  }
+
+  void processEmbeddedContent() {
     String embeddedContentPath =
         Thread.currentThread().getContextClassLoader().getResource("content/workflows/").getFile();
     processDir(new File(embeddedContentPath));
+
   }
 
   public Map<String, String> getWorkflowIdToYamlContext() {
@@ -272,17 +279,12 @@ public class ContentManager implements ContentManagerApi {
   }
 
 
-  private List<String> processWorkFlow(Optional<File> file, List<String> workflowYamlStr) throws IOException {
+  private synchronized List<String> updateWorkflowSet(List<String> workflowYamlStr) throws IOException {
 
-    if (workflowYamlStr == null) {
-      workflowYamlStr = new LinkedList<>();
+    if (workflowYamlStr == null || workflowYamlStr.isEmpty()) {
+      return new LinkedList<>();
     }
     List<String> workflowIdsProcessed = new LinkedList<>();
-
-    if (file.isPresent()) {
-      File fileToProcess = file.get();
-      workflowYamlStr.add(new String(Files.readAllBytes(Paths.get(fileToProcess.getPath()))));
-    }
 
     for (String s : workflowYamlStr) {
       String jsonFromYaml = StringyThings.getJsonFromYaml(s);
@@ -350,7 +352,10 @@ public class ContentManager implements ContentManagerApi {
           processDir(file);
         } else {
           try {
-            List<String> workflowIdsProcessed = processWorkFlow(Optional.of(file), new LinkedList<>());
+            String yamlWorkflow = new String(Files.readAllBytes(Paths.get(file.getPath())));
+            List<String> workflowYamlList = new LinkedList<>();
+            workflowYamlList.add(yamlWorkflow);
+            List<String> workflowIdsProcessed = updateWorkflowSet(workflowYamlList);
             String readFileToString = FileUtils.readFileToString(file, Charset.defaultCharset());
             workflowIdToYamlContext.put(workflowIdsProcessed.get(0), readFileToString);
           } catch (Exception e) {
@@ -365,7 +370,7 @@ public class ContentManager implements ContentManagerApi {
     return workflowProcessingResult;
   }
 
-  public SyncResult syncRemoteContent(Long lastSuccessfulSync, Request request) {
+  public SyncResult syncContent(Long lastSuccessfulSync, Request request) {
 
     SyncResult syncResult = new SyncResult();
     syncResult.setCacheHit(true);
@@ -389,12 +394,29 @@ public class ContentManager implements ContentManagerApi {
 
   @Override
   public Set<Workflow> getWorkflowSet(Request request) throws Exception {
-    syncRemoteContent(lastUpdated, request);
-    //add the additional workflow if available
+    syncContent(lastUpdated, request);
+
+    //if the additional workflows are provided,we use them. This is for the editor.dassana.io use case where we are
+    // editing workflows
     if (request.getAdditionalWorkflowYamls() != null
         && request.getAdditionalWorkflowYamls().size() > 0) {
-      processWorkFlow(Optional.empty(), request.getAdditionalWorkflowYamls());
+      List<String> additionalWorkflowYamls = request.getAdditionalWorkflowYamls();
 
+      Set<Workflow> workflowSetToUse = new HashSet<>(workflowSet);
+      //we want to run only the workflow provided, so we clear the cloned set first
+      for (String workflowYamlStr : additionalWorkflowYamls) {
+        String jsonFromYaml = StringyThings.getJsonFromYaml(workflowYamlStr);
+        Workflow workflow = getWorkflow(new JSONObject(jsonFromYaml));
+        String type = workflow.getType();
+        workflowSetToUse.removeIf(workflowInSet -> workflowInSet.getType().contentEquals(type));
+      }//and add the requested workflow
+      for (String workflowYamlStr : additionalWorkflowYamls) {
+        String jsonFromYaml = StringyThings.getJsonFromYaml(workflowYamlStr);
+        Workflow workflow = getWorkflow(new JSONObject(jsonFromYaml));
+        workflowSetToUse.add(workflow);
+      }//and add the requested workflow
+
+      return workflowSetToUse;
     }
 
     return workflowSet;

@@ -4,10 +4,13 @@ import static app.dassana.core.contentmanager.ContentManager.GENERAL_CONTEXT;
 import static app.dassana.core.contentmanager.ContentManager.NORMALIZE;
 import static app.dassana.core.contentmanager.ContentManager.POLICY_CONTEXT;
 import static app.dassana.core.contentmanager.ContentManager.RESOURCE_CONTEXT;
+import static app.dassana.core.contentmanager.ContentManager.WORKFLOW_ID;
 import static app.dassana.core.contentmanager.infra.S3Downloader.WORKFLOW_PATH_IN_S3;
+import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
 
 import app.dassana.core.api.DassanaWorkflowValidationException;
 import app.dassana.core.api.PingHandler;
+import app.dassana.core.api.VersionHandler;
 import app.dassana.core.api.WorkflowValidator;
 import app.dassana.core.contentmanager.ContentManager;
 import app.dassana.core.launch.model.Message;
@@ -22,10 +25,10 @@ import app.dassana.core.resource.model.ResourceContext;
 import app.dassana.core.rule.RuleMatch;
 import app.dassana.core.util.JsonyThings;
 import app.dassana.core.util.StringyThings;
-import app.dassana.core.workflow.processor.RequestProcessor;
 import app.dassana.core.workflow.WorkflowRunner;
 import app.dassana.core.workflow.model.Workflow;
 import app.dassana.core.workflow.model.WorkflowOutputWithRisk;
+import app.dassana.core.workflow.processor.RequestProcessor;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -68,13 +71,14 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 public class ApiHandler extends
     MicronautRequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
-  @Inject RequestProcessor requestProcessor;
-  @Inject Gson gson;
-  @Inject RuleMatch ruleMatch;
-  @Inject PingHandler pingHandler;
-  @Inject S3Client s3Client;
-  @Inject WorkflowValidator workflowValidator;
+  @Inject private RequestProcessor requestProcessor;
+  @Inject private Gson gson;
+  @Inject private RuleMatch ruleMatch;
+  @Inject private PingHandler pingHandler;
+  @Inject private S3Client s3Client;
+  @Inject private WorkflowValidator workflowValidator;
   @Inject private WorkflowRunner workflowRunner;
+  @Inject private VersionHandler versionHandler;
 
 
   @Inject ContentManager contentManager; //todo: not a good idea to inject an implementation
@@ -85,7 +89,6 @@ public class ApiHandler extends
   public static final String API_PARAM_SKIP_POLICY_CONTEXT = "skipPolicyContext";
   public static final String API_PARAM_SKIP_S3UPLOAD = "skipS3Upload";
   public static final String API_PARAM_SKIP_POST_PROCESSOR = "skipPostProcessor";
-  public static final String API_RUN_WORKFLOW_BY_ID = "workflowId";
   public static final String API_INCLUDE_ALERT_IN_OUTPUT = "includeAlert";
   public static final String API_INCLUDE_STEP_OUTPUT = "includeStepOutput";
 
@@ -182,20 +185,23 @@ public class ApiHandler extends
         try {
           String response = handleGet(
               getRequestFromQueryParam(input.getQueryStringParameters(), inputBody, input.getHeaders()),
-              input.getQueryStringParameters().get("workflowId"));
+              input.getQueryStringParameters().get(WORKFLOW_ID));
           gatewayProxyResponseEvent.setBody(response);
           gatewayProxyResponseEvent.getHeaders().put("Content-type", "application/x-yaml");
 
         } catch (WorkflowNotFundException e) {
           gatewayProxyResponseEvent
-              .setBody(String.format("Workflow %s not found", input.getQueryStringParameters().get("workflowId")));
+              .setBody(String.format("Workflow %s not found", input.getQueryStringParameters().get(WORKFLOW_ID)));
           gatewayProxyResponseEvent.setStatusCode(404);
           return gatewayProxyResponseEvent;
         }
       } else if (input.getPath().contentEquals("/ping")) {
         gatewayProxyResponseEvent.setBody(gson.toJson(pingHandler.getPingResponse()));
+      }else if(input.getPath().contentEquals("/version")){
+        gatewayProxyResponseEvent.setBody(gson.toJson(versionHandler.getVersionResponse()));
+      }
 
-      } else if (input.getPath().contentEquals(VALIDATE_WORKFLOW_PATH) && input.getHttpMethod().toLowerCase()
+      else if (input.getPath().contentEquals(VALIDATE_WORKFLOW_PATH) && input.getHttpMethod().toLowerCase()
           .contentEquals("post")) {
         try {
           workflowValidator.handleValidate(StringyThings.getJsonFromYaml(inputBody));
@@ -235,7 +241,7 @@ public class ApiHandler extends
 
   private Map<String, String> getHeaders() {
     Map<String, String> headers = new HashMap<>();
-    headers.put("Access-Control-Allow-Headers", "x-api-key , Content-Type");
+    headers.put("Access-Control-Allow-Headers", "x-api-key , Content-Type, x-dassana-cache");
     headers.put("Access-Control-Allow-Origin", "*");
     headers.put("Access-Control-Allow-Methods", "OPTIONS,POST,GET");
     headers.put("content-type", "application/json");
@@ -243,27 +249,50 @@ public class ApiHandler extends
 
   }
 
-  private String handleHints(String json, Request request) {
+  private String handleHints(String json, Request request) throws JsonProcessingException {
 
     JSONObject jsonObject = new JSONObject(json);
-    JSONObject dassana = jsonObject.optJSONObject("dassana");
+    JSONObject dassana = jsonObject.optJSONObject(DASSANA_KEY);
 
     if (dassana == null || !dassana.has(NORMALIZE)) {
       Message message = new Message();
       message.setSeverity(severity.WARN);
       message.setMsg(MISSING_NORMALIZATION_MSG);
-      jsonObject.put("dassana", new JSONObject(gson.toJson(message)));
+      jsonObject.put(DASSANA_KEY, new JSONObject(gson.toJson(message)));
     } else {//this means that normalization did occur
-      String[] workflows = {GENERAL_CONTEXT, RESOURCE_CONTEXT, POLICY_CONTEXT};
 
-      for (String workflow : workflows) {
-        JSONObject genContext = dassana.optJSONObject(workflow);
-        if (genContext == null) {
+      String[] workflowKeys = {GENERAL_CONTEXT, RESOURCE_CONTEXT, POLICY_CONTEXT};
+
+      for (String workflowKey : workflowKeys) {
+        JSONObject workflowResponse = dassana.optJSONObject(workflowKey);
+        if (workflowResponse == null) {
           Message message = new Message();
           message.setSeverity(severity.INFO);
           message.setMsg(String.format("Sorry, but no %s workflow ran for the given alert. Please check filter config",
-              workflow));
-          jsonObject.getJSONObject("dassana").put(workflow, new JSONObject(gson.toJson(message)));
+              workflowKey));
+          jsonObject.getJSONObject(DASSANA_KEY).put(workflowKey, new JSONObject(gson.toJson(message)));
+        } else {
+          //check if the expected workflow did run or not
+          if (request.getAdditionalWorkflowYamls() != null && request.getAdditionalWorkflowYamls().size() > 0) {
+
+            for (String workflowYamlStr : request.getAdditionalWorkflowYamls()) {
+              String workflowJson = StringyThings.getJsonFromYaml(workflowYamlStr);
+              Workflow workflow = contentManager.getWorkflow(new JSONObject(workflowJson));
+              String workflowType = workflowResponse.getString("workflowType");
+              if (workflowType.contentEquals(workflow.getType())) {
+                if (!workflow.getId().contentEquals(workflowResponse.getString(WORKFLOW_ID))) {
+                  jsonObject.getJSONObject(DASSANA_KEY).put(workflowKey,
+                      new JSONObject(gson.toJson(String.format("the output is from workflow id %s which doesn't "
+                          + "match the workflowId provided, please check your filter config",
+                          workflowResponse.getString(WORKFLOW_ID)))));
+                }
+              }
+
+
+            }
+
+          }
+
         }
       }
 
@@ -272,8 +301,8 @@ public class ApiHandler extends
 
     //we return the dassana only ONLY when we are asked to not include the original alert
     if (!request.isIncludeAlertInOutput()) {
-      if (jsonObject.optJSONObject("dassana") != null) {
-        return jsonObject.getJSONObject("dassana").toString();
+      if (jsonObject.optJSONObject(DASSANA_KEY) != null) {
+        return jsonObject.getJSONObject(DASSANA_KEY).toString();
       }
     }
 
@@ -308,12 +337,9 @@ public class ApiHandler extends
     boolean skipPostProcessor = parameters
         .getOrDefault(API_PARAM_SKIP_POST_PROCESSOR, "false").contentEquals("true");
 
-    boolean skipS3Upload = parameters
-        .getOrDefault(API_PARAM_SKIP_S3UPLOAD, "false").contentEquals("true");
-
     String cache = headers.getOrDefault("x-dassana-cache", "false");
 
-    String workflowId = parameters.getOrDefault(API_RUN_WORKFLOW_BY_ID, "");
+    String workflowId = parameters.getOrDefault(WORKFLOW_ID, "");
 
     boolean refreshFromS3 = Boolean.parseBoolean(cache);
     Request request = new Request(inputJsonStr);
