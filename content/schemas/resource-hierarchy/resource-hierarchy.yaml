@@ -8,6 +8,9 @@ csp:
       - id: cloudtrail
         resource-types:
           - id: trail
+      - id: config
+        resource-types:
+          - id: config-recorder
       - id: ec2
         resource-types:
           - id: instance

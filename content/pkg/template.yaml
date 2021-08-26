@@ -497,18 +497,6 @@ Resources:
       Role:
         Fn::GetAtt: [DassanaActionsRole, Arn]
       Timeout: 60
-  DemoCloudNormalizer:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handler.handle
-      Runtime: python3.7
-      MemorySize: 128
-      Layers:
-        - !Ref DassanaActionsPythonLayer
-      CodeUri: ../actions/demo-cloud-normalizer
-      Role:
-        Fn::GetAtt: [DassanaActionsRole, Arn]
-      Timeout: 60
 
   # PrismaCloudExtractor:
   #   Type: AWS::Serverless::Function
@@ -538,7 +526,13 @@ Resources:
 
 Outputs:
   ApiGatewayEndpoint:
-    Description: Api Gateway URL that you can use provide to workflow editor to manage and debug your workflows
+    Description: Api Gateway URL that you can use in https://editor.dassana.io/
     Value: !Sub https://${ApiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}
     Export:
       Name: !Join ["", [{ "Ref": "AWS::StackName" }, "ApiUrl"]]
+
+  ApiGatewayApiKey:
+    Description: Please visit this URL and select the API gateway and then click "API keys",select the API key (e.g Dassana-apikey) and click on "Show" in the panel. Keep this API Key safe. It is a secret.
+    Value: !Sub https://console.aws.amazon.com/apigateway/home?region=${AWS::Region}
+    Export:
+      Name: !Join ["", [{ "Ref": "AWS::StackName" }, "ApiKey"]]

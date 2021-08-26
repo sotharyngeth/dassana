@@ -12,6 +12,8 @@ public class JsonyThings {
 
   public static final ObjectMapper MAPPER = new ObjectMapper();
 
+  public static final String MESSAGE="Sorry, Dassana Engine can only process JSON objects";
+
 
   @Singleton
   Gson getGson() {
@@ -23,7 +25,7 @@ public class JsonyThings {
     try {
       JSONObject jsonObject = new JSONObject(strToValidate);
     } catch (JSONException e) {
-      throw new IllegalArgumentException("Sorry, Dassana Engine can only process JSON objects");
+      throw new IllegalArgumentException(MESSAGE);
 
     }
 

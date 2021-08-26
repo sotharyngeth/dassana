@@ -36,12 +36,6 @@ classes:
           - id: phishing
           - id: exploit-public-facing-application
           - id: valid-accounts
-      - id: initial-access
-        categories:
-          - id: drive-by-compromise
-          - id: phishing
-          - id: exploit-public-facing-application
-          - id: valid-accounts
       - id: persistence
         categories:
           - id: account-manipulation
@@ -60,9 +54,6 @@ classes:
           - id: network-service-scanning
           - id: cloud-infrastructure-discovery
           - id: cloud-service-discovery
-      - id: collection
-        categories:
-          - id: data-from-cloud-storage-object
       - id: collection
         categories:
           - id: data-from-cloud-storage-object

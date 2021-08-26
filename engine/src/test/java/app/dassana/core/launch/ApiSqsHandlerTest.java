@@ -6,6 +6,7 @@ import static app.dassana.core.contentmanager.ContentManager.NORMALIZE;
 import static app.dassana.core.contentmanager.ContentManager.POLICY_CONTEXT;
 import static app.dassana.core.contentmanager.ContentManager.WORKFLOW_ID;
 import static app.dassana.core.launch.ApiHandler.MISSING_NORMALIZATION_MSG;
+import static app.dassana.core.util.JsonyThings.MESSAGE;
 import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
 
 import app.dassana.core.api.DassanaWorkflowValidationException;
@@ -41,14 +42,27 @@ public class ApiSqsHandlerTest {
 
   @Inject Helper helper;
 
+
+  @Test
+  void testNormalizationException() throws IOException {
+
+    String file = "inputs/validShAlertWithBadNormalizer.json";
+
+    Map<String, String> queryParams = new HashMap<>();
+    queryParams = helper.getQueryParams(false);
+    String executeRunApi = helper.executeRunApi(helper.getFileContent(file), queryParams);
+    Assertions.assertTrue(executeRunApi.contains("Sorry but the normalizer aws-config-via-security-hub threw error csp is expected to be not empty"));
+
+
+  }
+
+
   @Test
   void testIncludeJson() throws Exception {
 
     String file = "inputs/validSecurityHubAlert.json";
 
     Map<String, String> queryParams = helper.getQueryParams(true);
-    String executeRunApi = helper.executeRunApi(helper.getFileContent(file), queryParams);
-
     queryParams = helper.getQueryParams(false);
     String response = helper.executeRunApi(helper.getFileContent(file), queryParams);
     JSONObject jsonObject = new JSONObject(response);
@@ -64,16 +78,6 @@ public class ApiSqsHandlerTest {
 
     if (!msg.contentEquals(MISSING_NORMALIZATION_MSG)) {
       Assertions.fail("Expected to see missing normalization message");
-    }
-
-    file = "inputs/validAlertWithNoGeneralContext.json";
-    response = helper.executeRunApi(helper.getFileContent(file), queryParams);
-
-    jsonObject = new JSONObject(response);
-
-    msg = jsonObject.getJSONObject(GENERAL_CONTEXT).getString("msg");
-    if (!msg.contains(GENERAL_CONTEXT)) {
-      Assertions.fail("Expected to see missing general-context message");
     }
 
   }
@@ -161,14 +165,8 @@ public class ApiSqsHandlerTest {
 
   @Test()
   void ensureInValidJsonThrowsError() {
-    boolean expectedExceptionThrown = false;
-    try {
-      helper.executeRunApi("foo", new HashMap<>());
-    } catch (RuntimeException exception) {
-      Assertions.assertTrue(exception.getMessage().contains("Dassana Engine can"));
-      expectedExceptionThrown = true;
-    }
-    Assertions.assertTrue(expectedExceptionThrown);
+    String foo = helper.executeRunApi("foo", new HashMap<>());
+    Assertions.assertTrue(foo.contains(MESSAGE));
 
   }
 

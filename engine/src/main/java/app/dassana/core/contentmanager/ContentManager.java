@@ -68,8 +68,13 @@ public class ContentManager implements ContentManagerApi {
   }
 
   void processEmbeddedContent() {
-    String embeddedContentPath =
-        Thread.currentThread().getContextClassLoader().getResource("content/workflows/").getFile();
+    String embeddedContentPath;
+    try {
+      embeddedContentPath = Thread.currentThread().getContextClassLoader().getResource("content/workflows/").getFile();
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Unable to read embedded content, make sure to run mvn clean "
+          + "process-resources first if you are running it locally ");
+    }
     processDir(new File(embeddedContentPath));
 
   }
@@ -402,20 +407,14 @@ public class ContentManager implements ContentManagerApi {
         && request.getAdditionalWorkflowYamls().size() > 0) {
       List<String> additionalWorkflowYamls = request.getAdditionalWorkflowYamls();
 
+      //we want to run only the workflow provided, so we clone the workflowSet and add it
       Set<Workflow> workflowSetToUse = new HashSet<>(workflowSet);
-      //we want to run only the workflow provided, so we clear the cloned set first
       for (String workflowYamlStr : additionalWorkflowYamls) {
         String jsonFromYaml = StringyThings.getJsonFromYaml(workflowYamlStr);
         Workflow workflow = getWorkflow(new JSONObject(jsonFromYaml));
-        String type = workflow.getType();
-        workflowSetToUse.removeIf(workflowInSet -> workflowInSet.getType().contentEquals(type));
-      }//and add the requested workflow
-      for (String workflowYamlStr : additionalWorkflowYamls) {
-        String jsonFromYaml = StringyThings.getJsonFromYaml(workflowYamlStr);
-        Workflow workflow = getWorkflow(new JSONObject(jsonFromYaml));
+        workflowSetToUse.remove(workflow);
         workflowSetToUse.add(workflow);
-      }//and add the requested workflow
-
+      }
       return workflowSetToUse;
     }
 

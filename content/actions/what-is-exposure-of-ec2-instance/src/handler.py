@@ -1,13 +1,18 @@
 from json import load
 from typing import Dict, Any, List, Union
+
+from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools.utilities.validation import validator
+from botocore.exceptions import ClientError
 from iteration_utilities import deepflatten
 from pydantic import BaseModel
 from pydantic.json import IPv4Address
 from json import loads
 
 from dassana.common.aws_client import DassanaAwsObject, parse_arn
+
+logger = Logger(service='dassana-actions')
 
 with open('input.json', 'r') as schema:
     schema = load(schema)
@@ -33,6 +38,7 @@ class Exposure(BaseModel):
     direct: Direct
 
 
+@logger.inject_lambda_context
 @validator(inbound_schema=schema)
 def handle(event: Dict[str, Any], context: LambdaContext):
     arn = parse_arn(event.get('instanceArn'))
@@ -138,13 +144,20 @@ def handle(event: Dict[str, Any], context: LambdaContext):
                                     exp.appLayer.exceptionMatch = True
 
     def evaluate_direct(ec2_resource) -> bool:
-        instance_resp = ec2_client.describe_instances(InstanceIds=[ec2_resource],
-                                                      Filters=[
-                                                          {
-                                                              'Name': 'instance-state-code',
-                                                              'Values': ['16']
-                                                          }
-                                                      ])
+        try:
+            instance_resp = ec2_client.describe_instances(InstanceIds=[ec2_resource],
+                                                          Filters=[
+                                                              {
+                                                                  'Name': 'instance-state-code',
+                                                                  'Values': ['16']
+                                                              }
+                                                          ])
+        except ClientError as e:
+            logger.error(e.response)
+            if 'InvalidInstanceID.Malformed' == e.response.get('Error').get('Code'):
+                return False
+            else:
+                raise Exception(e)
         if len(instance_resp['Reservations']) == 0:
             return False
         # Filter and deep flatten security groups attached to the EC2 instance

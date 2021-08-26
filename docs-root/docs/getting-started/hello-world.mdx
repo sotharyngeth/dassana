@@ -1,0 +1,112 @@
+# Hola World
+
+Let's send an alert to Dassana and see what happens. The best way to test out different alerts and their outputs is by using the [Dassana workflow editor](https://editor.dassana.io/).
+
+## Getting the API url and key
+
+import ApiUrlAndKey from '../common-fields/api-url-and-key.md'
+
+<ApiUrlAndKey />
+
+## Send a test json
+
+To test things out, enter the following JSON:
+
+```json
+{
+	"foo": "bar"
+}
+```
+
+and click `Run`.
+
+On the right-hand side panel, you will see the Normalization output as:
+
+```
+Dassana couldn't normalize the alert you sent, please verify normalizers filter config
+```
+
+What just happened? Why am I seeing this warning?
+Did you really expect anything fancier from a foo-bar example json? 🤨
+
+## Send a test alert json
+
+Let's send something interesting this time. Click `Edit Alert JSON` and enter this json this time -
+
+```json
+{
+	"badThingJustHappened": {
+		"description": "fubar"
+	}
+}
+```
+
+This time around you should more in the output panel.
+
+### Normalization
+
+We see a much better result this time! What just happened? Take a look at the workflow file code on the left-hand side panel. You will note the following:
+
+```yaml
+filters:
+    - match-type: all
+      rules:
+          - .badThingJustHappened and .badThingJustHappened.description
+          - .badThingJustHappened.description | contains ("fubar")
+```
+
+Here, we just told Dassana that when JSON path `$.badThingJustHappened.description` `contains` `fubar` (we will get to this in a moment), we want the workflow to run. This workflow performs [normalization](../guides/workflow-authoring/normalize) using the `steps`. We have this step -
+
+```yaml
+steps:
+    - id: resource-info
+      uses: DemoCloudNormalizer
+```
+
+What is this step doing? Well, it is simply calling a serverless function named `DemoCloudNormalizer` in the [CFT template](https://github.com/dassana-io/dassana/blob/main/content/pkg/template.yaml#L500) we deployed. You can refer to the [source code](https://github.com/dassana-io/dassana/blob/main/content/actions/demo-cloud-normalizer/src/handler.py) here but it doesn't do anything super interesting but does normalize every single alert to same static data.
+
+### General Context
+
+Next take a look at the output (on the right-hand side) under General Context. You will note a risk of low. On the left-hand panel, click on the General Context tab. You will note the following yaml in the workflow file code:
+
+```yaml
+risk-config:
+    default-risk: ''
+    rules:
+        - name: low risk for some account
+          condition: |-
+              .resourceContainer | contains ("some")
+          risk: low
+```
+
+:::info
+
+In the workflows of type `general-context`, the `risk-config` tells Dassana the risk of the resource.
+
+:::
+
+Again, the condition here uses JSON rule (yes, yes, we are going to get to it, beer🍺  with for us for a moment please). The condition here is basically telling Dassana that when the `resourceContainer` contains the word `some`, we want the resource risk to be low.
+
+### Resource and Policy Context
+
+Currently the `demo-cloud` example we use does not have any resource context or policy context workflow so that's why you see this message:
+
+```json
+Sorry, but no __________ workflow ran for the given alert. Please check filter config
+```
+
+### JSON Rules
+
+:::danger
+
+G to add readme + examples for rule engine
+
+:::
+
+JSON rules are the standardized way in Dassana to filter things. We have open-sourced our [rule engine](https://github.com/dassana-io/rule-engine) which takes a JSON input, a JSON rule and returns `true` or `false` based upon the json rule evaluation.
+
+We recommend you checkout [examples](https://github.com/dassana-io/rule-engine/blob/main/README.md#examples) to get a flavor of how these rules work.
+
+## What's next?
+
+Checkout some of the [vendor integrations](../guides/vendor-setup/aws-config/setup.md) to process some real alerts this time. Or, if you're hungry, order a pizza 🍕 with pineapple 🍍

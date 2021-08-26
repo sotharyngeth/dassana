@@ -1,14 +1,39 @@
 # Resource Context
 
-The `resource-context` workflow helps add all resource specific context to an alet.
+The `resource-context` workflow helps add all resource specific context to an alert.
 
 ## Example
 
-:::danger
+```yaml title="content/workflows/csp/aws/service/ec2/resources/instance/resource-context/instance-context.yaml"
+schema: 1
+type: resource-context
 
-todo
+id: ec2-instance-context
+name: EC2 instance resource context
 
-:::
+csp: aws
+service: ec2
+resource-type: instance
+
+filters:
+    - match-type: any
+      rules:
+          - .resourceType == "instance" and .csp =="aws"
+
+steps:
+    - id: ec2Exposure
+      uses: WhatIsEc2Exposure
+      with:
+          - name: instanceArn
+            value: .canonicalId
+
+risk-config:
+    default-risk: ''
+    rules:
+        - name: Can EC2 receive unauthenticated traffic
+          condition: .ec2Exposure.appLayer.canReceiveUnauthenticatedTraffic == true
+          risk: high
+```
 
 ## Reference
 
@@ -18,6 +43,7 @@ import Schema from '../../common-fields/schema.md'
 import Id from '../../common-fields/workflows/workflow-id.md'
 import Name from '../../common-fields/name.md'
 import Labels from '../../common-fields/labels.md'
+import ResourceHierarchy from '../../common-fields/resource-hierarchy.md'
 import Filters from '../../common-fields/workflows/filters.md'
 import MatchType from '../../common-fields/workflows/match-type.md'
 import RuleSyntax from '../../common-fields/workflows/rule-syntax.md'
@@ -44,6 +70,10 @@ Always `resource-context` for this kind of workflow.
 ### `labels`
 
 <Labels />
+
+### `csp`, `service`, & `resource-type`
+
+<ResourceHierarchy />
 
 ### `filters`
 
