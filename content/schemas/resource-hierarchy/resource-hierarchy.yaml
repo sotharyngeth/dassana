@@ -36,3 +36,6 @@ csp:
       - id: s3
         resource-types:
           - id: bucket
+      - id: config
+        resource-types:
+          - id: config-recorder

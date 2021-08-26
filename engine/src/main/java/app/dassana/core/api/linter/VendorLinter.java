@@ -42,7 +42,8 @@ public class VendorLinter extends BaseLinter {
 	}
 
 	private boolean hasValidFilter(Map<String, Object> data, File file) {
-		if(file != null && !ignore.contains(file.getName())) return true;
+
+		if(file != null && ignore.contains(file.getName())) return true;
 
 		boolean isValid = true;
 		if(ContentManager.POLICY_CONTEXT.equals((String) data.get("type"))) {

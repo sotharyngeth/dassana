@@ -2,7 +2,7 @@
   name: AWS Config
 - id: foo-cloud
   name: Foo Cloud
-- id: guardduty
-  name: GuardDuty
+- id: aws-guardduty
+  name: AWS GuardDuty
 # - id: prisma-cloud
 #   name: Prisma Cloud
