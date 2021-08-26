@@ -113,7 +113,7 @@ public class WorkflowRunner {
         stepOutputJson = runStep(workflow, step, stepPayload, simpleOutput);
 
         Object fromJson = gson.fromJson(stepOutputJson, Object.class);
-        logger.debug("Output from step {} is {}", step.getId(), stepOutputJson);
+        logger.info("Output from step {} in workflow {} is {}", step.getId(), workflow.getId(),stepOutputJson);
         stepToOutPutMap.put(step.getId(), fromJson);
 
         //merge the step results into the event
@@ -146,7 +146,6 @@ public class WorkflowRunner {
         String value = map.getValue();
 
         if (map.getValueType().equals(ValueType.JQ_EXPRESSION)) {
-          // anything other than JQ_EXPRESSION
           JsonQuery jsonQuery = JsonQuery.compile(value, Version.LATEST);
           JsonNode in = MAPPER.readTree(jsonObject.toString());
 

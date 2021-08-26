@@ -26,6 +26,7 @@ import app.dassana.core.rule.RuleMatch;
 import app.dassana.core.util.JsonyThings;
 import app.dassana.core.util.StringyThings;
 import app.dassana.core.workflow.WorkflowRunner;
+import app.dassana.core.workflow.model.NormalizerException;
 import app.dassana.core.workflow.model.Workflow;
 import app.dassana.core.workflow.model.WorkflowOutputWithRisk;
 import app.dassana.core.workflow.processor.RequestProcessor;
@@ -197,11 +198,9 @@ public class ApiHandler extends
         }
       } else if (input.getPath().contentEquals("/ping")) {
         gatewayProxyResponseEvent.setBody(gson.toJson(pingHandler.getPingResponse()));
-      }else if(input.getPath().contentEquals("/version")){
+      } else if (input.getPath().contentEquals("/version")) {
         gatewayProxyResponseEvent.setBody(gson.toJson(versionHandler.getVersionResponse()));
-      }
-
-      else if (input.getPath().contentEquals(VALIDATE_WORKFLOW_PATH) && input.getHttpMethod().toLowerCase()
+      } else if (input.getPath().contentEquals(VALIDATE_WORKFLOW_PATH) && input.getHttpMethod().toLowerCase()
           .contentEquals("post")) {
         try {
           workflowValidator.handleValidate(StringyThings.getJsonFromYaml(inputBody));
@@ -221,6 +220,12 @@ public class ApiHandler extends
       }
 
       gatewayProxyResponseEvent.setStatusCode(200);
+    } catch (NormalizerException exception) {
+
+      String message = String.format("Sorry but the normalizer %s threw error %s",
+          exception.getWorkflowId(), exception.getMessage());
+      gatewayProxyResponseEvent.setBody(gson.toJson(message));
+      gatewayProxyResponseEvent.setStatusCode(400);
     } catch (Exception e) {
       StringWriter sw = new StringWriter();
       e.printStackTrace(new PrintWriter(sw));
@@ -283,7 +288,7 @@ public class ApiHandler extends
                 if (!workflow.getId().contentEquals(workflowResponse.getString(WORKFLOW_ID))) {
                   jsonObject.getJSONObject(DASSANA_KEY).put(workflowKey,
                       new JSONObject(gson.toJson(String.format("the output is from workflow id %s which doesn't "
-                          + "match the workflowId provided, please check your filter config",
+                              + "match the workflowId provided, please check your filter config",
                           workflowResponse.getString(WORKFLOW_ID)))));
                 }
               }

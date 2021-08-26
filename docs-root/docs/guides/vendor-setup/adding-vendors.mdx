@@ -14,12 +14,13 @@ We will demonstrate how to go about creating a vendor over the new few sections.
 
 Please see the [`normalize`](../workflow-authoring/normalize) page to learn about how to create the workflow.
 
-## Field extr`action`
+## Field extr"action"
 
 The second step to supporting a new vendor is to write an action that extracts required fields.
 
-Here is an [example](https://github.com/dassana-io/dassana/tree/main/content/actions/security-hub-normalizer) written using Java to support AWS Security Hub alerts.
-Here is an [example](https://github.com/dassana-io/dassana/tree/main/content/actions/prisma-cloud-normalizer) written using Python to support Prisma Cloud alerts.
+Here is an [example](https://github.com/dassana-io/dassana/tree/main/content/actions/security-hub-normalizer) written using Java to support AWS Config alerts arriving via Security Hub.
+
+<!-- Here is an [example](https://github.com/dassana-io/dassana/tree/main/content/actions/prisma-cloud-normalizer) written using Python to support Prisma Cloud alerts. -->
 
 :::note
 
@@ -31,34 +32,38 @@ For more information on how to write actions, please see the [authoring actions]
 
 The final step in adding a new vendor is mapping its policies to the policies in Dassana. You can do this by writing rules that can help Dassana identify a specific policy. Here is an example of how rule matching is done for the `restricted-ssh` AWS security hub policy (see highlighted section).
 
-```yaml title="content/workflows/csp/aws/service/ec2/resources/security-group/policy-context/ssh-from-internet.yaml"
-schema: 1.0
+```yaml title="content/workflows/csp/aws/service/ec2/resources/security-group/policy-context/sg-is-wide-open.yaml"
+schema: 1
 type: policy-context
-id: ssh-from-internet
-name: Security group is allowing incoming SSH traffic from internet
-labels:
-  - contextualization
 
+id: security-group-wide-open
+name: Security group is wide open
+labels:
+    - contextualization
+
+csp: aws
+service: ec2
+resource-type: security-group
+
+class: risk
+subclass: config
 category: networking
 subcategory: firewall
 
 filters:
-//highlight-start
-  - vendor: aws-config
-    policies:
-      - "restricted-ssh"
-    match-type: any
-    rules:
-      # here workflowId refers to the normalizer workflowId which normalized the alert
-      - .workflowId == "aws-config" and (.vendorPolicy |contains ("restricted-ssh") )
-  - vendor: prisma-cloud
-    policies:
-      - "617b9138-584b-4e8e-ad15-7fbabafbed1a"
-    match-type: any
-    rules:
-      - .workflowId == "prisma-cloud" and .vendorPolicy == "617b9138-584b-4e8e-ad15-7fbabafbed1a"
-//highlight-end
-...
+// highlight-start
+    - vendor: aws-config
+      policies:
+          - restricted-ssh
+          - restricted-common-ports
+          - vpc-default-security-group-closed
+      match-type: any
+      rules:
+          # here normalizerId refers to the normalizer normalizerId which normalized the alert
+          - .vendorId == "aws-config" and (.vendorPolicy |contains ("restricted-ssh") )
+          - .vendorId == "aws-config" and (.vendorPolicy |contains ("restricted-common-ports"))
+          - .vendorId == "aws-config" and (.vendorPolicy |contains ("vpc-default-security-group-closed"))
+// highlight-end
 ```
 
 :::note

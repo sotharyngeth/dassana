@@ -15,6 +15,7 @@ import app.dassana.core.resource.model.GeneralContext;
 import app.dassana.core.resource.model.ResourceContext;
 import app.dassana.core.util.StringyThings;
 import app.dassana.core.workflow.WorkflowRunner;
+import app.dassana.core.workflow.model.NormalizerException;
 import app.dassana.core.workflow.model.Workflow;
 import app.dassana.core.workflow.model.WorkflowOutputWithRisk;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.utils.StringUtils;
 
 
 /**
@@ -90,6 +92,7 @@ public class RequestProcessor {
 
     if (normalizationResult.isPresent()) {
       WorkflowOutputWithRisk normalizedWorkflowOutput = normalizationResult.get();
+      validateNormalizerOutput(normalizedWorkflowOutput);
 
       if (!request.isSkipGeneralContext()) {
         futureList.add(executorCompletionService
@@ -156,5 +159,43 @@ public class RequestProcessor {
 
   }
 
+  //just a basic test for now
+  //todo: use schema based validation and also perform deep validation where even values are tested.
+  private void validateNormalizerOutput(WorkflowOutputWithRisk normalizerOutput) {
+
+    checkArgsToBeTrue("vendorId", normalizerOutput);
+    checkArgsToBeTrue("alertId", normalizerOutput);
+    checkArgsToBeTrue("canonicalId", normalizerOutput);
+    checkArgsToBeTrue("vendorPolicy", normalizerOutput);
+    checkArgsToBeTrue("csp", normalizerOutput);
+    checkArgsToBeTrue("resourceContainer", normalizerOutput);
+    checkArgsToBeTrue("region", normalizerOutput);
+    checkArgsToBeTrue("service", normalizerOutput);
+    checkArgsToBeTrue("resourceType", normalizerOutput);
+    checkArgsToBeTrue("resourceId", normalizerOutput);
+  }
+
+
+  private void checkArgsToBeTrue(String key, WorkflowOutputWithRisk normalizerOutput) {
+
+    try {
+      if (StringUtils.isEmpty((CharSequence) normalizerOutput.getOutput().get(key))) {
+        NormalizerException normalizerException = new NormalizerException(
+            String.format("%s is expected to be not empty", key));
+        normalizerException.setWorkflowId(normalizerOutput.getWorkflowId());
+
+        //relax the requirements for resource-type for now
+        if (!key.contentEquals("resourceType")) {
+          throw normalizerException;
+        }
+      }
+    } catch (NullPointerException exception) {
+      NormalizerException normalizerException = new NormalizerException(
+          String.format("%s is expected to be not null", key));
+      normalizerException.setWorkflowId(normalizerOutput.getWorkflowId());
+      throw normalizerException;
+    }
+
+  }
 
 }

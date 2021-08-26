@@ -21,38 +21,26 @@ For a complete list of examples, look at the [available actions in GitHub](https
 
 Here is an example metadata file for an action:
 
-:::info
-
-Schema is validated with [YAMALE](https://github.com/23andMe/Yamale).
-
-:::
-
-:::danger
-
-update example
-
-:::
-
-```yaml title="content/actions/does-nacl-allow-traffic-from-internet/dassana-action.yaml"
+```yaml title="content/actions/website-context/dassana-action.yaml"
 schema: 1.0
-id: DoesNaclAllowTrafficFromInternet
-name: Does NACL Allow Traffic From Internet
+id: WebsiteContext
+name: Is S3 bucket hosting a static website
 
 cloud-type: aws
-service: EC2
-resource-type: nacl
+service: s3
+resource-type: bucket
 
 runs-on: aws-lambda
+
 license:
     url: https://www.apache.org/licenses/LICENSE-2.0
     id: Apache
 author:
     name: dassana
     email: support@dassana.io
-compatible-type: contextualize
+compatible-type: policy-context
 labels:
-    - contextualize
-    - securityhub
+    - policy-context
 ```
 
 import Schema from '../../common-fields/schema.md'
@@ -125,21 +113,20 @@ The workflow type that is compatible with the action. One of:
 
 ## `input.json`
 
-```json title="content/actions/does-nacl-allow-traffic-from-internet/input.json"
+```json title="content/actions/website-context/input.json"
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"title": "DoesNaclAllowTrafficFromInternet",
+	"title": "WebsiteContext",
 	"type": "object",
 	"properties": {
-		"networkAclId": {
+		"bucketArn": {
 			"type": "string"
 		},
 		"awsRegion": {
-			"type": "string",
-			"default": "us-east-1"
+			"type": "string"
 		}
 	},
-	"required": ["networkAclId"]
+	"required": ["awsRegion", "bucketArn"]
 }
 ```
 
@@ -147,7 +134,7 @@ Based on the JSON input schema example above, the serverless function would rece
 
 ```json
 {
-	"networkAclId": "xxx",
+	"bucketArn": "arn:aws:s3:::xxxxx",
 	"awsRegion": "us-east-1"
 }
 ```
@@ -158,37 +145,39 @@ When creating actions, ensure that required fields are marked accordingly in the
 
 The code files required to run the action. Here is an example written using python:
 
-```py title="content/actions/does-nacl-allow-traffic-from-internet/src/handler.py"
+```py title="content/actions/website-context/src/handler.py"
 from json import load
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools.utilities.validation import validator
+from boto3 import resource
+from botocore.exceptions import ClientError
+from aws_lambda_powertools import Logger
 
-from dassana.common.aws_client import DassanaAwsObject
+from dassana.common.aws_client import DassanaAwsObject, parse_arn
 
 with open('input.json', 'r') as schema:
     schema = load(schema)
-    dassana_aws = DassanaAwsObject(
-        schema['properties']['awsRegion']['default'])
+    dassana_aws = DassanaAwsObject()
+
+logger = Logger(service='dassana-actions')
 
 
+@logger.inject_lambda_context
 @validator(inbound_schema=schema)
-def handle(event: Dict[str, Any], context: LambdaContext):
-    client = dassana_aws.create_aws_client(event, context, 'ec2')
-    resp = client.describe_network_acls(
-        NetworkAclIds=[
-            event['networkAclId']
-        ]
-    )
-    answer = False
-    assert len(resp['NetworkAcls']) == 1
-    for entry in resp['NetworkAcls'][0]['Entries']:
-        if entry['Egress'] is False and entry['Protocol'] == '-1' and entry[
-            'RuleAction'] == 'allow':
-            answer = True
-            break
-    return {"result": answer}
+def handle(event: Dict[str, Optional[Any]], context: LambdaContext):
+    arn = parse_arn(event.get('bucketArn'))
+    region = event.get('awsRegion')
+    arn_resource = arn.get('resource')
+    client = dassana_aws.create_aws_client(context, 's3', event.get('awsRegion'))
+
+    try:
+        bucket_website = client.get_bucket_website(Bucket=arn_resource)
+
+        return {"bucketWebsiteUrl": "%s.s3-website-%s.amazonaws.com" % (arn_resource, region)}
+    except ClientError as e:
+        logger.exception(e)
 
 ```
 

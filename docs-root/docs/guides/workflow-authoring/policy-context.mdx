@@ -6,49 +6,52 @@ Security policies are written using `policy-context` workflows. A single Dassana
 
 Here is an example of an AWS security group policy for SSH from the internet.
 
-```yaml title="content/workflows/csp/aws/service/ec2/resources/security-group/policy-context/ssh-from-internet.yaml"
-schema: 1.0
+```yaml title="content/workflows/csp/aws/service/ec2/resources/security-group/policy-context/sg-is-wide-open.yaml"
+schema: 1
 type: policy-context
-id: ssh-from-internet
-name: Security group is allowing incoming SSH traffic from internet
+
+id: security-group-wide-open
+name: Security group is wide open
 labels:
     - contextualization
 
+csp: aws
+service: ec2
+resource-type: security-group
+
+class: risk
+subclass: config
 category: networking
 subcategory: firewall
 
 filters:
     - vendor: aws-config
       policies:
-          - 'restricted-ssh'
+          - restricted-ssh
+          - restricted-common-ports
+          - vpc-default-security-group-closed
       match-type: any
       rules:
-          # here workflowId refers to the normalizer workflowId which normalized the alert
-          - .workflowId == "aws-config" and (.vendorPolicy |contains ("restricted-ssh") )
-    - vendor: prisma-cloud
-      policies:
-          - '617b9138-584b-4e8e-ad15-7fbabafbed1a'
-      match-type: any
-      rules:
-          - .workflowId == "prisma-cloud" and .vendorPolicy == "617b9138-584b-4e8e-ad15-7fbabafbed1a"
+          # here normalizerId refers to the normalizer normalizerId which normalized the alert
+          - .vendorId == "aws-config" and (.vendorPolicy |contains ("restricted-ssh") )
+          - .vendorId == "aws-config" and (.vendorPolicy |contains ("restricted-common-ports"))
+          - .vendorId == "aws-config" and (.vendorPolicy |contains ("vpc-default-security-group-closed"))
 
 steps:
     - id: list-of-attached-eni
       uses: WhatEnisAreAttachedToSg
       with:
-          - name: groupId
-            value: .resourceId
-          - name: awsRegion
-            value: .region
+          - name: canonicalId
+            value: .canonicalId
 
 risk-config:
-    default-risk: high
+    default-risk: ''
     rules:
         - name: are-enis-attached-to-sg
-          #in the below condition, we are checking if the step with id "list-of-attached-eni" has a key with nameed 'result' and its value (array size) has length 0
+          #in the below condition, we are checking if the step with id "list-of-attached-eni" has a key with nameed 'result' and its value (array size) has length > 0
           # i.e. we are checking if ENIs are attached to the security group or not
-          condition: ."list-of-attached-eni".result| length == 0
-          risk: low
+          condition: ."list-of-attached-eni".result| length > 0
+          risk: high
 ```
 
 ## Reference
@@ -90,13 +93,17 @@ Always `policy-context` for this kind of workflow.
 
 Used to organize security policies. A list of all classes, subclasses, categories, and subcategories can be found [here](https://github.com/dassana-io/dassana/blob/main/content/workflows/policies/policy-classification.yaml).
 
+### `csp`, `service`, & `resource-type`
+
+<ResourceHierarchy />
+
 ### `filters`
 
 <Filters />
 
 #### `vendor`
 
-Security vendor name. A complete list of supported vendors can be found [here](https://github.com/dassana-io/dassana/tree/main/content/workflows/vendors).
+Security vendor name. A complete list of supported vendors can be found [here](https://github.com/dassana-io/dassana/blob/main/content/schemas/vendors/vendor-list.yaml).
 
 :::note
 

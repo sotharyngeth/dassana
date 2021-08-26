@@ -40,6 +40,6 @@ steps:
 risk-config:
   default-risk: critical
   rules:
-    - name: bucket-has-associated-website-and-name-contains-public
-      condition: (.resourceId | contains ("public")) and ."website-info"?
+    - name: bucket-has-associated-website
+      condition: ."website-info".bucketWebsiteUrl != null
       risk: low

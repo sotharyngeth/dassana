@@ -7,15 +7,19 @@ The `general-context` workflow allows helps you answer the questions "how import
 Say, for example, you wanted to differentiate between dev and prod resources. You can write rules to assign critical risk for prod assets and low risk for dev assets. Let's take a look at an example:
 
 ```yaml title="content/workflows/csp/aws/general-context/general-context.yaml"
-schema: 1.0
+schema: 1
 type: general-context
+
 id: general-context-aws
 name: General context + tag-based risk for AWS resources
+
+csp: aws
 
 filters:
     - match-type: all
       rules:
-          - .csp=="aws" and .canonicalId
+          - .csp=="aws" and .canonicalId and .resourceType != "AwsAccount" # for alerts belonging to an account, the resource type is set to "AwsAccount" by security hub
+          #todo: try to get tags from aws org for the account
 
 steps:
     - id: getTags
@@ -78,6 +82,10 @@ Always `general-context` for this kind of workflow.
 ### `labels`
 
 <Labels />
+
+### `csp`
+
+Cloud service provider. A list of all supported cloud service providers can be found [here](https://github.com/dassana-io/dassana/blob/main/content/schemas/resource-hierarchy/resource-hierarchy.yaml).
 
 ### `filters`
 

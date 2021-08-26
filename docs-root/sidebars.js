@@ -46,7 +46,7 @@ module.exports = {
 					items: [
 						'guides/vendor-setup/aws-config/setup',
 						'guides/vendor-setup/guardduty/setup',
-						'guides/vendor-setup/prisma-cloud/setup',
+						// 'guides/vendor-setup/prisma-cloud/setup',
 						'guides/vendor-setup/adding-vendors'
 					]
 				},
@@ -54,6 +54,7 @@ module.exports = {
 					type: 'category',
 					label: 'Workflows',
 					items: [
+						'guides/workflow-authoring/editor',
 						'guides/workflow-authoring/normalize',
 						'guides/workflow-authoring/general-context',
 						'guides/workflow-authoring/resource-context',

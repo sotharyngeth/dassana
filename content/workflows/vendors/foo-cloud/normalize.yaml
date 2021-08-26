@@ -10,31 +10,37 @@ filters:
       - .badThingJustHappened and .badThingJustHappened.description
       - .badThingJustHappened.description | contains ("fubar")
 
-steps:
-  - id: resource-info
-    uses: DemoCloudNormalizer
-
 output:
   - name: vendorId
     value: foo-cloud
+    value-type: STRING
   - name: alertId
-    value: ."resource-info".alertId
+    value: demo-alert-id
+    value-type: STRING
   - name: canonicalId
-    value: ."resource-info".canonicalId
+    value: demo-canonicalId
+    value-type: STRING
   - name: vendorPolicy
-    value: ."resource-info".vendorPolicy
+    value: dempo-vendorPolicy
+    value-type: STRING
   - name: csp
-    value: ."resource-info".csp
+    value: demo-csp
+    value-type: STRING
   - name: resourceContainer
-    value: ."resource-info".resourceContainer
+    value: demo-resourceContainer
+    value-type: STRING
   - name: region
-    value: ."resource-info".region
+    value: demo-region
+    value-type: STRING
   - name: service
-    value: ."resource-info".service
+    value: demo-service
+    value-type: STRING
   - name: resourceType
-    value: ."resource-info".resourceType
+    value: demo-resourceType
+    value-type: STRING
   - name: resourceId
-    value: ."resource-info".resourceId
+    value: demo-resoureceId
+    value-type: STRING
 
 output-queue:
   enabled: true

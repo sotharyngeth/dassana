@@ -1,7 +1,6 @@
 package app.dassana.core.launch;
 
 import static app.dassana.core.launch.ApiHandler.API_INCLUDE_ALERT_IN_OUTPUT;
-import static app.dassana.core.launch.ApiHandler.API_INCLUDE_STEP_OUTPUT;
 import static app.dassana.core.launch.ApiHandler.API_PARAM_SKIP_GENERAL_CONTEXT;
 import static app.dassana.core.launch.ApiHandler.API_PARAM_SKIP_POLICY_CONTEXT;
 import static app.dassana.core.launch.ApiHandler.API_PARAM_SKIP_POST_PROCESSOR;
@@ -73,9 +72,6 @@ public class Helper {
     apiGatewayProxyRequestEvent.setHttpMethod("post");
     ApiHandler apiHandler = new ApiHandler();
     APIGatewayProxyResponseEvent responseEvent = apiHandler.execute(apiGatewayProxyRequestEvent);
-    if (responseEvent.getStatusCode() != 200) {
-      throw new RuntimeException(responseEvent.getBody());
-    }
     return responseEvent.getBody();
   }
 
