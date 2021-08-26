@@ -5,6 +5,8 @@ import app.dassana.core.api.linter.pojo.*;
 import app.dassana.core.contentmanager.ContentManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,8 +15,9 @@ import java.util.*;
 
 public class ResourceLinter extends BaseLinter{
 
-	Map<String, Set<String>> cspToService = new HashMap<>();
-	Map<String, Set<String>> serviceToResource = new HashMap<>();
+	private Gson gson = new Gson();
+	private Map<String, Set<String>> cspToService = new HashMap<>();
+	private Map<String, Set<String>> serviceToResource = new HashMap<>();
 
 	private void addResourcesToMaps(Provider provider){
 		cspToService.put(provider.getId(), new HashSet<>());
@@ -51,7 +54,14 @@ public class ResourceLinter extends BaseLinter{
 		return validPolicy;
 	}
 
-	public void validateResources(String path) throws FileNotFoundException {
+	public void validateResourcesAPI(String json){
+		Map<String, Object> data = gson.fromJson(json, Map.class);
+		if(!isValidPolicy(data)){
+			throw new ValidationException("Invalid resource mapping in json");
+		}
+	}
+
+	private void validateResources(String path) throws FileNotFoundException {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for(File file : files){
 			Map<String, Object> map = yaml.load(new FileInputStream(file));

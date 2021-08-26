@@ -5,14 +5,17 @@ import app.dassana.core.api.linter.pojo.*;
 import app.dassana.core.contentmanager.ContentManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.gson.Gson;
+
 import java.io.*;
 import java.util.*;
 
 public class PolicyLinter extends BaseLinter {
 
-	Map<String, Set<String>> classToSub = new HashMap<>();
-	Map<String, Set<String>> subToCat = new HashMap<>();
-	Map<String, Set<String>> catToSubCat = new HashMap<>();
+	private Map<String, Set<String>> classToSub = new HashMap<>();
+	private Map<String, Set<String>> subToCat = new HashMap<>();
+	private Map<String, Set<String>> catToSubCat = new HashMap<>();
+	private Gson gson = new Gson();
 
 	public void addPoliciesToMaps(Policy policy){
 		classToSub.put(policy.getId(), new HashSet<>());
@@ -45,7 +48,7 @@ public class PolicyLinter extends BaseLinter {
 		return map.containsKey(key) && map.get(key).contains(val);
 	}
 
-	private boolean isValidFields(Map<String, Object> map){
+	private boolean isValidFields(Map<String, Object> map, File file){
 		String pClass = (String) map.get("class");
 		String subClass = (String) map.get("subclass");
 		String category = (String) map.get("category");
@@ -60,12 +63,19 @@ public class PolicyLinter extends BaseLinter {
 		return isValidFields;
 	}
 
-	public void validatePolicies(String path) throws IOException {
+	public void validatePoliciesAPI(String json){
+		Map<String, Object> data = gson.fromJson(json, Map.class);
+		if(!isValidFields(data, null)){
+			throw new ValidationException("Not a valid policy file");
+		}
+	}
+
+	private void validatePolicies(String path) throws IOException {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (File file : files) {
 			if(file.getCanonicalPath().contains(ContentManager.POLICY_CONTEXT)) {
 				Map<String, Object> map = yaml.load(new FileInputStream(file));
-				if(!isValidFields(map)){
+				if(!isValidFields(map, file)){
 					throw new ValidationException("Not a valid policy file: " + file.getName());
 				}
 			}
