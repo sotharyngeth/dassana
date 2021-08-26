@@ -16,12 +16,6 @@ category: iam
 subcategory: authorization
 
 filters:
-#  - vendor: prisma-cloud
-#    policies:
-#      - "8f2a2ff7-b484-463d-95df-aecd038f62b0"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "8f2a2ff7-b484-463d-95df-aecd038f62b0"
 
 risk-config:
   default-risk: medium

@@ -22,12 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("cloud-trail-encryption-enabled"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "c2b84f89-7ec8-473e-a6af-404feeeb96c5"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "c2b84f89-7ec8-473e-a6af-404feeeb96c5"
 
 risk-config:
   default-risk: medium

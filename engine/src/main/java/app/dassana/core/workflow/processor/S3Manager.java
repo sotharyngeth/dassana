@@ -1,5 +1,7 @@
 package app.dassana.core.workflow.processor;
 
+import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
+
 import app.dassana.core.workflow.model.WorkflowOutputWithRisk;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,11 +64,10 @@ public class S3Manager {
     s3Client.putObject(putObjectRequest, RequestBody.fromBytes(jsonToUpload.getBytes()));
 
     if (normalizationResult.isPresent()) {
-      String dassanaKey = "dassana";
       JSONObject dassanaDecoratedJsonObj = new JSONObject(jsonToUpload);
-      JSONObject updatedDassanaObj = dassanaDecoratedJsonObj.getJSONObject(dassanaKey)
+      JSONObject updatedDassanaObj = dassanaDecoratedJsonObj.getJSONObject(DASSANA_KEY)
           .put("alertKey", "s3://".concat(dassanaBucket).concat("/").concat(path));
-      dassanaDecoratedJsonObj.put(dassanaKey, updatedDassanaObj);
+      dassanaDecoratedJsonObj.put(DASSANA_KEY, updatedDassanaObj);
       return dassanaDecoratedJsonObj.toString();
     } else {
       return jsonToUpload;

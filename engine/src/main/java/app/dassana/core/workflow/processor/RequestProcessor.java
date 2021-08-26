@@ -51,7 +51,7 @@ public class RequestProcessor {
   CompletionService<Optional<WorkflowOutputWithRisk>> executorCompletionService = new ExecutorCompletionService<>(
       executorService);
 
-  private static final Logger logger = LoggerFactory.getLogger(SqsHandler.class);
+  private static final Logger logger = LoggerFactory.getLogger(RequestProcessor.class);
 
 
   /**

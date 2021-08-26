@@ -30,6 +30,7 @@ public class App {
     apiGatewayProxyRequestEvent.setPath("/run");
 
     APIGatewayProxyResponseEvent responseEvent = apiHandler.execute(apiGatewayProxyRequestEvent);
+    System.out.println(responseEvent.getBody());
     if (responseEvent.getStatusCode() != 200) {
       throw new RuntimeException(responseEvent.getBody());
     } else {

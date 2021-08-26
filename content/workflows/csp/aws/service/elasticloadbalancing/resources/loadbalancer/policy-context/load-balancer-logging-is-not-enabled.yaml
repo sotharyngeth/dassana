@@ -22,14 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("elb-logging-enabled"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "b675c604-e886-43aa-a60f-a9ad1f3742d3"
-#      - "f2a2bcf1-2966-4cb5-9230-bd39c9903a02"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "b675c604-e886-43aa-a60f-a9ad1f3742d3"
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "f2a2bcf1-2966-4cb5-9230-bd39c9903a02"
 
 risk-config:
   default-risk: medium

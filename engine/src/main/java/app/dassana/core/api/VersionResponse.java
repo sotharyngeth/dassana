@@ -1,6 +1,6 @@
-package app.dassana.core.launch.model;
+package app.dassana.core.api;
 
-public class PingResponse {
+public class VersionResponse {
 
   boolean upgradeAvailable = false;
   String installedVersion;

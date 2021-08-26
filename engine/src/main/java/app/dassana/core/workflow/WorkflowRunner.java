@@ -270,8 +270,24 @@ public class WorkflowRunner {
         JsonNode in = MAPPER.readTree(mergedJsonObj.toString());
 
         Scope childScope = Scope.newChildScope(rootScope);
-        jsonQuery.apply(childScope, in, out -> fieldJsonObj.put(name, out.asText()));
+        jsonQuery.apply(childScope, in, out -> {
 
+          if (out.getNodeType().equals(JsonNodeType.STRING)) {
+            fieldJsonObj.put(name, out.asText());
+          }
+          if (out.getNodeType().equals(JsonNodeType.OBJECT)) {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> result = mapper.convertValue(out, new TypeReference<>() {
+            });
+            fieldJsonObj.put(name, result);
+          }
+          if (out.getNodeType().equals(JsonNodeType.NUMBER)) {
+            fieldJsonObj.put(name, out.asLong());
+          }
+          if (out.getNodeType().equals(JsonNodeType.BOOLEAN)) {
+            fieldJsonObj.put(name, out.asBoolean());
+          }
+        });
 
       } else if (valueType.contentEquals("string")) {
         fieldJsonObj.put(name, value);

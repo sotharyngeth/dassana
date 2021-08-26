@@ -22,12 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("iam-policy-no-statements-with-admin-access"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "d9b86448-11a2-f9d4-74a5-f6fc590caeef"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "d9b86448-11a2-f9d4-74a5-f6fc590caeef"
 
 risk-config:
   default-risk: low

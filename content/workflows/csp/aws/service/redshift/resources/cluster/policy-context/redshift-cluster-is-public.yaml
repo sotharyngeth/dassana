@@ -22,12 +22,6 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("redshift-cluster-public-access-check"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "d65fd313-1c5c-42a1-98b2-a73bdeda19a6"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "d65fd313-1c5c-42a1-98b2-a73bdeda19a6"
 
 risk-config:
   default-risk: critical

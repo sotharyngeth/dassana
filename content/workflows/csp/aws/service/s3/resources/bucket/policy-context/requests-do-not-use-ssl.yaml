@@ -22,11 +22,5 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-bucket-ssl-requests-only"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "7b0df373-006a-40d6-9f3d-68e6ea0bdd5d"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "7b0df373-006a-40d6-9f3d-68e6ea0bdd5d"
 risk-config:
   default-risk: ""

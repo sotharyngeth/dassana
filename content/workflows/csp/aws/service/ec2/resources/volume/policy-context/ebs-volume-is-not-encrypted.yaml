@@ -24,12 +24,6 @@ filters:
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("ec2-ebs-encryption-by-default"))
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("encrypted-volumes"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "7c714cb4-3d47-4c32-98d4-c13f92ce4ec5"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "7c714cb4-3d47-4c32-98d4-c13f92ce4ec5"
 
 risk-config:
   default-risk: medium

@@ -24,12 +24,6 @@ filters:
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-default-encryption-kms"))
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-bucket-server-side-encryption-enabled"))
-#  - vendor: prisma-cloud
-#    policies:
-#      - "7913fcbf-b679-5aac-d979-1b6817becb22"
-#    match-type: any
-#    rules:
-#      - .normalizerId == "prisma-cloud" and .vendorPolicy == "7913fcbf-b679-5aac-d979-1b6817becb22"
 
 risk-config:
   default-risk: ""
