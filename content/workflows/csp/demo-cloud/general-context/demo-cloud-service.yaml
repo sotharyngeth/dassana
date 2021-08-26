@@ -1,29 +1,32 @@
+# general context workflows such as this one are executed only after normalization has been done
+# all of the fields such as csp,service etc emitted by normalization workflow are available.
+
 schema: 1
 type: general-context
 
 id: general-context-demo-cloud
-name: for demo cloud, risk of "some" account is low
+name: for demo cloud, risk of "demo-service" is low
 
-csp: demo-cloud
-
-# general context workflows such as this one are executed only after normalization has been done
-# all of the fields such as csp,service etc emitted by normalization workflow are available.
+csp: demo-cloud # note that this value is not used by engine for filtering.
+#currently, it is being used to rendering content on https://contexthub.dassana.io/
 
 filters:
   - vendor: foo-cloud
     match-type: all
     rules:
-      - .csp == "demo-cloud" and .service == "some service"
+      - .csp == "demo-csp" and .service == "demo-service"
 
-# notice that this worflow does not have any steps. In the real world, there would be steps in this workflow which will
-# bring in some information which can be used to assess the resource criticality. For example, refer to
-# content/workflows/csp/aws/general-context/general-context.yaml
-# which brings in AWS tag information and uses the tag values to determine resource criticality
+#this workflow being a demo workflow doesn't have steps. In general, you will have steps that take the input and output something meaningful
+#for example, refer to https://github.com/dassana-io/dassana/blob/main/content/workflows/csp/aws/general-context/general-context.yaml
 
 risk-config:
-  default-risk: ""
+  default-risk: "" # we recommend that you set the default risk to be empty
   rules:
-    - name: low risk for some account
-      condition: |-
-        .resourceContainer | contains ("some")
-      risk: low
+    - name: low risk for demo-service. In real world, you will refer to steps output
+      condition: .service | contains ("demo-service") # jq expression which must return a true or false output
+      risk: low # valid values are low, medium, high and critical
+
+output:
+  - name: why-is-6-afraid-of-7
+    value: "because 7 ate 9"
+    value-type: STRING # the field value-type is optional with the default value of JQ. This is a demo workflow so we are not extracting anyting from steps using jq, so we are using STRING which simply puts the value in the JSON key

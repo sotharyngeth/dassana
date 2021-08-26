@@ -4,11 +4,11 @@ Now that you understand how the magic happens. Let's review the terminology and 
 
 ## Terminology
 
-| Syntax   | Description                                                                                                                     |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Engine   | Responsible for running workflows against an input JSON                                                                         |
-| Workflow | Responsible for running actions and available in four flavors: normalize, general-context, resource-context, and policy-context |
-| Action   | Responsible for doing a single thing. Require a specific input and returns some output.                                         |
+| Syntax   | Description                                                                                                                                                                                                                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Engine   | Responsible for running workflows against an alert (json object). It can take alerts from a SQS queue or you can interact with it using [Dassana Editor](https://editor.dassana.io/) to author workflows                                                                                                     |
+| Workflow | A YAML file which describes what to do with an alert. It has filters on top which tells if the workflow should run or not, it has steps in the middle which run actions (serverless functions) whose output is used in the risk-config section to determine the risk. The workflows can also emit an output. |
+| Action   | Lightweight serverless functions which are used in workflows. Although they are lightweight, they do the heavy lifting of adding context                                                                                                                                                                     |
 
 ## Summary
 
@@ -18,44 +18,21 @@ Alerts are sent to the inbound queue. Then, the engine processes alerts one at a
 
 Once alerts are processed by the engine, they are sent to the outbound queue. A `dassana` object is added into the original alert JSON containing all the context outputted by the various workflows.
 
-Here an example:
+Let's say the original alert was something like this -
+
+```json
+{
+	"foo": "bar"
+}
+```
+
+After the alert has been processed, Dassana will add a key to it like this-
 
 ```json
 {
 	"foo": "bar",
-	"dassana": {
-		"context": {},
-		"resourcePriority": {},
-		"risk": {
-			"contextualRisk": {
-				"condition": ".foo contains bar",
-				"riskValue": "critical",
-				"name": "does foo contain bar?"
-			},
-			"resourcePriority": {
-				"condition": ".resourceType contains user",
-				"riskValue": "high",
-				"name": "user resources are sensitive"
-			}
-		},
-		"normalize": {
-			"csp": "aws",
-			"resourceId": "user_foo",
-			"canonicalId": "arn:aws:iam::123456789012:user/user_foo",
-			"service": "iam",
-			"vendorPolicy": "7ca5af2c-d18d-4004-9ad4-9c1fbfcab218",
-			"alertId": "someAlertId",
-			"resourceContainer": "123456789012",
-			"region": "us-east-1",
-			"workflowId": "some-normalizer-workflow-id",
-			"resourceType": "user"
-		}
-	}
+	"dassana": {}
 }
 ```
 
-:::danger
-
-Update JSON
-
-:::
+The output and risk from each of the workflow becomes available inside the `dassana` key

@@ -1,0 +1,29 @@
+schema: 1
+type: resource-context
+
+id: demo-cloud-resource-context
+name: Resource context for "demo-resourceType" resource type
+
+csp: demo-cloud
+service: demo-service
+resource-type: demo-resourceType
+
+filters:
+  - match-type: any
+    rules:
+      - .resourceType == "demo-resourceType" and .csp =="demo-csp"
+
+#this workflow being a demo workflow doesn't have steps. In general, you will have steps that take the input and output something meaningful
+#for example, refer to https://github.com/dassana-io/dassana/blob/main/content/workflows/csp/aws/service/ec2/resources/instance/resource-context/instance-context.yaml
+
+risk-config:
+  default-risk: "" # we recommend that you set the default risk to be empty
+  rules:
+    - name: demo-resourceType resources have medium risk. In real world, you will refer to steps output
+      condition: .resourceType == "demo-resourceType" # jq expression which must return a true or false output
+      risk: medium # valid values are low, medium, high and critical
+
+output:
+  - name: i-can-tell-you-a-udp-joke
+    value: "but you may not get it"
+    value-type: STRING # the field value-type is optional with the default value of JQ. This is a demo workflow so we are not extracting anyting from steps using jq, so we are using STRING which simply puts the value in the JSON key

@@ -1,0 +1,39 @@
+schema: 1
+type: policy-context
+
+id: demo-policy-context
+name: Demo normalized policy
+labels:
+  - contextualization
+
+csp: demo-cloud
+service: demo-service
+resource-type: demo-resourceType
+
+class: risk
+subclass: config
+category: networking
+subcategory: firewall
+
+filters: # notice that the filter section for policy-context workflows have extra field like vendor and policies.
+  # these fields "vendor" and "policies" are NOT used for matching. They are used for rendering polices on https://contexthub.dassana.io/
+  - vendor: foo-cloud
+    policies:
+      - demo-vendorPolicy
+    match-type: any
+    rules:
+      - .vendorId == "foo-cloud-cspm-vendor"
+
+#this workflow being a demo workflow doesn't have steps. In general, you will have steps that take the input and output something meaningful
+#for example, refer to https://github.com/dassana-io/dassana/blob/main/content/workflows/csp/aws/service/s3/resources/bucket/policy-context/bucket-has-broad-access-permissions.yaml
+
+risk-config:
+  default-risk: ""
+  rules:
+    - name: demo region has critical severity. In real world, you will refer to steps output
+      condition: .region == "demo-region"
+      risk: critical
+output:
+  - name: if-bees-start-writing-software
+    value: "beeware"
+    value-type: STRING # the field value-type is optional with the default value of JQ. This is a demo workflow so we are not extracting anyting from steps using jq, so we are using STRING which simply puts the value in the JSON key

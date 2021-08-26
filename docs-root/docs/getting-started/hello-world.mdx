@@ -55,15 +55,8 @@ filters:
           - .badThingJustHappened.description | contains ("fubar")
 ```
 
-Here, we just told Dassana that when JSON path `$.badThingJustHappened.description` `contains` `fubar` (we will get to this in a moment), we want the workflow to run. This workflow performs [normalization](../guides/workflow-authoring/normalize) using the `steps`. We have this step -
-
-```yaml
-steps:
-    - id: resource-info
-      uses: DemoCloudNormalizer
-```
-
-What is this step doing? Well, it is simply calling a serverless function named `DemoCloudNormalizer` in the [CFT template](https://github.com/dassana-io/dassana/blob/main/content/pkg/template.yaml#L500) we deployed. You can refer to the [source code](https://github.com/dassana-io/dassana/blob/main/content/actions/demo-cloud-normalizer/src/handler.py) here but it doesn't do anything super interesting but does normalize every single alert to same static data.
+Here, we just told Dassana that when JQ expressions `.badThingJustHappened and .badThingJustHappened.description` and `.badThingJustHappened.description | contains ("fubar")` evaluate to true
+(we will get to this in a moment), we want the workflow to run.
 
 ### General Context
 
@@ -71,41 +64,62 @@ Next take a look at the output (on the right-hand side) under General Context. Y
 
 ```yaml
 risk-config:
-    default-risk: ''
+    default-risk: '' # we recommend that you set the default risk to be empty
     rules:
-        - name: low risk for some account
-          condition: |-
-              .resourceContainer | contains ("some")
-          risk: low
+        - name: low risk for demo-service
+          condition: .service | contains ("demo-service") # jq expression which must return a true or false output
+          risk: low # valid values are low, medium, high and critical
 ```
+
+In general (no pun intended), the general context is intended to provide context on a highest level. For example, for alerts generated against AWS resources,
+the general context can provide context about the account in question, the AWS org, tags etc.
 
 :::info
 
-In the workflows of type `general-context`, the `risk-config` tells Dassana the risk of the resource.
-
+In the workflows of type `general-context`, `resource-context` and `policy-context`, the `risk-config` section is used to represent the risk associated with
+the respective workflow type. The `normalize` workflow type does not have any risk config.
 :::
 
-Again, the condition here uses JSON rule (yes, yes, we are going to get to it, beer🍺  with for us for a moment please). The condition here is basically telling Dassana that when the `resourceContainer` contains the word `some`, we want the resource risk to be low.
+Again, the condition here uses JQ rules (yes, yes, we are going to get to it, beer🍺 with for us for a moment please).
+The condition here is basically telling Dassana that when the `service` contains the word `demo-service`, we want the resource risk to be low.
 
-### Resource and Policy Context
+### Resource Context
 
-Currently the `demo-cloud` example we use does not have any resource context or policy context workflow so that's why you see this message:
+The workflows of `resource-context` are intended to provide context around the resource. These workflows should _not_ care about the alert actually.
+For example, refer to [ec2-instance-context](https://github.com/dassana-io/dassana/blob/main/content/workflows/csp/aws/service/ec2/resources/instance/resource-context/instance-context.yaml) workflow.
+That workflow calls an action [WhatIsEc2Exposure](https://github.com/dassana-io/dassana/tree/main/content/actions/what-is-exposure-of-ec2-instance) in the steps
+to provide context around exposure of an ec2 instance.
 
-```json
-Sorry, but no __________ workflow ran for the given alert. Please check filter config
+:::tip
+
+You can directly run a workflow if you want. This makes `resource-context` workflow quite powerful. For example,
+given an ec2 instance arn, you can just run the following curl command and run the workflow directly and get context about its exposure.
+
+```bash
+curl --location --request POST 'https://<rest-api-id>.execute-api.us-east-1.amazonaws.com/v1/run?workflowId=ec2-instance-context&includeStepOutput=true' \
+--header 'x-api-key: <YOUR-API-KEY-GOES-HERE>' \
+--data-raw '{
+  "instanceArn": "arn:aws:ec2:us-east-1:123456789012:instance/i-09f3989e7c911111"
+}'
+
 ```
 
-### JSON Rules
-
-:::danger
-
-G to add readme + examples for rule engine
+Here, we are bypassing normalizatio, general context etc and running a workflow directly.
+This makes it super easy to get context directly of a resource
 
 :::
 
-JSON rules are the standardized way in Dassana to filter things. We have open-sourced our [rule engine](https://github.com/dassana-io/rule-engine) which takes a JSON input, a JSON rule and returns `true` or `false` based upon the json rule evaluation.
+### Policy Context
 
-We recommend you checkout [examples](https://github.com/dassana-io/rule-engine/blob/main/README.md#examples) to get a flavor of how these rules work.
+The workflows of `policy-context` are intended to provide context around the alert. These workflows should care about the alert actually (as opposed to resource-context workflows which should care about the resource in question)
+For example, refer to [bucket-has-broad-access-permissions](https://github.com/dassana-io/dassana/blob/main/content/workflows/csp/aws/service/s3/resources/bucket/policy-context/bucket-has-broad-access-permissions.yaml) workflow.
+That workflow calls an action [WebsiteContext](https://github.com/dassana-io/dassana/tree/main/content/actions/website-context) in the steps to find out if bucket in question has an associated website with it or not.
+
+### JQ rules
+
+JQ is widely used in Dassana. It is used in `filters` section of the workflow to find out if the workflow should run or not.
+It is also used to extract values from JSON. We highly recommend that you familiarize yourself with JQ. Here is a [tutorial](https://earthly.dev/blog/jq-select/) to get you started.
+You can also test JQ expressions [here](https://jqplay.org/).
 
 ## What's next?
 
