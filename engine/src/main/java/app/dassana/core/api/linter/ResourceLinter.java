@@ -40,33 +40,44 @@ public class ResourceLinter extends BaseLinter{
 		}
 	}
 
-	private boolean isValidPolicy(Map<String, Object> map){
-		boolean validPolicy = ContentManager.GENERAL_CONTEXT.equals(map.get("type"));
+	private ErrorMsg isValidPolicy(Map<String, Object> map){
+		ErrorMsg errorMsg = new ErrorMsg(false);
+		boolean isGeneral = ContentManager.GENERAL_CONTEXT.equals(map.get("type"));
 
-		if(map.containsKey("csp") && map.containsKey("service") && map.containsKey("resource-type") && !validPolicy){
+		if(isGeneral) return errorMsg;
+
+		if(map.containsKey("csp") && map.containsKey("service") && map.containsKey("resource-type")){
 
 			String csp = (String) map.get("csp"), service = (String) map.get("service"),
 							resource = (String) map.get("resource-type");
 
-			validPolicy = cspToService.containsKey(csp) && cspToService.get(csp).contains(service)
+			boolean validPolicy = cspToService.containsKey(csp) && cspToService.get(csp).contains(service)
 							&& serviceToResource.get(service).contains(resource);
+
+			if(!validPolicy){
+				errorMsg.setError(true);
+				errorMsg.setMsg("Bad bad mon");
+			}
+
 		}
-		return validPolicy;
+		return errorMsg;
 	}
 
 	public void validateResourcesAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		if(!isValidPolicy(data)){
-			throw new ValidationException("Invalid resource mapping in json");
+		ErrorMsg errorMsg = isValidPolicy(data);
+		if(errorMsg.isError()){
+			throw new ValidationException(errorMsg.getMsg());
 		}
 	}
 
 	private void validateResources(String path) throws FileNotFoundException {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for(File file : files){
-			Map<String, Object> map = yaml.load(new FileInputStream(file));
-			if(!isValidPolicy(map)){
-				throw new ValidationException("Invalid resource mapping in file, " + file.getName());
+			Map<String, Object> data = yaml.load(new FileInputStream(file));
+			ErrorMsg errorMsg = isValidPolicy(data);
+			if(errorMsg.isError()){
+				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
 			}
 		}
 	}

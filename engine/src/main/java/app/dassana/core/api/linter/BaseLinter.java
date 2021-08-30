@@ -10,8 +10,37 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@Singleton
 public abstract class BaseLinter {
+
+	protected class ErrorMsg {
+		private boolean isError;
+		private String msg;
+
+		public ErrorMsg(boolean isError){
+			this.isError = isError;
+		}
+
+		public ErrorMsg(boolean isError, String field) {
+			this.isError = isError;
+			this.msg = field;
+		}
+
+		public boolean isError() {
+			return isError;
+		}
+
+		public void setError(boolean error) {
+			isError = error;
+		}
+
+		public String getMsg() {
+			return msg;
+		}
+
+		public void setMsg(String msg) {
+			this.msg = msg;
+		}
+	}
 
 	protected Yaml yaml = new Yaml();
 

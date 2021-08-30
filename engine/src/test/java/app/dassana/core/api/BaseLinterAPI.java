@@ -27,6 +27,14 @@ public class BaseLinterAPI {
 	}
 
 	@Test
+	public void badInputNormAPI() throws IOException {
+		VendorLinter vendorLinter = new VendorLinter();
+		vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
+		String json = helper.getFileContent("inputs/invalidVendor.json");
+		vendorLinter.validateRequiredFieldsAPI(json);
+	}
+
+	@Test
 	public void validateFilterAPI() throws IOException {
 		VendorLinter vendorLinter = new VendorLinter();
 		vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
@@ -35,10 +43,26 @@ public class BaseLinterAPI {
 	}
 
 	@Test
+	public void badFilterAPI() throws IOException {
+		VendorLinter vendorLinter = new VendorLinter();
+		vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
+		String json = helper.getFileContent("inputs/invalidPolicy.json");
+		vendorLinter.validateFilterAPI(json);
+	}
+
+	@Test
 	public void validateResourcesAPI() throws IOException {
 		ResourceLinter resourceLinter = new ResourceLinter();
 		resourceLinter.loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
 		String json = helper.getFileContent("inputs/validPolicy.json");
+		resourceLinter.validateResourcesAPI(json);
+	}
+
+	@Test
+	public void badResourcesAPI() throws IOException {
+		ResourceLinter resourceLinter = new ResourceLinter();
+		resourceLinter.loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
+		String json = helper.getFileContent("inputs/invalidPolicy.json");
 		resourceLinter.validateResourcesAPI(json);
 	}
 

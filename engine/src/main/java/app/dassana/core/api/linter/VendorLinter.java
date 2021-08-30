@@ -5,6 +5,7 @@ import app.dassana.core.contentmanager.ContentManager;
 import com.google.gson.Gson;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class VendorLinter extends BaseLinter {
 
@@ -41,25 +42,29 @@ public class VendorLinter extends BaseLinter {
 		validateFilter(content + "/workflows/csp");
 	}
 
-	private boolean hasValidFilter(Map<String, Object> data, File file) {
-
-		if(file != null && ignore.contains(file.getName())) return true;
+	private ErrorMsg hasValidFilter(Map<String, Object> data) {
+		ErrorMsg errorMsg = new ErrorMsg(false);
 
 		boolean isValid = true;
-		if(ContentManager.POLICY_CONTEXT.equals((String) data.get("type"))) {
+		if(ContentManager.POLICY_CONTEXT.equals(data.get("type"))) {
 			List<Map<String, Object>> filters = (List<Map<String, Object>>) data.get("filters");
 			for (int i = 0; i < filters.size() && isValid; i++) {
 				Map<String, Object> filter = filters.get(i);
 				isValid = filter.containsKey("vendor") ? template.contains(filter.get("vendor")) : false;
+				if(!isValid){
+					errorMsg.setError(true);
+					errorMsg.setMsg("Invalid vendor id [" + filter.get("vendor") + "] in filters array");
+				}
 			}
 		}
-		return isValid;
+		return errorMsg;
 	}
 
 	public void validateFilterAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		if(!hasValidFilter(data, null)){
-			throw new ValidationException("Invalid filter setting in json");
+		ErrorMsg errorMsg = hasValidFilter(data);
+		if(errorMsg.isError()){
+			throw new ValidationException(errorMsg.getMsg());
 		}
 	}
 
@@ -69,31 +74,47 @@ public class VendorLinter extends BaseLinter {
 		for (int i = 0; i < files.size() && containsVendor; i++) {
 			File file = files.get(i);
 			Map<String, Object> data = yaml.load(new FileInputStream(file));
-			if(!hasValidFilter(data, file)){
-				throw new ValidationException("Invalid filter setting in file: " + file.getName());
+			ErrorMsg errorMsg = hasValidFilter(data);
+			if(errorMsg.isError()){
+				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
 			}
 		}
 	}
 
-	private boolean containsVendor(List<Map<String, Object>> outputs){
-		boolean validVendor = false;
+	private ErrorMsg containsVendor(List<Map<String, Object>> outputs){
+		boolean validVendor = true;
+		ErrorMsg errorMsg = new ErrorMsg(false);
 		Set<String> set = new HashSet<>();
-		for (int i = 0; i < outputs.size(); i++) {
+		for (int i = 0; i < outputs.size() && validVendor; i++) {
 			Map<String, Object> output = outputs.get(i);
 			String name = (String) output.get("name");
 			if("vendorId".equals(name)){
 				validVendor = template.contains((String) output.get("value"));
+				if(!validVendor){
+					errorMsg.setMsg("Invalid vendor id [" + output.get("value") + "]");
+					errorMsg.setError(true);
+				}
 			}
 			set.add(name);
 		}
-		return validVendor && required.containsAll(set);
+
+		Set<String> reqCopy = required.stream().collect(Collectors.toSet());
+		reqCopy.removeAll(set);
+
+		if(validVendor && !reqCopy.isEmpty()){
+			errorMsg.setMsg("Missing required fields: " + reqCopy);
+			errorMsg.setError(true);
+		}
+
+		return errorMsg;
 	}
 
 	public void validateRequiredFieldsAPI(String json){
 		Map<String, Object> map = gson.fromJson(json, Map.class);
 		List<Map<String, Object>> outputs = (List<Map<String, Object>>) map.get("output");
-		if(!containsVendor(outputs)){
-			throw new ValidationException("Is not valid normalizer for file");
+		ErrorMsg errorField = containsVendor(outputs);
+		if(errorField.isError()){
+			throw new ValidationException(errorField.getMsg());
 		}
 	}
 
@@ -107,8 +128,10 @@ public class VendorLinter extends BaseLinter {
 		for (int i = 0; i < files.size(); i++) {
 			File file = files.get(i);
 			List<Map<String, Object>> outputs = extractYamlArray(file, "output");
-			if(!containsVendor(outputs)){
-				throw new ValidationException("Is not valid normalizer for file: " + file.getName());
+			ErrorMsg errorField = containsVendor(outputs);
+			if(errorField.isError()){
+				throw new ValidationException("Is not valid normalizer, incorrect field: " + errorField.getMsg() +
+								" for file: " + file.getName());
 			}
 		}
 	}
