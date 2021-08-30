@@ -288,7 +288,7 @@ public class WorkflowRunner {
           }
         });
 
-      } else if (valueType.contentEquals("string")) {
+      } else if (valueType.contentEquals("STRING")) {
         fieldJsonObj.put(name, value);
       }
 

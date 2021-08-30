@@ -2,6 +2,6 @@
 
 :::info
 
-GuardDuty (via Security Hub) is natively integrated in Dassana! You don't have to do anything.
+GuardDuty (via Security Hub) is natively integrated into Dassana! You don't have to do anything.
 
 :::
