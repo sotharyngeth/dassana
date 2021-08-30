@@ -65,7 +65,7 @@ In the `Resources in scope` section, click on the refresh icon on the top right.
 
 :::note
 
-We will cover the purpose of the queues in the [following section](/docs/how-it-works/alert-lifecycle).
+We will cover the purpose of the queues in the [section](/docs/how-it-works/high-level).
 
 :::
 

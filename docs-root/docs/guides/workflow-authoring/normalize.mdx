@@ -1,8 +1,12 @@
 # Normalize
 
-This is the first workflow which gets run and its output is sent to all of the workflows which have type `general-context`, `resource-context` and `policy-context` (don't worry, not all of then will run, only the ones which match the filters defined in those workflows will run).
+:::info
+It is assumed that you have read the [workflow execution](./execution) page before you start reading this page
+:::
 
 ## Example
+
+This workflow type is responsible for normalizing alerts received by the engine. As such, the most important part to familiarize yourself with is the output section.
 
 Here is an example of how AWS Config alerts (via Security Hub) are normalized.
 
@@ -50,7 +54,7 @@ post-processor:
         - id: update-security-hub-finding
           uses: SecurityHubUpdateFinding
 
-#output queue is disabled because we use a post-processor. Output queue is used when we don't have a bi-directional integration with the vendor
+#output queue is disabled because we use a post-processor. The output queue is used when we don't have a bi-directional integration with the vendor
 output-queue:
     enabled: false
 ```
@@ -115,7 +119,7 @@ Security vendor id. A complete list of supported vendors can be found [here](htt
 
 ### `post-processor`
 
-Used for bidirectional sync for certain vendors (ie SecurityHub).
+Used for bidirectional sync for certain vendors (i.e., SecurityHub).
 
 ### `output-queue`
 
@@ -123,4 +127,4 @@ Used for sending alerts to the outbound queue.
 
 #### `enabled`
 
-If set to true, alerts will be sent to the outbound queue. A use case for not sending alerts to the outbound queue is when you have a bidirectional sync with a specific vendor (see [`post-processor`](#post-processor) above).
+If set to true, alerts will be sent to the outbound queue. A use case for not sending alerts to the outbound queue is when you have bidirectional sync with a specific vendor (see [`post-processor`](#post-processor) above).

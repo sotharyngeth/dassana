@@ -1,6 +1,10 @@
 # Resource Context
 
-The `resource-context` workflow helps add all resource specific context to an alert.
+:::info
+It is assumed that you have read the [workflow execution](./execution) page before you start reading this page
+:::
+
+The `resource-context` workflow helps add all resource-specific context to an alert.
 
 ## Example
 
@@ -34,6 +38,8 @@ risk-config:
           condition: .ec2Exposure.appLayer.canReceiveUnauthenticatedTraffic == true
           risk: high
 ```
+
+---
 
 ## Reference
 

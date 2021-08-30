@@ -1,5 +1,9 @@
 # Policy Context
 
+:::info
+It is assumed that you have read the [workflow execution](./execution) page before you start reading this page
+:::
+
 Security policies are written using `policy-context` workflows. A single Dassana policy can be mapped to multiple vendor policies.
 
 ## Example
@@ -54,6 +58,8 @@ risk-config:
           risk: high
 ```
 
+---
+
 ## Reference
 
 Following is the reference for all the available fields.
@@ -62,6 +68,7 @@ import Schema from '../../common-fields/schema.md'
 import Id from '../../common-fields/workflows/workflow-id.md'
 import Name from '../../common-fields/name.md'
 import Labels from '../../common-fields/labels.md'
+import ResourceHierarchy from '../../common-fields/resource-hierarchy.md'
 import RiskConfig from '../../common-fields/workflows/risk-config.mdx'
 import Filters from '../../common-fields/workflows/filters.md'
 import MatchType from '../../common-fields/workflows/match-type.md'

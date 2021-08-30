@@ -20,9 +20,7 @@ module.exports = {
 			type: 'category',
 			label: 'Getting Started',
 			items: [
-				'getting-started/concepts',
 				'getting-started/installation',
-				'getting-started/aws-cross-account-role',
 				'getting-started/hello-world'
 			]
 		},
@@ -30,9 +28,9 @@ module.exports = {
 			type: 'category',
 			label: 'How It Works',
 			items: [
-				'how-it-works/alert-lifecycle',
-				'how-it-works/under-the-hood',
-				'how-it-works/putting-it-together'
+				'how-it-works/high-level',
+				'how-it-works/mid-level',
+				'how-it-works/low-level'
 			]
 		},
 
@@ -40,6 +38,25 @@ module.exports = {
 			type: 'category',
 			label: 'Guides',
 			items: [
+				{
+					type: 'category',
+					label: 'Content Authoring',
+					items: [
+						{
+							type: 'category',
+							label: 'Workflows',
+							items: [
+								'guides/workflow-authoring/execution',
+								'guides/workflow-authoring/editor',
+								'guides/workflow-authoring/normalize',
+								'guides/workflow-authoring/general-context',
+								'guides/workflow-authoring/resource-context',
+								'guides/workflow-authoring/policy-context'
+							]
+						},
+						'guides/action-authoring/action'
+					]
+				},
 				{
 					type: 'category',
 					label: 'Vendor Setup',
@@ -50,22 +67,7 @@ module.exports = {
 						'guides/vendor-setup/adding-vendors'
 					]
 				},
-				{
-					type: 'category',
-					label: 'Workflows',
-					items: [
-						'guides/workflow-authoring/editor',
-						'guides/workflow-authoring/normalize',
-						'guides/workflow-authoring/general-context',
-						'guides/workflow-authoring/resource-context',
-						'guides/workflow-authoring/policy-context'
-					]
-				},
-				{
-					type: 'category',
-					label: 'Actions',
-					items: ['guides/action-authoring/action']
-				},
+
 				{
 					type: 'category',
 					label: 'Operations',

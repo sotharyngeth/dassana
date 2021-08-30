@@ -1,6 +1,10 @@
 # Hola World
 
-Let's send an alert to Dassana and see what happens. The best way to test out different alerts and their outputs is by using the [Dassana workflow editor](https://editor.dassana.io/).
+:::tip
+This tutorial uses a dummy alert. If you want to see a real-life example, we invite you to explore [this](https://docs.dassana.io/blog/static-s3-bucket) blog.
+:::
+
+Let's send an alert to Dassana and see what happens. The best way to test out alerts and their outputs are by using the [Dassana workflow editor](https://editor.dassana.io/).
 
 ## Getting the API url and key
 
@@ -18,7 +22,7 @@ To test things out, enter the following JSON:
 }
 ```
 
-and click `Run`.
+And click `Run`.
 
 On the right-hand side panel, you will see the Normalization output as:
 
@@ -26,12 +30,12 @@ On the right-hand side panel, you will see the Normalization output as:
 Dassana couldn't normalize the alert you sent, please verify normalizers filter config
 ```
 
-What just happened? Why am I seeing this warning?
+What just happened? Why do I see this warning?
 Did you really expect anything fancier from a foo-bar example json? 🤨
 
 ## Send a test alert json
 
-Let's send something interesting this time. Click `Edit Alert JSON` and enter this json this time -
+Let's send something interesting this time. Click `Edit Alert JSON` and enter this json this time:
 
 ```json
 {
@@ -41,7 +45,7 @@ Let's send something interesting this time. Click `Edit Alert JSON` and enter th
 }
 ```
 
-This time around you should more in the output panel.
+This time around, you should see more in the output panel.
 
 ### Normalization
 
@@ -58,9 +62,11 @@ filters:
 Here, we just told Dassana that when JQ expressions `.badThingJustHappened and .badThingJustHappened.description` and `.badThingJustHappened.description | contains ("fubar")` evaluate to true
 (we will get to this in a moment), we want the workflow to run.
 
+Learn more about [Normalization](../guides/workflow-authoring/normalize).
+
 ### General Context
 
-Next take a look at the output (on the right-hand side) under General Context. You will note a risk of low. On the left-hand panel, click on the General Context tab. You will note the following yaml in the workflow file code:
+Next, take a look at the output (on the right-hand side) under General Context. You will note a risk of low. On the left-hand panel, click on the General Context tab. You will note the following yaml in the workflow file code:
 
 ```yaml
 risk-config:
@@ -71,29 +77,31 @@ risk-config:
           risk: low # valid values are low, medium, high and critical
 ```
 
-In general (no pun intended), the general context is intended to provide context on a highest level. For example, for alerts generated against AWS resources,
-the general context can provide context about the account in question, the AWS org, tags etc.
+In general (no pun intended), the general context provides context on the highest level. For example, for alerts generated against AWS resources,
+the general context can give context on the account in question, the AWS org, tags, etc.
+
+Learn more about [General Context](../guides/workflow-authoring/general-context).
 
 :::info
 
-In the workflows of type `general-context`, `resource-context` and `policy-context`, the `risk-config` section is used to represent the risk associated with
-the respective workflow type. The `normalize` workflow type does not have any risk config.
+In the workflows of type `general-context`, `resource-context`, and `policy-context`, the `risk-config` section represents the risk associated with the respective workflow type. The `normalize` workflow type does not have any risk config.
+
 :::
 
-Again, the condition here uses JQ rules (yes, yes, we are going to get to it, beer🍺 with for us for a moment please).
-The condition here is basically telling Dassana that when the `service` contains the word `demo-service`, we want the resource risk to be low.
+Again, the condition here uses JQ rules (yes, yes, we will get to it, beer🍺 with for us for a moment, please).
+The condition here tells Dassana that when the `service` contains the word `demo-service`, we want the resource risk to be low.
 
 ### Resource Context
 
-The workflows of `resource-context` are intended to provide context around the resource. These workflows should _not_ care about the alert actually.
+The workflows of `resource-context` intend to provide context around the resource. These workflows should _not_ care about the alert.
 For example, refer to [ec2-instance-context](https://github.com/dassana-io/dassana/blob/main/content/workflows/csp/aws/service/ec2/resources/instance/resource-context/instance-context.yaml) workflow.
 That workflow calls an action [WhatIsEc2Exposure](https://github.com/dassana-io/dassana/tree/main/content/actions/what-is-exposure-of-ec2-instance) in the steps
-to provide context around exposure of an ec2 instance.
+to provide context around the exposure of an ec2 instance.
 
 :::tip
 
-You can directly run a workflow if you want. This makes `resource-context` workflow quite powerful. For example,
-given an ec2 instance arn, you can just run the following curl command and run the workflow directly and get context about its exposure.
+You can directly run a workflow if you want. This makes the `resource-context` workflow quite powerful. For example,
+given an ec2 instance arn, you can run the following curl command and run the workflow directly and get context about its exposure.
 
 ```bash
 curl --location --request POST 'https://<rest-api-id>.execute-api.us-east-1.amazonaws.com/v1/run?workflowId=ec2-instance-context&includeStepOutput=true' \
@@ -104,23 +112,28 @@ curl --location --request POST 'https://<rest-api-id>.execute-api.us-east-1.amaz
 
 ```
 
-Here, we are bypassing normalizatio, general context etc and running a workflow directly.
-This makes it super easy to get context directly of a resource
+Here, we are bypassing normalization, general context, etc., and running a workflow directly.
+This makes it super easy to get context directly of a resource.
 
 :::
 
+Learn more about [Resource Context](../guides/workflow-authoring/resource-context).
+
 ### Policy Context
 
-The workflows of `policy-context` are intended to provide context around the alert. These workflows should care about the alert actually (as opposed to resource-context workflows which should care about the resource in question)
+The workflows of the `policy-context` type intend to provide context around the alert. These workflows should care about the alert actually (as opposed to resource-context workflows, which should care about the resource in question).
 For example, refer to [bucket-has-broad-access-permissions](https://github.com/dassana-io/dassana/blob/main/content/workflows/csp/aws/service/s3/resources/bucket/policy-context/bucket-has-broad-access-permissions.yaml) workflow.
-That workflow calls an action [WebsiteContext](https://github.com/dassana-io/dassana/tree/main/content/actions/website-context) in the steps to find out if bucket in question has an associated website with it or not.
+That workflow calls an action [WebsiteContext](https://github.com/dassana-io/dassana/tree/main/content/actions/website-context) in the steps to find out if the bucket in question has an associated website with it or not.
+
+Learn more about [Policy Context](../guides/workflow-authoring/policy-context).
 
 ### JQ rules
 
-JQ is widely used in Dassana. It is used in `filters` section of the workflow to find out if the workflow should run or not.
+JQ is widely used in Dassana. It is used in the `filters` section of the workflow to find out if the workflow should run or not.
 It is also used to extract values from JSON. We highly recommend that you familiarize yourself with JQ. Here is a [tutorial](https://earthly.dev/blog/jq-select/) to get you started.
 You can also test JQ expressions [here](https://jqplay.org/).
 
 ## What's next?
 
-Checkout some of the [vendor integrations](../guides/vendor-setup/aws-config/setup.md) to process some real alerts this time. Or, if you're hungry, order a pizza 🍕 with pineapple 🍍
+Checkout some of the [vendor integrations](../guides/vendor-setup/aws-config/setup.md) to process some real alerts this time.
+Read [this](https://docs.dassana.io/blog/static-s3-bucket) blog, or, if you're hungry, order a pizza 🍕 with pineapple 🍍

@@ -1,4 +1,4 @@
-# Authoring Actions
+# Actions
 
 import Actions from '../../common-fields/actions/about.md'
 
@@ -9,7 +9,7 @@ To write actions, the following need to be created:
 1. `dassana-action.yaml` - Describes the metadata of an action
 2. `input.json` - A JSON input schema describing the variables passed to the serverless function
 3. `README.md` - Describes the purpose of the action
-4. Programming language specific requirements
+4. Programming language-specific requirements
 
 :::info
 
@@ -60,7 +60,7 @@ import Labels from '../../common-fields/labels.md'
 
 <Name />
 
-### `cloudType`
+### `cloud-type`
 
 Cloud service provider. Currently, only `aws` is supported.
 
@@ -68,7 +68,7 @@ Cloud service provider. Currently, only `aws` is supported.
 
 (Optional) The AWS service.
 
-### `resourceType`
+### `resource-type`
 
 (Optional) The AWS resource type.
 
@@ -187,29 +187,29 @@ Common code should be abstracted into [modules](https://github.com/dassana-io/da
 
 Make sure to follow each runtime's [conventions](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 
-Above example uses **dassana.common** which is shared across actions as an AWS Lambda Layer.
+The above example uses **dassana.common**, which is shared across actions as an AWS Lambda Layer.
 
 :::
 
 ## `README.md`
 
-Should contain a decription of what the action does.
+Should contain a description of what the action does.
 
-## Programming language specific requirements
+## Programming language-specific requirements
 
 ### Python
 
-When using Python a `requirements.txt` file is required in the specific action folder. This file must always exist for the action to work with AWS Lambda. Feel free to leave it empty if you don't need any external dependencies.
+When using python, a `requirements.txt` file is required in the specific action folder. This file must always exist for the action to work with AWS Lambda. Feel free to leave it empty if you don't need any external dependencies.
 
 :::info
 
-Since a lot of Dassana actions are written using Python and because most of them have the same external dependencies, we have defined the dependencies in a more central location [here](https://github.com/dassana-io/dassana/blob/main/content/pkg/deps/python/requirements.txt) as opposed to within each action folder's `requirements.txt`.
+Since many Dassana actions are written using Python and because most of them have the same external dependencies, we have defined the dependencies in a more central location [here](https://github.com/dassana-io/dassana/blob/main/content/pkg/deps/python/requirements.txt) as opposed to within each action folder's `requirements.txt`.
 
 :::
 
 ### Node.js
 
-When using node.js a `package.json` file is required in the specific action folder. This file must always exist for the action to work with AWS lambda. Feel free to leave it empty if you don't need any external dependencies.
+When using node.js, a `package.json` file is required in the specific action folder. This file must always exist for the action to work with AWS lambda. Feel free to leave it empty if you don't need any external dependencies.
 
 ### Java
 

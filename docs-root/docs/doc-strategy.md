@@ -4,7 +4,7 @@ It is important that we follow a strategy for documentation otherwise documentat
 
 I propose that we follow this structure of documentation for now and adapt with time:
 
-### About
+### Introduction
 
 **Keep this section readable in under two minutes**
 

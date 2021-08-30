@@ -154,7 +154,7 @@ def handle(event: Dict[str, Any], context: LambdaContext):
                                                           ])
         except ClientError as e:
             logger.error(e.response)
-            if 'InvalidInstanceID.Malformed' == e.response.get('Error').get('Code'):
+            if e.response.get('Error').get('Code') in ['InvalidInstanceID.Malformed','InvalidInstanceID.NotFound']:
                 return False
             else:
                 raise Exception(e)

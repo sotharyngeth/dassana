@@ -17,10 +17,30 @@ Parameter Notes:
 
 ###### `CrossAccountRoleName`
 
-If you would like Dassana to process alerts belonging to other AWS accounts (i.e. you are deploying Dassana in a "central" account), enter the name of the role that the Dassana engine will assume.
-For more information, refer to [cross account role section](./aws-cross-account-role).
+If you would like Dassana to process alerts belonging to other AWS accounts (i.e., you are deploying Dassana in a "central" account), enter the name of the role that the Dassana Engine
+will assume. In a multi-account setup, you typically have a central security account that receives alerts from other AWS accounts. This central account acts as "Delegated Administrator." Please refer to [AWS documentation](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services_list.html) for services that support this kind of setup.
 
-### 🏃🏽‍♂️ Running into issues?
+When Dassana receives an alert, it automatically finds out if the alert belongs to a resource in a different AWS account. To access such resources, the Dassana Engine can automatically ["assume role"](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_aws-accounts.html) into the target account.
+
+If such a role already exists, Dassana can use it. This role must have the [SecurityAudit](https://console.aws.amazon.com/iam/home#policies/arn:aws:iam::aws:policy/SecurityAudit) policy attached to it. The name of this role is what you provide in the `CrossAccountRoleName` during deployment.
+
+If you don't have such a role already available, you can deploy [this CFT](https://github.com/dassana-io/dassana/blob/main/content/pkg/cross-account-role.yaml) using [StackSets in your AWS organization](https://aws.amazon.com/blogs/aws/new-use-aws-cloudformation-stacksets-for-multiple-accounts-in-an-aws-organization/).
+
+:::warning
+
+Do **not** provide ARN value (`arn:aws:iam::1234567891012:role/MyCrossAccountRoleName`) of the role, just the role name (`MyCrossAccountRoleName`).
+
+:::
+
+Refer to the following diagram:
+
+![Deployment Strategies](/img/getting-started/deploymentStrategy.png)
+
+Do you see that "Access Role"? That's the role Dassana Engine will assume. And yes, that means that the Dassana Engine does have `sts:AssumeRole` permission, but don't worry, it is restricted to the role name you provide.
+
+---
+
+# 🏃🏽‍♂️ Running into issues?
 
 import Help from '../common-fields/support.md'
 
