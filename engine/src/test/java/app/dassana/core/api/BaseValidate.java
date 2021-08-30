@@ -11,11 +11,10 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BaseLinter {
+public class BaseValidate {
 
 
 	@Test
-	//req 3 - 64
 	public void vendorValidate(){
 		try {
 			VendorLinter vendorLinter = new VendorLinter();
@@ -26,7 +25,6 @@ public class BaseLinter {
 	}
 
 	@Test
-	//req #107
 	public void actionValidate(){
 		try {
 			ActionsLinter actionsLinter = new ActionsLinter();
@@ -37,7 +35,6 @@ public class BaseLinter {
 	}
 
 	@Test
-	//req #88
 	public void policyValidate(){
 		try {
 			PolicyLinter policyLinter = new PolicyLinter();

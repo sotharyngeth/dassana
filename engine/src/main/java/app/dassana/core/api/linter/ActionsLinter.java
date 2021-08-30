@@ -34,27 +34,37 @@ public class ActionsLinter extends BaseLinter {
 	}
 
 
-	private void validateYaml(Map<String, Object> data) {
+	private ErrorMsg validateYaml(Map<String, Object> data) {
+		ErrorMsg errorMsg = new ErrorMsg(false);
 		if(data.containsKey("steps")){
 			List<Map<String, Object>> steps = (List<Map<String, Object>>) data.get("steps");
-			for(Map<String, Object> step : steps){
+			for(int i = 0; i < steps.size() && !errorMsg.isError(); i++){
+				Map<String, Object> step = steps.get(i);
 				if(!template.contains(step.get("uses"))){
-					throw new ValidationException("Invalid action: " + step.get("uses"));
+					errorMsg.setError(true);
+					errorMsg.setMsg("Invalid uses field: [" +  step.get("uses") + "]");
 				}
 			}
 		}
+		return errorMsg;
 	}
 
 	public void validateActionsAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		validateYaml(data);
+		ErrorMsg errorMsg = validateYaml(data);
+		if(errorMsg.isError()){
+			throw new ValidationException(errorMsg.getMsg());
+		}
 	}
 
 	private void validateActions(String path) throws IOException {
 		List<File> files = loadFilesFromPath(path,new String[]{"yaml"});
 		for(File file : files){
 			Map<String, Object> data = yaml.load(new FileInputStream(file));
-			validateYaml(data);
+			ErrorMsg errorMsg = validateYaml(data);
+			if(errorMsg.isError()){
+				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
+			}
 		}
 	}
 

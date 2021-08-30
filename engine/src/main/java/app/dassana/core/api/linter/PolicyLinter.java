@@ -48,25 +48,43 @@ public class PolicyLinter extends BaseLinter {
 		return map.containsKey(key) && map.get(key).contains(val);
 	}
 
-	private boolean isValidFields(Map<String, Object> map, File file){
+	private String retrieveErrorField(String pClass, String subClass, String category, String subCategory){
+		String errField = !classToSub.containsKey(pClass) ?  "invalid class: [" + pClass + "]" :
+						!classToSub.get(pClass).contains(subClass) ? "invalid subclass: [" + subClass + "]" :
+						!subToCat.get(subClass).contains(category) ? "invalid category: [" + category + "]" :
+										                                     "invalid subcategory: [" + subCategory + "]";
+
+		return errField;
+	}
+
+	private ErrorMsg isValidFields(Map<String, Object> map){
 		String pClass = (String) map.get("class");
 		String subClass = (String) map.get("subclass");
 		String category = (String) map.get("category");
+		String subCategory = null;
 
 		boolean isValidFields = isMapValid(classToSub, pClass, subClass) && isMapValid(subToCat, subClass, category);
 
 		if("risk".equals(pClass) && isValidFields){
-			String subCategory = (String) map.get("subcategory");
+			subCategory = (String) map.get("subcategory");
 			isValidFields = isMapValid(catToSubCat, category, subCategory);
 		}
 
-		return isValidFields;
+		ErrorMsg errorMsg = new ErrorMsg(false);
+
+		if(!isValidFields){
+			errorMsg.setError(true);
+			errorMsg.setMsg(retrieveErrorField(pClass, subClass, category, subCategory));
+		}
+
+		return errorMsg;
 	}
 
 	public void validatePoliciesAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		if(!isValidFields(data, null)){
-			throw new ValidationException("Not a valid policy file");
+		ErrorMsg errorMsg = isValidFields(data);
+		if(errorMsg.isError()){
+			throw new ValidationException(errorMsg.getMsg());
 		}
 	}
 
@@ -75,8 +93,9 @@ public class PolicyLinter extends BaseLinter {
 		for (File file : files) {
 			if(file.getCanonicalPath().contains(ContentManager.POLICY_CONTEXT)) {
 				Map<String, Object> map = yaml.load(new FileInputStream(file));
-				if(!isValidFields(map, file)){
-					throw new ValidationException("Not a valid policy file: " + file.getName());
+				ErrorMsg errorMsg = isValidFields(map);
+				if(errorMsg.isError()){
+					throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
 				}
 			}
 		}

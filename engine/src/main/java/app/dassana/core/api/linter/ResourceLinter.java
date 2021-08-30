@@ -56,7 +56,10 @@ public class ResourceLinter extends BaseLinter{
 
 			if(!validPolicy){
 				errorMsg.setError(true);
-				errorMsg.setMsg("Bad bad mon");
+				String errField = !cspToService.containsKey(csp) ? "invalid csp: [" + csp + "]" :
+								!cspToService.get(csp).contains(service) ? "invalid service: [" + service + "]" :
+																											     "invalid resource: [" + resource + "]";
+				errorMsg.setMsg(errField);
 			}
 
 		}

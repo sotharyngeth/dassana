@@ -73,10 +73,12 @@ public class VendorLinter extends BaseLinter {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (int i = 0; i < files.size() && containsVendor; i++) {
 			File file = files.get(i);
-			Map<String, Object> data = yaml.load(new FileInputStream(file));
-			ErrorMsg errorMsg = hasValidFilter(data);
-			if(errorMsg.isError()){
-				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
+			if(!ignore.contains(file.getName())) {
+				Map<String, Object> data = yaml.load(new FileInputStream(file));
+				ErrorMsg errorMsg = hasValidFilter(data);
+				if (errorMsg.isError()) {
+					throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
+				}
 			}
 		}
 	}
@@ -127,11 +129,13 @@ public class VendorLinter extends BaseLinter {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (int i = 0; i < files.size(); i++) {
 			File file = files.get(i);
-			List<Map<String, Object>> outputs = extractYamlArray(file, "output");
-			ErrorMsg errorField = containsVendor(outputs);
-			if(errorField.isError()){
-				throw new ValidationException("Is not valid normalizer, incorrect field: " + errorField.getMsg() +
-								" for file: " + file.getName());
+			if(!ignore.contains(file.getName())){
+				List<Map<String, Object>> outputs = extractYamlArray(file, "output");
+				ErrorMsg errorField = containsVendor(outputs);
+				if(errorField.isError()) {
+					throw new ValidationException("Is not valid normalizer, incorrect field: " + errorField.getMsg() +
+									" for file: " + file.getName());
+				}
 			}
 		}
 	}
