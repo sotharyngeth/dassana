@@ -1,1 +1,27 @@
-{"schema":1,"type":"policy-context","id":"cmk-rotation-not-enabled","name":"CMK rotation not enabled","labels":["contextualization"],"csp":"aws1","service":"kms","resource-type":"cmk","class":"risk","subclass":"config","category":"credential-management","subcategory":"secrets1","filters":[{"vendor":"aws-config1","policies":["cmk-backing-key-rotation-enabled"],"match-type":"any","rules":[".vendorId == \"aws-config\" and (.vendorPolicy |contains (\"cmk-backing-key-rotation-enabled\"))"]}],"steps":[{"id":"invalidId", "uses":"invalid"}],"risk-config":{"default-risk":"medium"}}
+{
+  "schema": 1,
+  "type": "policy-context",
+  "id": "cmk-rotation-not-enabled",
+  "name": "CMK rotation not enabled",
+  "labels": ["contextualization"],
+  "csp": "aws1",
+  "service": "kms",
+  "resource-type": "cmk",
+  "class": "risk",
+  "subclass": "config",
+  "category": "credential-management",
+  "subcategory": "secrets1",
+  "filters": [{
+    "vendor": "aws-config1",
+    "policies": ["cmk-backing-key-rotation-enabled"],
+    "match-type": "any",
+    "rules": [".vendorId == \"aws-config\" and (.vendorPolicy |contains (\"cmk-backing-key-rotation-enabled\"))"]
+  }],
+  "steps": [{
+    "id": "invalid-id",
+    "uses": "invalid"
+  }],
+  "risk-config": {
+    "default-risk": "medium"
+  }
+}

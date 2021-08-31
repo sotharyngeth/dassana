@@ -34,26 +34,33 @@ public class ActionsLinter extends BaseLinter {
 	}
 
 
-	private ErrorMsg validateYaml(Map<String, Object> data) {
-		ErrorMsg errorMsg = new ErrorMsg(false);
-		if(data.containsKey("steps")){
-			List<Map<String, Object>> steps = (List<Map<String, Object>>) data.get("steps");
-			for(int i = 0; i < steps.size() && !errorMsg.isError(); i++){
-				Map<String, Object> step = steps.get(i);
-				if(!template.contains(step.get("uses"))){
-					errorMsg.setError(true);
-					errorMsg.setMsg("Invalid uses field: [" +  step.get("uses") + "]");
-				}
+	private StatusMsg checkStepsForErrors(List<Map<String, Object>> steps){
+		boolean isError = false;
+		String errorMsg = null;
+		for(int i = 0; i < steps.size() && !isError; i++){
+			Map<String, Object> step = steps.get(i);
+			if(!template.contains(step.get("uses"))){
+				isError  = true;
+				errorMsg = "Invalid uses field: [" +  step.get("uses") + "]";
 			}
 		}
-		return errorMsg;
+		return new StatusMsg(isError, errorMsg);
+	}
+
+	private StatusMsg validateYaml(Map<String, Object> data) {
+		StatusMsg statusMsg = new StatusMsg(false);
+		if(data.containsKey("steps")){
+			List<Map<String, Object>> steps = (List<Map<String, Object>>) data.get("steps");
+			statusMsg = checkStepsForErrors(steps);
+		}
+		return statusMsg;
 	}
 
 	public void validateActionsAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		ErrorMsg errorMsg = validateYaml(data);
-		if(errorMsg.isError()){
-			throw new ValidationException(errorMsg.getMsg());
+		StatusMsg statusMsg = validateYaml(data);
+		if(statusMsg.isError()){
+			throw new ValidationException(statusMsg.getMsg());
 		}
 	}
 
@@ -61,9 +68,9 @@ public class ActionsLinter extends BaseLinter {
 		List<File> files = loadFilesFromPath(path,new String[]{"yaml"});
 		for(File file : files){
 			Map<String, Object> data = yaml.load(new FileInputStream(file));
-			ErrorMsg errorMsg = validateYaml(data);
-			if(errorMsg.isError()){
-				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
+			StatusMsg statusMsg = validateYaml(data);
+			if(statusMsg.isError()){
+				throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getName());
 			}
 		}
 	}

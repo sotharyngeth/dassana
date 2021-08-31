@@ -17,6 +17,22 @@ public class PolicyLinter extends BaseLinter {
 	private Map<String, Set<String>> catToSubCat = new HashMap<>();
 	private Gson gson = new Gson();
 
+	@Override
+	public void loadTemplate(String path) throws IOException{
+		ObjectMapper om = new ObjectMapper(new YAMLFactory());
+		List<Policy> policies = om.readValue(new File(path), Policies.class).getClasses();
+		for(Policy policy : policies){
+			addPoliciesToMaps(policy);
+		}
+	}
+
+	@Override
+	public void validate() throws IOException {
+		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
+		loadTemplate(content + "/schemas/policy-classification/policy-classification.yaml");
+		validatePolicies(content + "/workflows");
+	}
+
 	public void addPoliciesToMaps(Policy policy){
 		classToSub.put(policy.getId(), new HashSet<>());
 		for(SubClass subclass : policy.getSubclasses()){
@@ -34,16 +50,6 @@ public class PolicyLinter extends BaseLinter {
 		}
 	}
 
-	@Override
-	public void loadTemplate(String path) throws IOException{
-		ObjectMapper om = new ObjectMapper(new YAMLFactory());
-		List<Policy> policies = om.readValue(new File(path), Policies.class).getClasses();
-
-		for(Policy policy : policies){
-			addPoliciesToMaps(policy);
-		}
-	}
-
 	private boolean isMapValid(Map<String, Set<String>> map, String key, String val){
 		return map.containsKey(key) && map.get(key).contains(val);
 	}
@@ -57,7 +63,7 @@ public class PolicyLinter extends BaseLinter {
 		return errField;
 	}
 
-	private ErrorMsg isValidFields(Map<String, Object> map){
+	private StatusMsg isValidFields(Map<String, Object> map){
 		String pClass = (String) map.get("class");
 		String subClass = (String) map.get("subclass");
 		String category = (String) map.get("category");
@@ -70,21 +76,21 @@ public class PolicyLinter extends BaseLinter {
 			isValidFields = isMapValid(catToSubCat, category, subCategory);
 		}
 
-		ErrorMsg errorMsg = new ErrorMsg(false);
+		StatusMsg statusMsg = new StatusMsg(false);
 
 		if(!isValidFields){
-			errorMsg.setError(true);
-			errorMsg.setMsg(retrieveErrorField(pClass, subClass, category, subCategory));
+			statusMsg.setError(true);
+			statusMsg.setMsg(retrieveErrorField(pClass, subClass, category, subCategory));
 		}
 
-		return errorMsg;
+		return statusMsg;
 	}
 
 	public void validatePoliciesAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		ErrorMsg errorMsg = isValidFields(data);
-		if(errorMsg.isError()){
-			throw new ValidationException(errorMsg.getMsg());
+		StatusMsg statusMsg = isValidFields(data);
+		if(statusMsg.isError()){
+			throw new ValidationException(statusMsg.getMsg());
 		}
 	}
 
@@ -93,18 +99,12 @@ public class PolicyLinter extends BaseLinter {
 		for (File file : files) {
 			if(file.getCanonicalPath().contains(ContentManager.POLICY_CONTEXT)) {
 				Map<String, Object> map = yaml.load(new FileInputStream(file));
-				ErrorMsg errorMsg = isValidFields(map);
-				if(errorMsg.isError()){
-					throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
+				StatusMsg statusMsg = isValidFields(map);
+				if(statusMsg.isError()){
+					throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getName());
 				}
 			}
 		}
 	}
 
-	@Override
-	public void validate() throws IOException {
-		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-		loadTemplate(content + "/schemas/policy-classification/policy-classification.yaml");
-		validatePolicies(content + "/workflows");
-	}
 }

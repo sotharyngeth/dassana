@@ -19,6 +19,23 @@ public class ResourceLinter extends BaseLinter{
 	private Map<String, Set<String>> cspToService = new HashMap<>();
 	private Map<String, Set<String>> serviceToResource = new HashMap<>();
 
+	@Override
+	public void loadTemplate(String path) throws IOException {
+		ObjectMapper om = new ObjectMapper(new YAMLFactory());
+		Csp csp = om.readValue(new File(path), Csp.class);
+
+		for(Provider provider : csp.getProviders()){
+			addResourcesToMaps(provider);
+		}
+	}
+
+	@Override
+	public void validate() throws IOException {
+		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
+		loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
+		validateResources(content + "/workflows/csp");
+	}
+
 	private void addResourcesToMaps(Provider provider){
 		cspToService.put(provider.getId(), new HashSet<>());
 		for(Service service : provider.getServices()){
@@ -30,24 +47,20 @@ public class ResourceLinter extends BaseLinter{
 		}
 	}
 
-	@Override
-	public void loadTemplate(String path) throws IOException {
-		ObjectMapper om = new ObjectMapper(new YAMLFactory());
-		Csp csp = om.readValue(new File(path), Csp.class);
-
-		for(Provider provider : csp.getProviders()){
-			addResourcesToMaps(provider);
-		}
+	private StatusMsg setErrorMessages(String csp, String service, String resource){
+		StatusMsg statusMsg = new StatusMsg(true);
+		String errField = !cspToService.containsKey(csp) ? "invalid csp: [" + csp + "]" :
+						!cspToService.get(csp).contains(service) ? "invalid service: [" + service + "]" :
+										"invalid resource: [" + resource + "]";
+		statusMsg.setMsg(errField);
+		return statusMsg;
 	}
 
-	private ErrorMsg isValidPolicy(Map<String, Object> map){
-		ErrorMsg errorMsg = new ErrorMsg(false);
+	private StatusMsg isValidPolicy(Map<String, Object> map){
+		StatusMsg statusMsg = new StatusMsg(false);
 		boolean isGeneral = ContentManager.GENERAL_CONTEXT.equals(map.get("type"));
 
-		if(isGeneral) return errorMsg;
-
-		if(map.containsKey("csp") && map.containsKey("service") && map.containsKey("resource-type")){
-
+		if(!isGeneral && map.containsKey("csp") && map.containsKey("service") && map.containsKey("resource-type")){
 			String csp = (String) map.get("csp"), service = (String) map.get("service"),
 							resource = (String) map.get("resource-type");
 
@@ -55,22 +68,17 @@ public class ResourceLinter extends BaseLinter{
 							&& serviceToResource.get(service).contains(resource);
 
 			if(!validPolicy){
-				errorMsg.setError(true);
-				String errField = !cspToService.containsKey(csp) ? "invalid csp: [" + csp + "]" :
-								!cspToService.get(csp).contains(service) ? "invalid service: [" + service + "]" :
-																											     "invalid resource: [" + resource + "]";
-				errorMsg.setMsg(errField);
+				statusMsg = setErrorMessages(csp, service, resource);
 			}
-
 		}
-		return errorMsg;
+		return statusMsg;
 	}
 
 	public void validateResourcesAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		ErrorMsg errorMsg = isValidPolicy(data);
-		if(errorMsg.isError()){
-			throw new ValidationException(errorMsg.getMsg());
+		StatusMsg statusMsg = isValidPolicy(data);
+		if(statusMsg.isError()){
+			throw new ValidationException(statusMsg.getMsg());
 		}
 	}
 
@@ -78,17 +86,11 @@ public class ResourceLinter extends BaseLinter{
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for(File file : files){
 			Map<String, Object> data = yaml.load(new FileInputStream(file));
-			ErrorMsg errorMsg = isValidPolicy(data);
-			if(errorMsg.isError()){
-				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getPath());
+			StatusMsg statusMsg = isValidPolicy(data);
+			if(statusMsg.isError()){
+				throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getPath());
 			}
 		}
 	}
 
-	@Override
-	public void validate() throws IOException {
-		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-		loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
-		validateResources(content + "/workflows/csp");
-	}
 }

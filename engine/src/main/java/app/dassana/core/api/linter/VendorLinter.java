@@ -37,13 +37,13 @@ public class VendorLinter extends BaseLinter {
 		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
 		loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
 
-		validateImages(content + "/schemas/vendors/icons");
+		validateIcons(content + "/schemas/vendors/icons");
 		validateRequiredFields(content + "/workflows/vendors");
 		validateFilter(content + "/workflows/csp");
 	}
 
-	private ErrorMsg hasValidFilter(Map<String, Object> data) {
-		ErrorMsg errorMsg = new ErrorMsg(false);
+	private StatusMsg hasValidFilter(Map<String, Object> data) {
+		StatusMsg statusMsg = new StatusMsg(false);
 
 		boolean isValid = true;
 		if(ContentManager.POLICY_CONTEXT.equals(data.get("type"))) {
@@ -52,19 +52,19 @@ public class VendorLinter extends BaseLinter {
 				Map<String, Object> filter = filters.get(i);
 				isValid = filter.containsKey("vendor") ? template.contains(filter.get("vendor")) : false;
 				if(!isValid){
-					errorMsg.setError(true);
-					errorMsg.setMsg("Invalid vendor id [" + filter.get("vendor") + "] in filters array");
+					statusMsg.setError(true);
+					statusMsg.setMsg("Invalid vendor id [" + filter.get("vendor") + "] in filters array");
 				}
 			}
 		}
-		return errorMsg;
+		return statusMsg;
 	}
 
 	public void validateFilterAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
-		ErrorMsg errorMsg = hasValidFilter(data);
-		if(errorMsg.isError()){
-			throw new ValidationException(errorMsg.getMsg());
+		StatusMsg statusMsg = hasValidFilter(data);
+		if(statusMsg.isError()){
+			throw new ValidationException(statusMsg.getMsg());
 		}
 	}
 
@@ -75,17 +75,17 @@ public class VendorLinter extends BaseLinter {
 			File file = files.get(i);
 			if(!ignore.contains(file.getName())) {
 				Map<String, Object> data = yaml.load(new FileInputStream(file));
-				ErrorMsg errorMsg = hasValidFilter(data);
-				if (errorMsg.isError()) {
-					throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
+				StatusMsg statusMsg = hasValidFilter(data);
+				if (statusMsg.isError()) {
+					throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getName());
 				}
 			}
 		}
 	}
 
-	private ErrorMsg containsVendor(List<Map<String, Object>> outputs){
+	private StatusMsg containsVendor(List<Map<String, Object>> outputs){
 		boolean validVendor = true;
-		ErrorMsg errorMsg = new ErrorMsg(false);
+		StatusMsg statusMsg = new StatusMsg(false);
 		Set<String> set = new HashSet<>();
 		for (int i = 0; i < outputs.size() && validVendor; i++) {
 			Map<String, Object> output = outputs.get(i);
@@ -93,8 +93,8 @@ public class VendorLinter extends BaseLinter {
 			if("vendorId".equals(name)){
 				validVendor = template.contains((String) output.get("value"));
 				if(!validVendor){
-					errorMsg.setMsg("Invalid vendor id [" + output.get("value") + "]");
-					errorMsg.setError(true);
+					statusMsg.setMsg("Invalid vendor id [" + output.get("value") + "]");
+					statusMsg.setError(true);
 				}
 			}
 			set.add(name);
@@ -104,17 +104,17 @@ public class VendorLinter extends BaseLinter {
 		reqCopy.removeAll(set);
 
 		if(validVendor && !reqCopy.isEmpty()){
-			errorMsg.setMsg("Missing required fields: " + reqCopy);
-			errorMsg.setError(true);
+			statusMsg.setMsg("Missing required fields: " + reqCopy);
+			statusMsg.setError(true);
 		}
 
-		return errorMsg;
+		return statusMsg;
 	}
 
 	public void validateRequiredFieldsAPI(String json){
 		Map<String, Object> map = gson.fromJson(json, Map.class);
 		List<Map<String, Object>> outputs = (List<Map<String, Object>>) map.get("output");
-		ErrorMsg errorField = containsVendor(outputs);
+		StatusMsg errorField = containsVendor(outputs);
 		if(errorField.isError()){
 			throw new ValidationException(errorField.getMsg());
 		}
@@ -131,7 +131,7 @@ public class VendorLinter extends BaseLinter {
 			File file = files.get(i);
 			if(!ignore.contains(file.getName())){
 				List<Map<String, Object>> outputs = extractYamlArray(file, "output");
-				ErrorMsg errorField = containsVendor(outputs);
+				StatusMsg errorField = containsVendor(outputs);
 				if(errorField.isError()) {
 					throw new ValidationException("Is not valid normalizer, incorrect field: " + errorField.getMsg() +
 									" for file: " + file.getName());
@@ -140,7 +140,7 @@ public class VendorLinter extends BaseLinter {
 		}
 	}
 
-	private void validateImages(String path) {
+	private void validateIcons(String path) {
 		List<File> files = loadFilesFromPath(path, new String[]{"svg"});
 		for (int i = 0; i < files.size(); i++) {
 			File file = files.get(i);

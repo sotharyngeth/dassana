@@ -1,9 +1,6 @@
 package app.dassana.core.api;
 
-import app.dassana.core.api.linter.ActionsLinter;
-import app.dassana.core.api.linter.PolicyLinter;
-import app.dassana.core.api.linter.ResourceLinter;
-import app.dassana.core.api.linter.VendorLinter;
+import app.dassana.core.api.linter.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import java.io.IOException;
@@ -17,8 +14,8 @@ public class BaseValidate {
 	@Test
 	public void vendorValidate(){
 		try {
-			VendorLinter vendorLinter = new VendorLinter();
-			vendorLinter.validate();
+			BaseLinter linter = new VendorLinter();
+			linter.validate();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -27,8 +24,8 @@ public class BaseValidate {
 	@Test
 	public void actionValidate(){
 		try {
-			ActionsLinter actionsLinter = new ActionsLinter();
-			actionsLinter.validate();
+			BaseLinter linter = new ActionsLinter();
+			linter.validate();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -37,8 +34,8 @@ public class BaseValidate {
 	@Test
 	public void policyValidate(){
 		try {
-			PolicyLinter policyLinter = new PolicyLinter();
-			policyLinter.validate();
+			BaseLinter linter = new PolicyLinter();
+			linter.validate();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -46,9 +43,9 @@ public class BaseValidate {
 
 	@Test
 	public void resourceValidate(){
-		ResourceLinter resourceLinter = new ResourceLinter();
 		try {
-			resourceLinter.validate();
+			BaseLinter linter = new ResourceLinter();
+			linter.validate();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

@@ -1,1 +1,48 @@
-{"schema":1,"type":"normalize","vendor-id":"foo-cloud-cspm-vendor","id":"foo-cloud-normalize","filters":[{"match-type":"all","rules":[".badThingJustHappened and .badThingJustHappened.description",".badThingJustHappened.description | contains (\"fubar\")"]}],"steps":[{"id":"resource-info","uses":"DemoCloudNormalizer"}],"output":[{"name":"vendorId","value":"foo-cloud-cspm-vendor"},{"name":"alertId1","value":".\"resource-info\".alertId"},{"name":"canonicalId1","value":".\"resource-info\".canonicalId"},{"name":"vendorPolicy","value":".\"resource-info\".vendorPolicy"},{"name":"csp","value":".\"resource-info\".csp"},{"name":"resourceContainer","value":".\"resource-info\".resourceContainer"},{"name":"region","value":".\"resource-info\".region"},{"name":"service","value":".\"resource-info\".service"},{"name":"resourceType","value":".\"resource-info\".resourceType"},{"name":"resourceId","value":".\"resource-info\".resourceId"}],"output-queue":{"enabled":true}}
+{
+  "schema": 1,
+  "type": "normalize",
+  "vendor-id": "foo-cloud-cspm-vendor",
+  "id": "foo-cloud-normalize",
+  "filters": [{
+    "match-type": "all",
+    "rules": [".badThingJustHappened and .badThingJustHappened.description", ".badThingJustHappened.description | contains (\"fubar\")"]
+  }],
+  "steps": [{
+    "id": "resource-info",
+    "uses": "DemoCloudNormalizer"
+  }],
+  "output": [{
+    "name": "vendorId",
+    "value": "foo-cloud-cspm-vendor"
+  }, {
+    "name": "alertId1",
+    "value": ".\"resource-info\".alertId"
+  }, {
+    "name": "canonicalId1",
+    "value": ".\"resource-info\".canonicalId"
+  }, {
+    "name": "vendorPolicy",
+    "value": ".\"resource-info\".vendorPolicy"
+  }, {
+    "name": "csp",
+    "value": ".\"resource-info\".csp"
+  }, {
+    "name": "resourceContainer",
+    "value": ".\"resource-info\".resourceContainer"
+  }, {
+    "name": "region",
+    "value": ".\"resource-info\".region"
+  }, {
+    "name": "service",
+    "value": ".\"resource-info\".service"
+  }, {
+    "name": "resourceType",
+    "value": ".\"resource-info\".resourceType"
+  }, {
+    "name": "resourceId",
+    "value": ".\"resource-info\".resourceId"
+  }],
+  "output-queue": {
+    "enabled": true
+  }
+}

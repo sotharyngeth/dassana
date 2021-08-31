@@ -12,15 +12,15 @@ import java.util.Map;
 
 public abstract class BaseLinter {
 
-	protected class ErrorMsg {
+	protected class StatusMsg {
 		private boolean isError;
 		private String msg;
 
-		public ErrorMsg(boolean isError){
+		public StatusMsg(boolean isError){
 			this.isError = isError;
 		}
 
-		public ErrorMsg(boolean isError, String field) {
+		public StatusMsg(boolean isError, String field) {
 			this.isError = isError;
 			this.msg = field;
 		}
