@@ -42,3 +42,8 @@ csp:
       - id: config
         resource-types:
           - id: config-recorder
+  - id: demo-cloud
+    services:
+      - id: demo-service
+        resource-types:
+          - id: demo-resourceType

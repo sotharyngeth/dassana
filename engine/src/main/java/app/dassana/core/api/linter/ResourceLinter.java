@@ -80,7 +80,7 @@ public class ResourceLinter extends BaseLinter{
 			Map<String, Object> data = yaml.load(new FileInputStream(file));
 			ErrorMsg errorMsg = isValidPolicy(data);
 			if(errorMsg.isError()){
-				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getName());
+				throw new ValidationException(errorMsg.getMsg() + " in file: " + file.getPath());
 			}
 		}
 	}

@@ -2,5 +2,5 @@
   name: AWS Config
 - id: foo-cloud-cspm-vendor
   name: Foo Cloud CSPM vendor
-- id: guardduty
-  name: GuardDuty
+- id: aws-guardduty
+  name: AWS GuardDuty
