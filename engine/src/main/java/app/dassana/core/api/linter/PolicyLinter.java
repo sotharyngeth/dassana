@@ -86,12 +86,10 @@ public class PolicyLinter extends BaseLinter {
 		return statusMsg;
 	}
 
-	public void validatePoliciesAPI(String json){
+	public StatusMsg validatePoliciesAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
 		StatusMsg statusMsg = isValidFields(data);
-		if(statusMsg.isError()){
-			throw new ValidationException(statusMsg.getMsg());
-		}
+		return statusMsg;
 	}
 
 	private void validatePolicies(String path) throws IOException {

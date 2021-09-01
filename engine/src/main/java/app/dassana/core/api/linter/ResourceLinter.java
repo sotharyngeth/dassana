@@ -74,12 +74,10 @@ public class ResourceLinter extends BaseLinter{
 		return statusMsg;
 	}
 
-	public void validateResourcesAPI(String json){
+	public StatusMsg validateResourcesAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
 		StatusMsg statusMsg = isValidPolicy(data);
-		if(statusMsg.isError()){
-			throw new ValidationException(statusMsg.getMsg());
-		}
+		return statusMsg;
 	}
 
 	private void validateResources(String path) throws FileNotFoundException {

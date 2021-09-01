@@ -165,7 +165,7 @@ public class RequestProcessor {
 
     checkArgsToBeTrue("vendorId", normalizerOutput);
     checkArgsToBeTrue("alertId", normalizerOutput);
-    checkArgsToBeTrue("canonicalId", normalizerOutput);
+   //checkArgsToBeTrue("canonicalId", normalizerOutput);
     checkArgsToBeTrue("vendorPolicy", normalizerOutput);
     checkArgsToBeTrue("csp", normalizerOutput);
     checkArgsToBeTrue("resourceContainer", normalizerOutput);

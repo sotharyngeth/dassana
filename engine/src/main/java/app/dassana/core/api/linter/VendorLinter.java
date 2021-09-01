@@ -60,12 +60,10 @@ public class VendorLinter extends BaseLinter {
 		return statusMsg;
 	}
 
-	public void validateFilterAPI(String json){
+	public StatusMsg validateFilterAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
 		StatusMsg statusMsg = hasValidFilter(data);
-		if(statusMsg.isError()){
-			throw new ValidationException(statusMsg.getMsg());
-		}
+		return statusMsg;
 	}
 
 	private void validateFilter(String path) throws FileNotFoundException {
@@ -111,13 +109,11 @@ public class VendorLinter extends BaseLinter {
 		return statusMsg;
 	}
 
-	public void validateRequiredFieldsAPI(String json){
+	public StatusMsg validateRequiredFieldsAPI(String json){
 		Map<String, Object> map = gson.fromJson(json, Map.class);
 		List<Map<String, Object>> outputs = (List<Map<String, Object>>) map.get("output");
-		StatusMsg errorField = containsVendor(outputs);
-		if(errorField.isError()){
-			throw new ValidationException(errorField.getMsg());
-		}
+		StatusMsg statusMsg = containsVendor(outputs);
+		return statusMsg;
 	}
 
 	/**

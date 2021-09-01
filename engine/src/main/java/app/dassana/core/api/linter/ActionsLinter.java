@@ -1,5 +1,6 @@
 package app.dassana.core.api.linter;
 
+import app.dassana.core.api.DassanaWorkflowValidationException;
 import app.dassana.core.api.ValidationException;
 import com.google.gson.Gson;
 
@@ -56,12 +57,10 @@ public class ActionsLinter extends BaseLinter {
 		return statusMsg;
 	}
 
-	public void validateActionsAPI(String json){
+	public StatusMsg validateActionsAPI(String json){
 		Map<String, Object> data = gson.fromJson(json, Map.class);
 		StatusMsg statusMsg = validateYaml(data);
-		if(statusMsg.isError()){
-			throw new ValidationException(statusMsg.getMsg());
-		}
+		return statusMsg;
 	}
 
 	private void validateActions(String path) throws IOException {

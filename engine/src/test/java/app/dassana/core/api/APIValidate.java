@@ -1,16 +1,13 @@
 package app.dassana.core.api;
 
-import app.dassana.core.api.linter.ActionsLinter;
-import app.dassana.core.api.linter.PolicyLinter;
-import app.dassana.core.api.linter.ResourceLinter;
-import app.dassana.core.api.linter.VendorLinter;
+import app.dassana.core.api.linter.*;
 import app.dassana.core.launch.Helper;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.io.IOException;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @MicronautTest
 public class APIValidate {
@@ -30,13 +27,15 @@ public class APIValidate {
 
 	@Test
 	public void badInputNormAPI() {
-		ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-			VendorLinter vendorLinter = new VendorLinter();
+		VendorLinter vendorLinter = new VendorLinter();
+		try {
 			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
 			String json = helper.getFileContent("inputs/invalidVendor.json");
-			vendorLinter.validateRequiredFieldsAPI(json);
-		});
-		assertTrue(exception.getMessage().contains("canonicalId, alertId"));
+			StatusMsg statusMsg = vendorLinter.validateRequiredFieldsAPI(json);
+			assertFalse(!statusMsg.getMsg().contains("canonicalId, alertId"));
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -49,13 +48,15 @@ public class APIValidate {
 
 	@Test
 	public void badFilterAPI(){
-		ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-			VendorLinter vendorLinter = new VendorLinter();
+		VendorLinter vendorLinter = new VendorLinter();
+		try {
 			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
 			String json = helper.getFileContent("inputs/invalidPolicy.json");
-			vendorLinter.validateFilterAPI(json);
-		});
-		assertTrue(exception.getMessage().contains("aws-config1"));
+			StatusMsg statusMsg = vendorLinter.validateFilterAPI(json);
+			assertFalse(!statusMsg.getMsg().contains("aws-config1"));
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -68,13 +69,15 @@ public class APIValidate {
 
 	@Test
 	public void badResourcesAPI(){
-		ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-			ResourceLinter resourceLinter = new ResourceLinter();
+		ResourceLinter resourceLinter = new ResourceLinter();
+		try {
 			resourceLinter.loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
 			String json = helper.getFileContent("inputs/invalidPolicy.json");
-			resourceLinter.validateResourcesAPI(json);
-		});
-		assertTrue(exception.getMessage().contains("aws1"));
+			StatusMsg statusMsg = resourceLinter.validateResourcesAPI(json);
+			assertFalse(!statusMsg.getMsg().contains("aws1"));
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -87,13 +90,15 @@ public class APIValidate {
 
 	@Test
 	public void badActionsAPI(){
-		ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-			ActionsLinter actionsLinter = new ActionsLinter();
+		ActionsLinter actionsLinter = new ActionsLinter();
+		try {
 			actionsLinter.loadTemplate(content + "/actions");
 			String json = helper.getFileContent("inputs/invalidPolicy.json");
-			actionsLinter.validateActionsAPI(json);
-		});
-		assertTrue(exception.getMessage().contains("invalid"));
+			StatusMsg statusMsg = actionsLinter.validateActionsAPI(json);
+			assertFalse(!statusMsg.getMsg().contains("invalid"));
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -106,13 +111,20 @@ public class APIValidate {
 
 	@Test
 	public void badPoliciesAPI(){
-		ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-			PolicyLinter policyLinter = new PolicyLinter();
+		PolicyLinter policyLinter = new PolicyLinter();
+		try{
 			policyLinter.loadTemplate(content + "/schemas/policy-classification/policy-classification.yaml");
 			String json = helper.getFileContent("inputs/invalidPolicy.json");
-			policyLinter.validatePoliciesAPI(json);
-		});
-		assertTrue(exception.getMessage().contains("secrets1"));
+			StatusMsg statusMsg = policyLinter.validatePoliciesAPI(json);
+			assertFalse(!statusMsg.getMsg().contains("secrets1"));
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testMap(){
+		List<>
 	}
 
 }

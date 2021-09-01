@@ -1,5 +1,6 @@
 package app.dassana.core.api.linter;
 
+import app.dassana.core.api.DassanaWorkflowValidationException;
 import org.apache.commons.io.FileUtils;
 import org.yaml.snakeyaml.Yaml;
 import javax.inject.Singleton;
@@ -11,36 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseLinter {
-
-	protected class StatusMsg {
-		private boolean isError;
-		private String msg;
-
-		public StatusMsg(boolean isError){
-			this.isError = isError;
-		}
-
-		public StatusMsg(boolean isError, String field) {
-			this.isError = isError;
-			this.msg = field;
-		}
-
-		public boolean isError() {
-			return isError;
-		}
-
-		public void setError(boolean error) {
-			isError = error;
-		}
-
-		public String getMsg() {
-			return msg;
-		}
-
-		public void setMsg(String msg) {
-			this.msg = msg;
-		}
-	}
 
 	protected Yaml yaml = new Yaml();
 
