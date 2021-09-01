@@ -17,7 +17,7 @@ subcategory: firewall
 
 filters: # notice that the filter section for policy-context workflows have extra field like vendor and policies.
   # these fields "vendor" and "policies" are NOT used for matching. They are used for rendering polices on https://contexthub.dassana.io/
-  - vendor: foo-cloud
+  - vendor: foo-cloud-cspm-vendor
     policies:
       - demo-vendorPolicy
     match-type: any

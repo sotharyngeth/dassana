@@ -1,7 +1,7 @@
 schema: 1 # currently only version 1 is supported. All schema versions are going to be backward compatible unless otherwise noted. We plan to support decrepated versions for atleast six months
 type: normalize # valid types are normalize,general-context,policy-context and resource-context
 
-vendor-id: foo-cloud # this identifies the vendor that generated the alert
+vendor-id: foo-cloud-cspm-vendor # this identifies the vendor that generated the alert
 id: foo-cloud-normalize # this is the id of this workflow. If you change the id, the new id will represent a new workflow
 
 filters: # before this workflow can run, Dassana engine will match the input to see if it passes the filters.
