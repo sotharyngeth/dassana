@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @MicronautTest
@@ -120,11 +124,6 @@ public class APIValidate {
 		}catch (Exception e){
 			Assertions.fail(e.getMessage());
 		}
-	}
-
-	@Test
-	public void testMap(){
-		//List<>
 	}
 
 }

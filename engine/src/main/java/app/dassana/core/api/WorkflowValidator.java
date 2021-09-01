@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.apache.commons.io.IOUtils;
@@ -63,47 +64,36 @@ public class WorkflowValidator {
     actionsLinter.loadTemplate(content + "/actions");
   }
 
-  private void appendToListIfError(List<String> issues, StatusMsg statusMsg){
-    if(statusMsg.isError()){
-      issues.add(statusMsg.getMsg());
+  private void ifIssuesThrowException(List<StatusMsg> msgs){
+    List<String> issues = msgs.stream().filter(m -> m.isError()).map(m -> m.getMsg()).collect(Collectors.toList());
+    if(issues.size() > 0) {
+      DassanaWorkflowValidationException exception = new DassanaWorkflowValidationException();
+      exception.setIssues(issues);
+      throw exception;
     }
   }
 
   private void validatePolicies(String json){
-    DassanaWorkflowValidationException exception = new DassanaWorkflowValidationException("failed during policy validation");
+    List<StatusMsg> messages = new ArrayList<>();
+    messages.add(resourceLinter.validateResourcesAPI(json));
+    messages.add(vendorLinter.validateFilterAPI(json));
+    messages.add(actionsLinter.validateActionsAPI(json));
+    messages.add(policyLinter.validatePoliciesAPI(json));
 
-    List<String> issues = new ArrayList<>();
-    appendToListIfError(issues, resourceLinter.validateResourcesAPI(json));
-    appendToListIfError(issues, vendorLinter.validateFilterAPI(json));
-    appendToListIfError(issues, actionsLinter.validateActionsAPI(json));
-    appendToListIfError(issues, policyLinter.validatePoliciesAPI(json));
-    exception.setIssues(issues);
-
-    if(issues.size() > 0) {
-      throw exception;
-    }
+    ifIssuesThrowException(messages);
   }
 
   private void validateResources(String json){
-    DassanaWorkflowValidationException exception = new DassanaWorkflowValidationException("failed during resources validation");
-
-    List<String> issues = new ArrayList<>();
-    appendToListIfError(issues, resourceLinter.validateResourcesAPI(json));
-    appendToListIfError(issues, actionsLinter.validateActionsAPI(json));
-    exception.setIssues(issues);
-
-    if(issues.size() > 0) {
-      throw exception;
-    }
+    List<StatusMsg> messages = new ArrayList<>();
+    messages.add(resourceLinter.validateResourcesAPI(json));
+    messages.add(actionsLinter.validateActionsAPI(json));
+    ifIssuesThrowException(messages);
   }
 
   private void validateNormalize(String json){
-    DassanaWorkflowValidationException exception = new DassanaWorkflowValidationException("failed during resources validation");
-    List<String> issues = new ArrayList<>();
-    appendToListIfError(issues, resourceLinter.validateResourcesAPI(json));
-    if(issues.size() > 0) {
-      throw exception;
-    }
+    List<StatusMsg> messages = new ArrayList<>();
+    messages.add(resourceLinter.validateResourcesAPI(json));
+    ifIssuesThrowException(messages);
   }
 
   public void handleValidate(String workflowAsJson) throws IOException {
@@ -125,7 +115,6 @@ public class WorkflowValidator {
         .getResourceAsStream("content/schemas/base-workflow-schema.json"), Charset.defaultCharset());
 
     validateJsonAgainstJsonSchema(workflowAsJson, baseSchema);
-
     loadTemplates();
 
     if (workflow instanceof NormalizerWorkflow) {

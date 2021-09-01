@@ -42,11 +42,17 @@ public class VendorLinter extends BaseLinter {
 		validateFilter(content + "/workflows/csp");
 	}
 
+	private boolean containsFilters(Map<String, Object> data){
+		boolean containsFilter = data.containsKey("filters");
+		List<Object> filters = (List<Object>) data.get("filters");
+		return containsFilter && filters != null && filters.size() > 0;
+	}
+
 	private StatusMsg hasValidFilter(Map<String, Object> data) {
 		StatusMsg statusMsg = new StatusMsg(false);
 
 		boolean isValid = true;
-		if(ContentManager.POLICY_CONTEXT.equals(data.get("type"))) {
+		if(ContentManager.POLICY_CONTEXT.equals(data.get("type")) && containsFilters(data)) {
 			List<Map<String, Object>> filters = (List<Map<String, Object>>) data.get("filters");
 			for (int i = 0; i < filters.size() && isValid; i++) {
 				Map<String, Object> filter = filters.get(i);
