@@ -124,7 +124,7 @@ public class APIValidate {
 
 	@Test
 	public void testMap(){
-		List<>
+		//List<>
 	}
 
 }
