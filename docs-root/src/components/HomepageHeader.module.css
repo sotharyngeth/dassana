@@ -110,4 +110,8 @@
 	.link {
 		width: 100%;
 	}
+
+	.heroSubtitle {
+		flex-direction: column;
+	}
 }

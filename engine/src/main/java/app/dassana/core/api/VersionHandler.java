@@ -26,7 +26,7 @@ public class VersionHandler {
     VersionResponse versionResponse = new VersionResponse();
     versionResponse.setInstalledVersion(currentVersion);
 
-    Semver installed = new Semver(latestVersion);
+    Semver installed = new Semver(currentVersion);
     Semver latest = new Semver(latestVersion);
 
     if (latest.isGreaterThan(installed)) {

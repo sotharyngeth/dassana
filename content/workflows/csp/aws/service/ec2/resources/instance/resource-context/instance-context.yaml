@@ -23,6 +23,14 @@ steps:
 risk-config:
   default-risk: ""
   rules:
-    - name: Can EC2 receive unauthenticated traffic
+    - name: Exposed Directly via Public IP
+      condition: .ec2Exposure.direct.isExposed == true
+      risk: critical
+
+    - name: Can receive unauthenticated traffic via ALB
       condition: .ec2Exposure.appLayer.canReceiveUnauthenticatedTraffic == true
       risk: high
+
+    - name: is exposed via ALB auth
+      condition: .ec2Exposure.appLayer.canReceiveUnauthenticatedTraffic == false
+      risk: medium

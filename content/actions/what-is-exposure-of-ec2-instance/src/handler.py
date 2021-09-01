@@ -172,15 +172,13 @@ def handle(event: Dict[str, Any], context: LambdaContext):
             [{
                 'Name': 'ip-permission.cidr',
                 'Values': [
-                    '0.0.0.0/0',
-                    '::/0',
+                    '0.0.0.0/0'
                 ]
             }],
             [{
                 'Name': 'ip-permission.ipv6-cidr',
                 'Values': [
-                    '0.0.0.0/0',
-                    '::/0',
+                    '::/0'
                 ]
             }]
         ]
