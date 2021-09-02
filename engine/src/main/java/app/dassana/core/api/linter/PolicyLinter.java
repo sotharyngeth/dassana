@@ -58,13 +58,17 @@ public class PolicyLinter extends BaseLinter {
 		String msg = null;
 
 		if(alertClass == null){
-			msg = "missing class field, available fields: " + classToSub.keySet();
+			//msg = "missing class field, available fields: " + classToSub.keySet();
+			msg = "missing class field, " + getAvailableFields(classToSub);
 		}else if(subClass == null){
-			msg = "missing subclass field, available fields: " + classToSub.get(alertClass);
+			//msg = "missing subclass field, available fields: " + classToSub.get(alertClass);
+			msg = "missing subclass field, " + getAvailableFields(classToSub, alertClass);
 		}else if(category == null){
-			msg = "missing category field, available fields: " + subToCat.get(subClass);
+			//msg = "missing category field, available fields: " + subToCat.get(subClass);
+			msg = "missing category field, " + getAvailableFields(subToCat, subClass);
 		}else if(isRisk){
-			msg = "missing subcategory field, available fields: " + catToSubCat.get(category);
+			//msg = "missing subcategory field, available fields: " + catToSubCat.get(category);
+			msg = "missing subcategory field, " + getAvailableFields(catToSubCat, category);
 		}
 
 		return new StatusMsg(true, msg);
@@ -74,13 +78,13 @@ public class PolicyLinter extends BaseLinter {
 		String msg = "";
 
 		if(!classToSub.containsKey(alertClass)){
-			msg = "invalid class: [" + alertClass + "]";
+			msg = "invalid class: [" + alertClass + "], " + getAvailableFields(classToSub);
 		}else if(!classToSub.get(alertClass).contains(subClass)){
-			msg = "invalid subclass: [" + subClass + "]";
+			msg = "invalid subclass: [" + subClass + "], " + getAvailableFields(classToSub, alertClass);
 		}else if(!subToCat.get(subClass).contains(category)){
-			msg = "invalid category: [" + category + "]";
+			msg = "invalid category: [" + category + "], " + getAvailableFields(subToCat, subClass);
 		}else if(isRisk){
-			msg = "invalid subcategory: [" + subCategory + "]";
+			msg = "invalid subcategory: [" + subCategory + "], " + getAvailableFields(catToSubCat, category);
 		}
 
 		return new StatusMsg(true, msg);

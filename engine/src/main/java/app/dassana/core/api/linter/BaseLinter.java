@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class BaseLinter {
 
@@ -26,6 +27,14 @@ public abstract class BaseLinter {
 
 	protected boolean isResourceContext(Map<String, Object> data){
 		return ContentManager.RESOURCE_CONTEXT.equals(data.get(ContentManager.FIELDS.TYPE.getName()));
+	}
+
+	protected String getAvailableFields(Map<String, Set<String>> map, String key){
+		return "available fields: " + map.get(key);
+	}
+
+	protected String getAvailableFields(Map<String, Set<String>> map){
+		return "available fields: " + map.keySet();
 	}
 
 	public List<File> loadFilesFromPath(String path, String[] extensions) {
