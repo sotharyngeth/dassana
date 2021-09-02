@@ -6,7 +6,6 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
-import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @MicronautTest
@@ -18,11 +17,15 @@ public class APIValidate {
 	Helper helper;
 
 	@Test
-	public void validateNormAPI() throws IOException {
+	public void validateNormAPI(){
 		VendorLinter vendorLinter = new VendorLinter();
-		vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
-		String json = helper.getFileContent("inputs/validVendor.json");
-		vendorLinter.validateRequiredFieldsAPI(json);
+		try {
+			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
+			String json = helper.getFileContent("inputs/validVendor.json");
+			vendorLinter.validateVendorIdAPI(json);
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -31,19 +34,23 @@ public class APIValidate {
 		try {
 			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
 			String json = helper.getFileContent("inputs/invalidVendor.json");
-			StatusMsg statusMsg = vendorLinter.validateRequiredFieldsAPI(json);
-			assertFalse(!statusMsg.getMsg().contains("canonicalId, alertId"));
+			StatusMsg statusMsg = vendorLinter.validateVendorIdAPI(json);
+			assertFalse(!statusMsg.getMsg().contains("foo-cloud-cspm-vendor1"));
 		}catch (Exception e){
 			Assertions.fail(e.getMessage());
 		}
 	}
 
 	@Test
-	public void validateFilterAPI() throws IOException {
+	public void validateFilterAPI(){
 		VendorLinter vendorLinter = new VendorLinter();
-		vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
-		String json = helper.getFileContent("inputs/validPolicy.json");
-		vendorLinter.validateFilterAPI(json);
+		try {
+			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
+			String json = helper.getFileContent("inputs/validPolicy.json");
+			vendorLinter.validateFilterAPI(json);
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -60,11 +67,15 @@ public class APIValidate {
 	}
 
 	@Test
-	public void validateResourcesAPI() throws IOException {
+	public void validateResourcesAPI(){
 		ResourceLinter resourceLinter = new ResourceLinter();
-		resourceLinter.loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
-		String json = helper.getFileContent("inputs/validPolicy.json");
-		resourceLinter.validateResourcesAPI(json);
+		try {
+			resourceLinter.loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
+			String json = helper.getFileContent("inputs/validPolicy.json");
+			resourceLinter.validateResourcesAPI(json);
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -81,11 +92,15 @@ public class APIValidate {
 	}
 
 	@Test
-	public void validateActionsAPI() throws IOException {
+	public void validateActionsAPI(){
 		ActionsLinter actionsLinter = new ActionsLinter();
-		actionsLinter.loadTemplate(content + "/actions");
-		String json = helper.getFileContent("inputs/validPolicy.json");
-		actionsLinter.validateActionsAPI(json);
+		try {
+			actionsLinter.loadTemplate(content + "/actions");
+			String json = helper.getFileContent("inputs/validPolicy.json");
+			actionsLinter.validateActionsAPI(json);
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -102,11 +117,15 @@ public class APIValidate {
 	}
 
 	@Test
-	public void validatePoliciesAPI() throws IOException {
+	public void validatePoliciesAPI(){
 		PolicyLinter policyLinter = new PolicyLinter();
-		policyLinter.loadTemplate(content + "/schemas/policy-classification/policy-classification.yaml");
-		String json = helper.getFileContent("inputs/validPolicy.json");
-		policyLinter.validatePoliciesAPI(json);
+		try {
+			policyLinter.loadTemplate(content + "/schemas/policy-classification/policy-classification.yaml");
+			String json = helper.getFileContent("inputs/validPolicy.json");
+			policyLinter.validatePoliciesAPI(json);
+		}catch (Exception e){
+			Assertions.fail(e.getMessage());
+		}
 	}
 
 	@Test

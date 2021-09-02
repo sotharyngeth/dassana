@@ -1,6 +1,7 @@
 package app.dassana.core.api.linter;
 
 import app.dassana.core.api.DassanaWorkflowValidationException;
+import app.dassana.core.contentmanager.ContentManager;
 import org.apache.commons.io.FileUtils;
 import org.yaml.snakeyaml.Yaml;
 import javax.inject.Singleton;
@@ -19,10 +20,12 @@ public abstract class BaseLinter {
 
 	public abstract void validate() throws IOException;
 
-	public List<Map<String, Object>> extractYamlArray(File file, String name) throws FileNotFoundException {
-		Map<String, Object> map = yaml.load(new FileInputStream(file));
-		List<Map<String, Object>> arr = (List<Map<String, Object>>) map.get(name);
-		return arr;
+	protected boolean isPolicyContext(Map<String, Object> data){
+		return ContentManager.POLICY_CONTEXT.equals(data.get(ContentManager.FIELDS.TYPE.getName()));
+	}
+
+	protected boolean isResourceContext(Map<String, Object> data){
+		return ContentManager.RESOURCE_CONTEXT.equals(data.get(ContentManager.FIELDS.TYPE.getName()));
 	}
 
 	public List<File> loadFilesFromPath(String path, String[] extensions) {

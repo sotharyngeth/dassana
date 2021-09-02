@@ -5,23 +5,12 @@ import app.dassana.core.contentmanager.ContentManager;
 import com.google.gson.Gson;
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class VendorLinter extends BaseLinter {
 
-	private Set<String> template = new HashSet<>(), ignore, required;
+	public final static String vendorListYamlPath = "/schemas/vendors/vendor-list.yaml";
+	private Set<String> template = new HashSet<>();
 	private Gson gson = new Gson();
-
-	public void buildIgnoreList(){
-		String[] ignoreList = new String[]{"config-recording-not-enabled.yaml", "user-has-console-and-access-keys.yaml",
-		"iam-role-not-enabled-for-ec2.yaml", "vpc-route-table-is-overly-permissive.yaml"};
-
-		String[] requireList = new String[]{"alertId", "canonicalId", "vendorId", "vendorPolicy", "csp",
-						"resourceContainer", "region", "service", "resourceType", "resourceId"};
-
-		ignore   = Set.of(ignoreList);
-		required = Set.of(requireList);
-	}
 
 	@Override
 	public void loadTemplate(String path) throws FileNotFoundException {
@@ -29,16 +18,15 @@ public class VendorLinter extends BaseLinter {
 		for(Map<String,String> data : dataArr){
 			template.add(data.get("id"));
 		}
-		buildIgnoreList();
 	}
 
 	@Override
 	public void validate() throws IOException {
 		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-		loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
+		loadTemplate(content + vendorListYamlPath);
 
 		validateIcons(content + "/schemas/vendors/icons");
-		validateRequiredFields(content + "/workflows/vendors");
+		validateVendorId(content + "/workflows");
 		validateFilter(content + "/workflows/csp");
 	}
 
@@ -52,7 +40,7 @@ public class VendorLinter extends BaseLinter {
 		StatusMsg statusMsg = new StatusMsg(false);
 
 		boolean isValid = true;
-		if(ContentManager.POLICY_CONTEXT.equals(data.get("type")) && containsFilters(data)) {
+		if(containsFilters(data)) {
 			List<Map<String, Object>> filters = (List<Map<String, Object>>) data.get("filters");
 			for (int i = 0; i < filters.size() && isValid; i++) {
 				Map<String, Object> filter = filters.get(i);
@@ -77,8 +65,8 @@ public class VendorLinter extends BaseLinter {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (int i = 0; i < files.size() && containsVendor; i++) {
 			File file = files.get(i);
-			if(!ignore.contains(file.getName())) {
-				Map<String, Object> data = yaml.load(new FileInputStream(file));
+			Map<String, Object> data = yaml.load(new FileInputStream(file));
+			if(isPolicyContext(data)) {
 				StatusMsg statusMsg = hasValidFilter(data);
 				if (statusMsg.isError()) {
 					throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getName());
@@ -88,34 +76,22 @@ public class VendorLinter extends BaseLinter {
 	}
 
 	private StatusMsg containsVendor(List<Map<String, Object>> outputs){
-		boolean validVendor = true;
 		StatusMsg statusMsg = new StatusMsg(false);
-		Set<String> set = new HashSet<>();
-		for (int i = 0; i < outputs.size() && validVendor; i++) {
+		for (int i = 0; i < outputs.size() && !statusMsg.isError(); i++) {
 			Map<String, Object> output = outputs.get(i);
 			String name = (String) output.get("name");
 			if("vendorId".equals(name)){
-				validVendor = template.contains((String) output.get("value"));
-				if(!validVendor){
+				if(!template.contains((String) output.get("value"))){
 					statusMsg.setMsg("Invalid vendor id [" + output.get("value") + "]");
 					statusMsg.setError(true);
 				}
 			}
-			set.add(name);
-		}
-
-		Set<String> reqCopy = required.stream().collect(Collectors.toSet());
-		reqCopy.removeAll(set);
-
-		if(validVendor && !reqCopy.isEmpty()){
-			statusMsg.setMsg("Missing required fields: " + reqCopy);
-			statusMsg.setError(true);
 		}
 
 		return statusMsg;
 	}
 
-	public StatusMsg validateRequiredFieldsAPI(String json){
+	public StatusMsg validateVendorIdAPI(String json){
 		Map<String, Object> map = gson.fromJson(json, Map.class);
 		List<Map<String, Object>> outputs = (List<Map<String, Object>>) map.get("output");
 		StatusMsg statusMsg = containsVendor(outputs);
@@ -127,14 +103,15 @@ public class VendorLinter extends BaseLinter {
 	 * @param path
 	 * @throws FileNotFoundException
 	 */
-	private void validateRequiredFields(String path) throws FileNotFoundException {
+	private void validateVendorId(String path) throws FileNotFoundException {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (int i = 0; i < files.size(); i++) {
 			File file = files.get(i);
-			if(!ignore.contains(file.getName())){
-				List<Map<String, Object>> outputs = extractYamlArray(file, "output");
+			Map<String, Object> data = yaml.load(new FileInputStream(file));
+			if(data.containsKey(ContentManager.FIELDS.OUTPUT.getName())) {
+				List<Map<String, Object>> outputs = (List<Map<String, Object>>) data.get(ContentManager.FIELDS.OUTPUT.getName());
 				StatusMsg errorField = containsVendor(outputs);
-				if(errorField.isError()) {
+				if (errorField.isError()) {
 					throw new ValidationException("Is not valid normalizer, incorrect field: " + errorField.getMsg() +
 									" for file: " + file.getName());
 				}

@@ -11,7 +11,7 @@ csp: demo-cloud # note that this value is not used by engine for filtering.
 #currently, it is being used to rendering content on https://contexthub.dassana.io/
 
 filters:
-  - vendor: foo-cloud
+  - vendor: foo-cloud-cspm-vendor
     match-type: all
     rules:
       - .csp == "demo-csp" and .service == "demo-service"

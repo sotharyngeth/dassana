@@ -58,6 +58,35 @@ public class ContentManager implements ContentManagerApi {
   public static final String NORMALIZE = "normalize";
   public static final String WORKFLOW_ID = "workflowId";
 
+  public enum FIELDS {
+    CLASS("class"),
+    SUB_CLASS("subclass"),
+    CATEGORY("category"),
+    SUB_CATEGORY("subcategory"),
+    STEPS("steps"),
+    USES("uses"),
+    CSP("csp"),
+    SERVICE("service"),
+    TYPE("type"),
+    OUTPUT("output"),
+    RESOURCE_TYPE("resource-type");
+
+    private final String name;
+
+    FIELDS(final String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public String toString() {
+      return name;
+    }
+  }
+
   private static final Logger logger = LoggerFactory.getLogger(ContentManager.class);
 
 
@@ -126,6 +155,7 @@ public class ContentManager implements ContentManagerApi {
 
   }
 
+  //TODO add alertClass and subclass to PolicyContext
   public Workflow getWorkflow(JSONObject jsonObject) {
     Workflow workflow = new Workflow();
 

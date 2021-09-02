@@ -13,12 +13,12 @@
   }],
   "output": [{
     "name": "vendorId",
-    "value": "foo-cloud-cspm-vendor"
+    "value": "foo-cloud-cspm-vendor1"
   }, {
-    "name": "alertId1",
+    "name": "alertId",
     "value": ".\"resource-info\".alertId"
   }, {
-    "name": "canonicalId1",
+    "name": "canonicalId",
     "value": ".\"resource-info\".canonicalId"
   }, {
     "name": "vendorPolicy",

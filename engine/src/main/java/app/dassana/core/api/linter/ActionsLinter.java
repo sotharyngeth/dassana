@@ -1,9 +1,8 @@
 package app.dassana.core.api.linter;
 
-import app.dassana.core.api.DassanaWorkflowValidationException;
 import app.dassana.core.api.ValidationException;
+import app.dassana.core.contentmanager.ContentManager;
 import com.google.gson.Gson;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,6 +14,7 @@ import java.util.Set;
 
 public class ActionsLinter extends BaseLinter {
 
+	public final static String actionTemplatePath = "/actions";
 	private Set<String> template = new HashSet<>();
 	private Gson gson = new Gson();
 
@@ -30,7 +30,7 @@ public class ActionsLinter extends BaseLinter {
 	@Override
 	public void validate() throws IOException {
 		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-		loadTemplate(content + "/actions");
+		loadTemplate(content + actionTemplatePath);
 		validateActions(content + "/workflows/csp");
 	}
 
@@ -40,9 +40,9 @@ public class ActionsLinter extends BaseLinter {
 		String errorMsg = null;
 		for(int i = 0; i < steps.size() && !isError; i++){
 			Map<String, Object> step = steps.get(i);
-			if(!template.contains(step.get("uses"))){
+			if(!template.contains(step.get(ContentManager.FIELDS.USES.getName()))){
 				isError  = true;
-				errorMsg = "Invalid uses field: [" +  step.get("uses") + "]";
+				errorMsg = "Invalid uses field: [" +  step.get(ContentManager.FIELDS.USES.getName()) + "]";
 			}
 		}
 		return new StatusMsg(isError, errorMsg);
@@ -50,8 +50,8 @@ public class ActionsLinter extends BaseLinter {
 
 	private StatusMsg validateYaml(Map<String, Object> data) {
 		StatusMsg statusMsg = new StatusMsg(false);
-		if(data.containsKey("steps")){
-			List<Map<String, Object>> steps = (List<Map<String, Object>>) data.get("steps");
+		if(data.containsKey(ContentManager.FIELDS.STEPS.getName())){
+			List<Map<String, Object>> steps = (List<Map<String, Object>>) data.get(ContentManager.FIELDS.STEPS.getName());
 			statusMsg = checkStepsForErrors(steps);
 		}
 		return statusMsg;

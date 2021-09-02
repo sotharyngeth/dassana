@@ -15,6 +15,7 @@ import java.util.*;
 
 public class ResourceLinter extends BaseLinter{
 
+	public final static String hierarchyYamlPath = "/schemas/resource-hierarchy/resource-hierarchy.yaml";
 	private Gson gson = new Gson();
 	private Map<String, Set<String>> cspToService = new HashMap<>();
 	private Map<String, Set<String>> serviceToResource = new HashMap<>();
@@ -32,7 +33,7 @@ public class ResourceLinter extends BaseLinter{
 	@Override
 	public void validate() throws IOException {
 		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-		loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
+		loadTemplate(content + hierarchyYamlPath);
 		validateResources(content + "/workflows/csp");
 	}
 
@@ -48,26 +49,27 @@ public class ResourceLinter extends BaseLinter{
 	}
 
 	private StatusMsg setErrorMessages(String csp, String service, String resource){
-		StatusMsg statusMsg = new StatusMsg(true);
 		String errField = !cspToService.containsKey(csp) ? "invalid csp: [" + csp + "]" :
 						!cspToService.get(csp).contains(service) ? "invalid service: [" + service + "]" :
 										"invalid resource: [" + resource + "]";
-		statusMsg.setMsg(errField);
-		return statusMsg;
+		return new StatusMsg(true, errField);
 	}
 
 	private StatusMsg isValidPolicy(Map<String, Object> map){
 		StatusMsg statusMsg = new StatusMsg(false);
-		boolean isGeneral = ContentManager.GENERAL_CONTEXT.equals(map.get("type"));
 
-		if(!isGeneral && map.containsKey("csp") && map.containsKey("service") && map.containsKey("resource-type")){
-			String csp = (String) map.get("csp"), service = (String) map.get("service"),
-							resource = (String) map.get("resource-type");
+		if(map.containsKey(ContentManager.FIELDS.CSP.getName()) &&
+						map.containsKey(ContentManager.FIELDS.SERVICE.getName()) &&
+						map.containsKey(ContentManager.FIELDS.RESOURCE_TYPE.getName())){
 
-			boolean validPolicy = cspToService.containsKey(csp) && cspToService.get(csp).contains(service)
+			String csp = (String) map.get(ContentManager.FIELDS.CSP.getName()),
+							service = (String) map.get(ContentManager.FIELDS.SERVICE.getName()),
+							resource = (String) map.get(ContentManager.FIELDS.RESOURCE_TYPE.getName());
+
+			boolean isValid = cspToService.containsKey(csp) && cspToService.get(csp).contains(service)
 							&& serviceToResource.get(service).contains(resource);
 
-			if(!validPolicy){
+			if(!isValid){
 				statusMsg = setErrorMessages(csp, service, resource);
 			}
 		}
@@ -84,9 +86,11 @@ public class ResourceLinter extends BaseLinter{
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for(File file : files){
 			Map<String, Object> data = yaml.load(new FileInputStream(file));
-			StatusMsg statusMsg = isValidPolicy(data);
-			if(statusMsg.isError()){
-				throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getPath());
+			if(isResourceContext(data) || isPolicyContext(data)) {
+				StatusMsg statusMsg = isValidPolicy(data);
+				if (statusMsg.isError()) {
+					throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getPath());
+				}
 			}
 		}
 	}

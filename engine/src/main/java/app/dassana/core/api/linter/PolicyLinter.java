@@ -6,12 +6,12 @@ import app.dassana.core.contentmanager.ContentManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.gson.Gson;
-
 import java.io.*;
 import java.util.*;
 
 public class PolicyLinter extends BaseLinter {
 
+	public final static String classificationPath = "/schemas/policy-classification/policy-classification.yaml";
 	private Map<String, Set<String>> classToSub = new HashMap<>();
 	private Map<String, Set<String>> subToCat = new HashMap<>();
 	private Map<String, Set<String>> catToSubCat = new HashMap<>();
@@ -29,7 +29,7 @@ public class PolicyLinter extends BaseLinter {
 	@Override
 	public void validate() throws IOException {
 		String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-		loadTemplate(content + "/schemas/policy-classification/policy-classification.yaml");
+		loadTemplate(content + classificationPath);
 		validatePolicies(content + "/workflows");
 	}
 
@@ -54,9 +54,9 @@ public class PolicyLinter extends BaseLinter {
 		return map.containsKey(key) && map.get(key).contains(val);
 	}
 
-	private String retrieveErrorField(String pClass, String subClass, String category, String subCategory){
-		String errField = !classToSub.containsKey(pClass) ?  "invalid class: [" + pClass + "]" :
-						!classToSub.get(pClass).contains(subClass) ? "invalid subclass: [" + subClass + "]" :
+	private String retrieveErrorField(String alertClass, String subClass, String category, String subCategory){
+		String errField = !classToSub.containsKey(alertClass) ?  "invalid class: [" + alertClass + "]" :
+						!classToSub.get(alertClass).contains(subClass) ? "invalid subclass: [" + subClass + "]" :
 						!subToCat.get(subClass).contains(category) ? "invalid category: [" + category + "]" :
 										                                     "invalid subcategory: [" + subCategory + "]";
 
@@ -64,15 +64,15 @@ public class PolicyLinter extends BaseLinter {
 	}
 
 	private StatusMsg isValidFields(Map<String, Object> map){
-		String pClass = (String) map.get("class");
-		String subClass = (String) map.get("subclass");
-		String category = (String) map.get("category");
+		String alertClass = (String) map.get(ContentManager.FIELDS.CLASS.getName());
+		String subClass = (String) map.get(ContentManager.FIELDS.SUB_CLASS.getName());
+		String category = (String) map.get(ContentManager.FIELDS.CATEGORY.getName());
 		String subCategory = null;
 
-		boolean isValidFields = isMapValid(classToSub, pClass, subClass) && isMapValid(subToCat, subClass, category);
+		boolean isValidFields = isMapValid(classToSub, alertClass, subClass) && isMapValid(subToCat, subClass, category);
 
-		if("risk".equals(pClass) && isValidFields){
-			subCategory = (String) map.get("subcategory");
+		if("risk".equals(alertClass) && isValidFields){
+			subCategory = (String) map.get(ContentManager.FIELDS.SUB_CATEGORY.getName());
 			isValidFields = isMapValid(catToSubCat, category, subCategory);
 		}
 
@@ -80,7 +80,7 @@ public class PolicyLinter extends BaseLinter {
 
 		if(!isValidFields){
 			statusMsg.setError(true);
-			statusMsg.setMsg(retrieveErrorField(pClass, subClass, category, subCategory));
+			statusMsg.setMsg(retrieveErrorField(alertClass, subClass, category, subCategory));
 		}
 
 		return statusMsg;
@@ -95,10 +95,10 @@ public class PolicyLinter extends BaseLinter {
 	private void validatePolicies(String path) throws IOException {
 		List<File> files = loadFilesFromPath(path, new String[]{"yaml"});
 		for (File file : files) {
-			if(file.getCanonicalPath().contains(ContentManager.POLICY_CONTEXT)) {
-				Map<String, Object> map = yaml.load(new FileInputStream(file));
+			Map<String, Object> map = yaml.load(new FileInputStream(file));
+			if(isPolicyContext(map)) {
 				StatusMsg statusMsg = isValidFields(map);
-				if(statusMsg.isError()){
+				if (statusMsg.isError()) {
 					throw new ValidationException(statusMsg.getMsg() + " in file: " + file.getName());
 				}
 			}
