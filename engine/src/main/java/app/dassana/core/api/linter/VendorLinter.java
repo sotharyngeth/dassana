@@ -77,13 +77,15 @@ public class VendorLinter extends BaseLinter {
 
 	private StatusMsg containsVendor(List<Map<String, Object>> outputs){
 		StatusMsg statusMsg = new StatusMsg(false);
-		for (int i = 0; i < outputs.size() && !statusMsg.isError(); i++) {
-			Map<String, Object> output = outputs.get(i);
-			String name = (String) output.get("name");
-			if("vendorId".equals(name)){
-				if(!template.contains((String) output.get("value"))){
-					statusMsg.setMsg("Invalid vendor id [" + output.get("value") + "]");
-					statusMsg.setError(true);
+		if(outputs != null) {
+			for (int i = 0; i < outputs.size() && !statusMsg.isError(); i++) {
+				Map<String, Object> output = outputs.get(i);
+				String name = (String) output.get("name");
+				if ("vendorId".equals(name)) {
+					if (!template.contains((String) output.get("value"))) {
+						statusMsg.setMsg("Invalid vendor id [" + output.get("value") + "]");
+						statusMsg.setError(true);
+					}
 				}
 			}
 		}
@@ -93,7 +95,7 @@ public class VendorLinter extends BaseLinter {
 
 	public StatusMsg validateVendorIdAPI(String json){
 		Map<String, Object> map = gson.fromJson(json, Map.class);
-		List<Map<String, Object>> outputs = (List<Map<String, Object>>) map.get("output");
+		List<Map<String, Object>> outputs = (List<Map<String, Object>>) map.get(ContentManager.FIELDS.OUTPUT.getName());
 		StatusMsg statusMsg = containsVendor(outputs);
 		return statusMsg;
 	}

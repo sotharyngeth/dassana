@@ -54,13 +54,34 @@ public class PolicyLinter extends BaseLinter {
 		return map.containsKey(key) && map.get(key).contains(val);
 	}
 
-	private String retrieveErrorField(String alertClass, String subClass, String category, String subCategory){
-		String errField = !classToSub.containsKey(alertClass) ?  "invalid class: [" + alertClass + "]" :
-						!classToSub.get(alertClass).contains(subClass) ? "invalid subclass: [" + subClass + "]" :
-						!subToCat.get(subClass).contains(category) ? "invalid category: [" + category + "]" :
-										                                     "invalid subcategory: [" + subCategory + "]";
+	private String retrieveMissingField(String alertClass, String subClass, String category){
+		String msg = null;
 
-		return errField;
+		if(alertClass == null){
+			msg = "missing class field, suggested fields: " + classToSub.keySet();
+		}else if(subClass == null){
+			msg = "missing subclass field, suggested fields: " + classToSub.get(alertClass);
+		}else if(category == null){
+			msg = "missing category field, suggested fields: " + subToCat.get(subClass);
+		}else{
+			msg = "missing subcategory field, suggested fields: " + catToSubCat.get(category);
+		}
+
+		return msg;
+	}
+
+	private String retrieveErrorField(String alertClass, String subClass, String category, String subCategory){
+		String msg = null;
+		if(alertClass == null || subClass == null || category == null || subCategory == null){
+			msg = retrieveMissingField(alertClass, subClass, category);
+		}else {
+			msg = !classToSub.containsKey(alertClass) ? "invalid class: [" + alertClass + "]" :
+							!classToSub.get(alertClass).contains(subClass) ? "invalid subclass: [" + subClass + "]" :
+											!subToCat.get(subClass).contains(category) ? "invalid category: [" + category + "]" :
+															"invalid subcategory: [" + subCategory + "]";
+		}
+
+		return msg;
 	}
 
 	private StatusMsg isValidFields(Map<String, Object> map){

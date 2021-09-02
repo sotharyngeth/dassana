@@ -55,6 +55,22 @@ public class ResourceLinter extends BaseLinter{
 		return new StatusMsg(true, errField);
 	}
 
+	private StatusMsg retrieveMissingFields(Map<String, Object> map){
+		String msg = null;
+
+		if(!map.containsKey(ContentManager.FIELDS.CSP.getName())){
+			msg = "missing csp field, suggested fields: " + cspToService.keySet();
+		}else if(!map.containsKey(ContentManager.FIELDS.SERVICE.getName())){
+			String csp = (String) map.get(ContentManager.FIELDS.CSP.getName());
+			msg = "missing service field, suggested fields: " + cspToService.get(csp);
+		}else{
+			String service = (String) map.get(ContentManager.FIELDS.SERVICE.getName());
+			msg = "missing resource-type field, suggested fields: " + serviceToResource.get(service);
+		}
+
+		return new StatusMsg(true, msg);
+	}
+
 	private StatusMsg isValidPolicy(Map<String, Object> map){
 		StatusMsg statusMsg = new StatusMsg(false);
 
@@ -72,6 +88,9 @@ public class ResourceLinter extends BaseLinter{
 			if(!isValid){
 				statusMsg = setErrorMessages(csp, service, resource);
 			}
+
+		}else{
+			statusMsg = retrieveMissingFields(map);
 		}
 		return statusMsg;
 	}

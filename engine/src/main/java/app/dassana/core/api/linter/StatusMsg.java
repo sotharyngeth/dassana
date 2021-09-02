@@ -29,4 +29,12 @@ public class StatusMsg {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
+
+	@Override
+	public String toString() {
+		return "StatusMsg{" +
+						"isError=" + isError +
+						", msg='" + msg + '\'' +
+						'}';
+	}
 }
