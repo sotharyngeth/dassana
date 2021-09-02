@@ -59,13 +59,13 @@ public class ResourceLinter extends BaseLinter{
 		String msg = null;
 
 		if(!map.containsKey(ContentManager.FIELDS.CSP.getName())){
-			msg = "missing csp field, suggested fields: " + cspToService.keySet();
+			msg = "missing csp field, available fields: " + cspToService.keySet();
 		}else if(!map.containsKey(ContentManager.FIELDS.SERVICE.getName())){
 			String csp = (String) map.get(ContentManager.FIELDS.CSP.getName());
-			msg = "missing service field, suggested fields: " + cspToService.get(csp);
+			msg = "missing service field, available fields: " + cspToService.get(csp);
 		}else{
 			String service = (String) map.get(ContentManager.FIELDS.SERVICE.getName());
-			msg = "missing resource-type field, suggested fields: " + serviceToResource.get(service);
+			msg = "missing resource-type field, available fields: " + serviceToResource.get(service);
 		}
 
 		return new StatusMsg(true, msg);
@@ -74,24 +74,34 @@ public class ResourceLinter extends BaseLinter{
 	private StatusMsg isValidPolicy(Map<String, Object> map){
 		StatusMsg statusMsg = new StatusMsg(false);
 
-		if(map.containsKey(ContentManager.FIELDS.CSP.getName()) &&
-						map.containsKey(ContentManager.FIELDS.SERVICE.getName()) &&
-						map.containsKey(ContentManager.FIELDS.RESOURCE_TYPE.getName())){
+		String csp = (String) map.get(ContentManager.FIELDS.CSP.getName()),
+						service = (String) map.get(ContentManager.FIELDS.SERVICE.getName()),
+						resource = (String) map.get(ContentManager.FIELDS.RESOURCE_TYPE.getName());
 
-			String csp = (String) map.get(ContentManager.FIELDS.CSP.getName()),
-							service = (String) map.get(ContentManager.FIELDS.SERVICE.getName()),
-							resource = (String) map.get(ContentManager.FIELDS.RESOURCE_TYPE.getName());
-
+		if(csp == null || service == null || resource == null){
+			statusMsg = retrieveMissingFields(map);
+		}else{
 			boolean isValid = cspToService.containsKey(csp) && cspToService.get(csp).contains(service)
 							&& serviceToResource.get(service).contains(resource);
 
 			if(!isValid){
 				statusMsg = setErrorMessages(csp, service, resource);
 			}
+		}
 
+		/*
+		if(csp != null && service != null && resource == null){
+			boolean isValid = cspToService.containsKey(csp) && cspToService.get(csp).contains(service)
+							&& serviceToResource.get(service).contains(resource);
+
+			if(!isValid){
+				statusMsg = setErrorMessages(csp, service, resource);
+			}
 		}else{
 			statusMsg = retrieveMissingFields(map);
 		}
+		*/
+
 		return statusMsg;
 	}
 

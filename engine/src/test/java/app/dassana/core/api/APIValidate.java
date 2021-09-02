@@ -22,7 +22,10 @@ public class APIValidate {
 		try {
 			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
 			String json = helper.getFileContent("inputs/validVendor.json");
-			vendorLinter.validateVendorIdAPI(json);
+			StatusMsg statusMsg = vendorLinter.validateVendorIdAPI(json);
+			if(statusMsg.isError()){
+				Assertions.fail(statusMsg.getMsg());
+			}
 		}catch (Exception e){
 			Assertions.fail(e.getMessage());
 		}
@@ -47,7 +50,10 @@ public class APIValidate {
 		try {
 			vendorLinter.loadTemplate(content + "/schemas/vendors/vendor-list.yaml");
 			String json = helper.getFileContent("inputs/validPolicy.json");
-			vendorLinter.validateFilterAPI(json);
+			StatusMsg statusMsg = vendorLinter.validateFilterAPI(json);
+			if(statusMsg.isError()){
+				Assertions.fail(statusMsg.getMsg());
+			}
 		}catch (Exception e){
 			Assertions.fail(e.getMessage());
 		}
@@ -72,7 +78,10 @@ public class APIValidate {
 		try {
 			resourceLinter.loadTemplate(content + "/schemas/resource-hierarchy/resource-hierarchy.yaml");
 			String json = helper.getFileContent("inputs/validPolicy.json");
-			resourceLinter.validateResourcesAPI(json);
+			StatusMsg statusMsg = resourceLinter.validateResourcesAPI(json);
+			if(statusMsg.isError()){
+				Assertions.fail(statusMsg.getMsg());
+			}
 		}catch (Exception e){
 			Assertions.fail(e.getMessage());
 		}
@@ -97,7 +106,10 @@ public class APIValidate {
 		try {
 			actionsLinter.loadTemplate(content + "/actions");
 			String json = helper.getFileContent("inputs/validPolicy.json");
-			actionsLinter.validateActionsAPI(json);
+			StatusMsg statusMsg = actionsLinter.validateActionsAPI(json);
+			if(statusMsg.isError()){
+				Assertions.fail(statusMsg.getMsg());
+			}
 		}catch (Exception e){
 			Assertions.fail(e.getMessage());
 		}
@@ -122,7 +134,10 @@ public class APIValidate {
 		try {
 			policyLinter.loadTemplate(content + "/schemas/policy-classification/policy-classification.yaml");
 			String json = helper.getFileContent("inputs/validPolicy.json");
-			policyLinter.validatePoliciesAPI(json);
+			StatusMsg statusMsg = policyLinter.validatePoliciesAPI(json);
+			if(statusMsg.isError()){
+				Assertions.fail(statusMsg.getMsg());
+			}
 		}catch (Exception e){
 			Assertions.fail(e.getMessage());
 		}

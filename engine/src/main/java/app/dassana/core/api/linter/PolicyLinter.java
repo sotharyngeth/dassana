@@ -54,54 +54,67 @@ public class PolicyLinter extends BaseLinter {
 		return map.containsKey(key) && map.get(key).contains(val);
 	}
 
-	private String retrieveMissingField(String alertClass, String subClass, String category){
+	private StatusMsg retrieveMissingField(String alertClass, String subClass, String category, boolean isRisk){
 		String msg = null;
 
 		if(alertClass == null){
-			msg = "missing class field, suggested fields: " + classToSub.keySet();
+			msg = "missing class field, available fields: " + classToSub.keySet();
 		}else if(subClass == null){
-			msg = "missing subclass field, suggested fields: " + classToSub.get(alertClass);
+			msg = "missing subclass field, available fields: " + classToSub.get(alertClass);
 		}else if(category == null){
-			msg = "missing category field, suggested fields: " + subToCat.get(subClass);
-		}else{
-			msg = "missing subcategory field, suggested fields: " + catToSubCat.get(category);
+			msg = "missing category field, available fields: " + subToCat.get(subClass);
+		}else if(isRisk){
+			msg = "missing subcategory field, available fields: " + catToSubCat.get(category);
 		}
 
-		return msg;
+		return new StatusMsg(true, msg);
 	}
 
-	private String retrieveErrorField(String alertClass, String subClass, String category, String subCategory){
-		String msg = null;
-		if(alertClass == null || subClass == null || category == null || subCategory == null){
-			msg = retrieveMissingField(alertClass, subClass, category);
-		}else {
-			msg = !classToSub.containsKey(alertClass) ? "invalid class: [" + alertClass + "]" :
-							!classToSub.get(alertClass).contains(subClass) ? "invalid subclass: [" + subClass + "]" :
-											!subToCat.get(subClass).contains(category) ? "invalid category: [" + category + "]" :
-															"invalid subcategory: [" + subCategory + "]";
+	private StatusMsg retrieveErrorField(String alertClass, String subClass, String category, String subCategory, boolean isRisk){
+		String msg = "";
+
+		if(!classToSub.containsKey(alertClass)){
+			msg = "invalid class: [" + alertClass + "]";
+		}else if(!classToSub.get(alertClass).contains(subClass)){
+			msg = "invalid subclass: [" + subClass + "]";
+		}else if(!subToCat.get(subClass).contains(category)){
+			msg = "invalid category: [" + category + "]";
+		}else if(isRisk){
+			msg = "invalid subcategory: [" + subCategory + "]";
 		}
 
-		return msg;
+		return new StatusMsg(true, msg);
 	}
 
 	private StatusMsg isValidFields(Map<String, Object> map){
 		String alertClass = (String) map.get(ContentManager.FIELDS.CLASS.getName());
 		String subClass = (String) map.get(ContentManager.FIELDS.SUB_CLASS.getName());
 		String category = (String) map.get(ContentManager.FIELDS.CATEGORY.getName());
-		String subCategory = null;
-
-		boolean isValidFields = isMapValid(classToSub, alertClass, subClass) && isMapValid(subToCat, subClass, category);
-
-		if("risk".equals(alertClass) && isValidFields){
-			subCategory = (String) map.get(ContentManager.FIELDS.SUB_CATEGORY.getName());
-			isValidFields = isMapValid(catToSubCat, category, subCategory);
-		}
+		String subCategory = (String) map.get(ContentManager.FIELDS.SUB_CATEGORY.getName());;
 
 		StatusMsg statusMsg = new StatusMsg(false);
 
-		if(!isValidFields){
-			statusMsg.setError(true);
-			statusMsg.setMsg(retrieveErrorField(alertClass, subClass, category, subCategory));
+		boolean isRisk  = "risk".equals(alertClass);
+
+		boolean hasBaseFields = alertClass != null && subClass != null && category != null;
+
+		if(isRisk){
+			hasBaseFields = hasBaseFields && (isRisk && subCategory != null);
+		}
+
+		//if missing required fields for risk or incident
+		if(!hasBaseFields){
+			statusMsg = retrieveMissingField(alertClass, subClass, category, isRisk);
+		}else{
+			boolean isValid = isMapValid(classToSub, alertClass, subClass) && isMapValid(subToCat, subClass, category);
+			//if risk make sure subcategory is valid
+			if(isRisk){
+				isValid = isValid && isMapValid(catToSubCat, category, subCategory);
+			}
+
+			if(!isValid){
+				statusMsg = retrieveErrorField(alertClass, subClass, category, subCategory, isRisk);
+			}
 		}
 
 		return statusMsg;
