@@ -11,6 +11,8 @@ on:
 jobs:
 
   Copy-from-dev-to-prod:
+    permissions:
+      contents: none
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS Credentials
