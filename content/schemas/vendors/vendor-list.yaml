@@ -4,3 +4,5 @@
   name: Foo Cloud CSPM vendor
 - id: aws-guardduty
   name: AWS GuardDuty
+- id: prisma-cloud
+  name: Prisma Cloud
