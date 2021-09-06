@@ -4,6 +4,8 @@ on:
 jobs:
 
   Copy-from-dev-to-prod:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

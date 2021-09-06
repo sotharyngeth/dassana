@@ -5,6 +5,8 @@ on:
       - main
 jobs:
   build-and-publish-public-actions-and-policies-dev:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

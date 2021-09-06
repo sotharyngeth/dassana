@@ -7,6 +7,8 @@ on:
       - main
 jobs:
   validate-schema:
+    permissions:
+      contents: read
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -57,6 +59,8 @@ jobs:
           target: content/actions
 
   validate-content-dir-and-file-structure:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -71,6 +75,8 @@ jobs:
       - run: ls-lint
         working-directory: .dassana-internal-devops
   validate-actions-deployment:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -86,6 +92,8 @@ jobs:
         run: |
           python .dassana-internal-devops/scripts/validate-actions-deployment.py
   validate-workflow-steps:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

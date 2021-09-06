@@ -4,6 +4,8 @@ on:
     types: [opened, labeled, unlabeled, synchronize]
 jobs:
   check_pr_labels:
+    permissions:
+      contents: none
     name: Verify that the PR has the appropriate label(s)
     runs-on: ubuntu-latest
     steps:
