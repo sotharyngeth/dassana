@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -227,9 +229,8 @@ public class ApiHandler extends
       gatewayProxyResponseEvent.setBody(gson.toJson(message));
       gatewayProxyResponseEvent.setStatusCode(400);
     } catch (Exception e) {
-      StringWriter sw = new StringWriter();
-      e.printStackTrace(new PrintWriter(sw));
-      gatewayProxyResponseEvent.setBody(sw.toString());
+      Throwable rootCause = ExceptionUtils.getRootCause(e);
+      gatewayProxyResponseEvent.setBody(rootCause.getMessage());
       gatewayProxyResponseEvent.setStatusCode(500);
     }
     return gatewayProxyResponseEvent;
