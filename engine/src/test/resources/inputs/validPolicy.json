@@ -17,6 +17,10 @@
     "match-type": "any",
     "rules": [".vendorId == \"aws-config\" and (.vendorPolicy |contains (\"cmk-backing-key-rotation-enabled\"))"]
   }],
+  "steps": [{
+    "id": "resource-info",
+    "uses": "GetTags"
+  }],
   "risk-config": {
     "default-risk": "medium"
   }

@@ -30,11 +30,10 @@ public class WorkflowValidator {
   @Inject ContentManager contentManager;
   @Inject RuleMatch ruleMatch;
   private SchemaLoader schemaLoader;
+  private NormalizeLinter normalizeLinter = new NormalizeLinter();
+  private GeneralLinter generalLinter = new GeneralLinter();
   private ResourceLinter resourceLinter = new ResourceLinter();
   private PolicyLinter policyLinter = new PolicyLinter();
-  private ActionsLinter actionsLinter = new ActionsLinter();
-  private VendorLinter vendorLinter = new VendorLinter();
-
 
   void validateJsonAgainstJsonSchema(String json, String jsonSchema) {
 
@@ -56,53 +55,20 @@ public class WorkflowValidator {
 
   }
 
-  private void loadTemplates() throws IOException{
-    String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
-    resourceLinter.loadTemplate(content + ResourceLinter.hierarchyYamlPath);
-    policyLinter.loadTemplate(content + PolicyLinter.classificationPath);
-    vendorLinter.loadTemplate(content + VendorLinter.vendorListYamlPath);
-    actionsLinter.loadTemplate(content + ActionsLinter.actionTemplatePath);
+  private void initLinters() throws IOException{
+    normalizeLinter.init();
+    generalLinter.init();
+    resourceLinter.init();
+    policyLinter.init();
   }
 
-  private void ifIssuesThrowException(List<StatusMsg> msgs){
-    List<String> issues = msgs.stream().filter(m -> m.isError()).map(m -> m.getMsg()).collect(Collectors.toList());
-    if(issues.size() > 0) {
-      DassanaWorkflowValidationException exception = new DassanaWorkflowValidationException();
-      exception.setIssues(issues);
-      throw exception;
+  private void processJson(BaseLinter linter, String json) throws IOException {
+    List<String> issues = linter.validate(json);
+    if(issues.size() > 0){
+      DassanaWorkflowValidationException workflowException = new DassanaWorkflowValidationException();
+      workflowException.setIssues(issues);
+      throw workflowException;
     }
-  }
-
-  private void validateNormalize(String json){
-    List<StatusMsg> messages = new ArrayList<>();
-    messages.add(vendorLinter.validateVendorIdAPI(json));
-    ifIssuesThrowException(messages);
-  }
-
-  private void validateGeneralize(String json){
-    List<StatusMsg> messages = new ArrayList<>();
-    messages.add(vendorLinter.validateVendorIdAPI(json));
-    messages.add(actionsLinter.validateActionsAPI(json));
-    ifIssuesThrowException(messages);
-  }
-
-  private void validateResources(String json){
-    List<StatusMsg> messages = new ArrayList<>();
-    messages.add(resourceLinter.validateResourcesAPI(json));
-    messages.add(vendorLinter.validateVendorIdAPI(json));
-    messages.add(actionsLinter.validateActionsAPI(json));
-    ifIssuesThrowException(messages);
-  }
-
-  private void validatePolicies(String json){
-    List<StatusMsg> messages = new ArrayList<>();
-    messages.add(resourceLinter.validateResourcesAPI(json));
-    messages.add(vendorLinter.validateFilterAPI(json));
-    messages.add(vendorLinter.validateVendorIdAPI(json));
-    messages.add(actionsLinter.validateActionsAPI(json));
-    messages.add(policyLinter.validatePoliciesAPI(json));
-
-    ifIssuesThrowException(messages);
   }
 
   public void handleValidate(String workflowAsJson) throws IOException {
@@ -124,29 +90,28 @@ public class WorkflowValidator {
         .getResourceAsStream("content/schemas/base-workflow-schema.json"), Charset.defaultCharset());
 
     validateJsonAgainstJsonSchema(workflowAsJson, baseSchema);
-    loadTemplates();
+    initLinters();
 
     if (workflow instanceof NormalizerWorkflow) {
       String normalizerSchema = IOUtils.toString(Thread.currentThread().getContextClassLoader()
           .getResourceAsStream("content/schemas/normalizer-schema.json"), Charset.defaultCharset());
       validateJsonAgainstJsonSchema(workflowAsJson, normalizerSchema);
-      validateNormalize(workflowAsJson);
-
+      processJson(normalizeLinter, workflowAsJson);
     } else if (workflow instanceof PolicyContext) {
       String generalContextSchema = IOUtils.toString(Thread.currentThread().getContextClassLoader()
           .getResourceAsStream("content/schemas/risk-schema.json"), Charset.defaultCharset());
       validateJsonAgainstJsonSchema(workflowAsJson, generalContextSchema);
-      validatePolicies(workflowAsJson);
+      processJson(policyLinter, workflowAsJson);
     } else if (workflow instanceof ResourceContext) {
       String resourceContextSchema = IOUtils.toString(Thread.currentThread().getContextClassLoader()
           .getResourceAsStream("content/schemas/resource-context-schema.json"), Charset.defaultCharset());
       validateJsonAgainstJsonSchema(workflowAsJson, resourceContextSchema);
-      validateResources(workflowAsJson);
+      processJson(resourceLinter, workflowAsJson);
     } else if (workflow instanceof GeneralContext) {
       String generalContextSchema = IOUtils.toString(Thread.currentThread().getContextClassLoader()
           .getResourceAsStream("content/schemas/risk-schema.json"), Charset.defaultCharset());
       validateJsonAgainstJsonSchema(workflowAsJson, generalContextSchema);
-      validateGeneralize(workflowAsJson);
+      processJson(generalLinter, workflowAsJson);
     }
 
     for (Filter filter : workflow.getFilters()) {

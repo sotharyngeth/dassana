@@ -69,6 +69,7 @@ public class ContentManager implements ContentManagerApi {
     SERVICE("service"),
     TYPE("type"),
     OUTPUT("output"),
+    VENDOR_ID("vendor-id"),
     RESOURCE_TYPE("resource-type");
 
     private final String name;
