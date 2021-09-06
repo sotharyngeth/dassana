@@ -14,6 +14,14 @@ steps:
   - id: resource-info
     uses: GuardDutyExtractor
 
+  - id: getTags
+    uses: GetTags
+    with:
+      - name: arn
+        value: .steps."resource-info".arn
+      - name: region
+        value: .steps."resource-info".region
+
 output:
   - name: vendorId
     value: aws-guardduty
@@ -36,6 +44,8 @@ output:
     value: ."resource-info".resourceType
   - name: resourceId
     value: ."resource-info".resourceId
+  - name: tags
+    value: ."getTags"
 
 post-processor:
   steps:

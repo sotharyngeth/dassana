@@ -22,6 +22,12 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("iam-root-access-key-check"))
+  - vendor: prisma-cloud
+    policies:
+      - "88db4b66-4dec-48c0-9013-c7871d61b1c8"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "88db4b66-4dec-48c0-9013-c7871d61b1c8"
 
 risk-config:
   default-risk: medium

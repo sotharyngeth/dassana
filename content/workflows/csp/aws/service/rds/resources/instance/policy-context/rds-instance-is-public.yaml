@@ -22,6 +22,12 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("rds-instance-public-access-check"))
+  - vendor: prisma-cloud
+    policies:
+      - "1bb6005a-dca6-40e2-b0a6-24da968c0808"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "1bb6005a-dca6-40e2-b0a6-24da968c0808"
 
 risk-config:
   default-risk: critical

@@ -16,7 +16,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.json.JSONObject;
@@ -77,7 +76,7 @@ public class LambdaStepRunner implements StepRunnerApi {
 
   @Override
   public StepRunResponse runStep(Workflow workflow, Step step, String payLoad,
-      Map<String, Object> simpleOutput)
+      String simpleOutputJsonStr)
       throws Exception {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode jsonNode = mapper.readValue(payLoad, JsonNode.class);
@@ -85,7 +84,7 @@ public class LambdaStepRunner implements StepRunnerApi {
 
     StepRunResponse stepRunResponse = new StepRunResponse();
 
-    RuntimeContext runtimeContext = getRuntimeContext(workflow, simpleOutput);
+    RuntimeContext runtimeContext = getRuntimeContext(workflow, simpleOutputJsonStr);
     stepRunResponse.setRuntimeContext(runtimeContext);
     InvokeResponse invokeResponse = lambdaClient.invoke(InvokeRequest.builder().
         invocationType(InvocationType.REQUEST_RESPONSE).
@@ -96,11 +95,8 @@ public class LambdaStepRunner implements StepRunnerApi {
 
     if (StringUtils.isNotEmpty(invokeResponse.functionError())) {
       throw new StepExecutionRuntimeException(
-          String.format("Error in running step %s, input sent to the action was "
-                  + "%s and  the response "
-                  + "from action "
-                  + "is "
-                  + "%s", step.getId(), payLoad,
+          String.format("Error in running step %s in workflow %s , input sent to the action was "
+                  + "%s and  the response from action  is %s", step.getId(), workflow.getId(), payLoad,
               invokeResponse.payload().asString(Charset.defaultCharset())));
 
     } else {
@@ -142,10 +138,9 @@ public class LambdaStepRunner implements StepRunnerApi {
   }
 
 
-  private RuntimeContext getRuntimeContext(Workflow workflow,
-      Map<String, Object> simpleOutput) {
+  private RuntimeContext getRuntimeContext(Workflow workflow, String simpleOutputJsonStr) {
 
-    if (simpleOutput.size() == 0) {
+    if (simpleOutputJsonStr.contentEquals("{}")) {
       return new RuntimeContext();
     }
 
@@ -155,7 +150,7 @@ public class LambdaStepRunner implements StepRunnerApi {
 
     if (workflow instanceof GeneralContext || workflow instanceof PolicyContext) {
 
-      JSONObject jsonObject = new JSONObject(simpleOutput);
+      JSONObject jsonObject = new JSONObject(simpleOutputJsonStr);
       String resourceContainer = jsonObject.getString("resourceContainer");
 
       if (runtimeHelper.crossAccountRoleRequired(resourceContainer)) {

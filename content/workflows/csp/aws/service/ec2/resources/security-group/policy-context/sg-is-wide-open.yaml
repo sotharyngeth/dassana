@@ -27,16 +27,28 @@ filters:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("restricted-ssh") )
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("restricted-common-ports"))
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("vpc-default-security-group-closed"))
+  - vendor: prisma-cloud
+    policies:
+      - "617b9138-584b-4e8e-ad15-7fbabafbed1a"
+      - "b82f90ce-ed8b-4b49-970c-2268b0a6c2e5"
+      - "2378dbf4-b104-4bda-9b05-7417affbba3f"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "617b9138-584b-4e8e-ad15-7fbabafbed1a"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "b82f90ce-ed8b-4b49-970c-2268b0a6c2e5"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "2378dbf4-b104-4bda-9b05-7417affbba3f"
 
 steps:
   - id: list-of-attached-eni
     uses: WhatEnisAreAttachedToSg
     with:
-      - name: canonicalId
-        value: .canonicalId
+      - name: groupId
+        value: .resourceId
+      - name: region
+        value: .region
 
 risk-config:
-  default-risk: ''
+  default-risk: ""
   rules:
     - name: are-enis-attached-to-sg
       #in the below condition, we are checking if the step with id "list-of-attached-eni" has a key with nameed 'result' and its value (array size) has length > 0

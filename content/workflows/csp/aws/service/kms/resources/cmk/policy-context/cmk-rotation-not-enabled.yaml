@@ -6,7 +6,6 @@ name: CMK rotation not enabled
 labels:
   - contextualization
 
-
 csp: aws
 service: kms
 resource-type: cmk
@@ -23,6 +22,12 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("cmk-backing-key-rotation-enabled"))
+  - vendor: prisma-cloud
+    policies:
+      - "497f7e2c-b702-47c7-9a07-f0f6404ac896"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "497f7e2c-b702-47c7-9a07-f0f6404ac896"
 
 risk-config:
   default-risk: medium

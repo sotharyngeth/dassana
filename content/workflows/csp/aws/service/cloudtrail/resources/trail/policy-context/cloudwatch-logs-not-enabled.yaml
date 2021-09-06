@@ -22,6 +22,12 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("cloud-trail-cloud-watch-logs-enabled"))
+  - vendor: prisma-cloud
+    policies:
+      - "0d07ac51-fbfe-44fe-8edb-3314c9995ee0"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "0d07ac51-fbfe-44fe-8edb-3314c9995ee0"
 
 risk-config:
   default-risk: low

@@ -13,6 +13,7 @@ import app.dassana.core.workflow.model.Output;
 import app.dassana.core.workflow.model.Step;
 import app.dassana.core.workflow.model.ValueType;
 import app.dassana.core.workflow.model.Workflow;
+import app.dassana.core.workflow.model.WorkflowException;
 import app.dassana.core.workflow.model.WorkflowOutput;
 import app.dassana.core.workflow.model.WorkflowOutputWithRisk;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +38,7 @@ import net.thisptr.jackson.jq.JsonQuery;
 import net.thisptr.jackson.jq.Scope;
 import net.thisptr.jackson.jq.Version;
 import net.thisptr.jackson.jq.Versions;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,12 +65,13 @@ public class WorkflowRunner {
 
   public Optional<WorkflowOutputWithRisk> runWorkFlow(Class<? extends Workflow> workflowType,
       Request request,
-      Map<String, Object> simpleOutput) throws Exception {
+      String simpleOutputJson) throws Exception {
+
     String jsonToUse;
     if (workflowType.getName().contentEquals(NormalizerWorkflow.class.getName())) {
       jsonToUse = request.getInputJson();
     } else {
-      jsonToUse = gson.toJson(simpleOutput);
+      jsonToUse = simpleOutputJson;
     }
 
     WorkflowOutputWithRisk workflowOutputWithRisk = new WorkflowOutputWithRisk();
@@ -110,10 +113,10 @@ public class WorkflowRunner {
           stepPayload = jsonToUse;
         }
         String stepOutputJson;
-        stepOutputJson = runStep(workflow, step, stepPayload, simpleOutput);
+        stepOutputJson = runStep(workflow, step, stepPayload, simpleOutputJson);
 
         Object fromJson = gson.fromJson(stepOutputJson, Object.class);
-        logger.info("Output from step {} in workflow {} is {}", step.getId(), workflow.getId(),stepOutputJson);
+        logger.info("Output from step {} in workflow {} is {}", step.getId(), workflow.getId(), stepOutputJson);
         stepToOutPutMap.put(step.getId(), fromJson);
 
         //merge the step results into the event
@@ -137,50 +140,13 @@ public class WorkflowRunner {
         workflowOutputWithRisk.setStepOutput(list);
       }
 
-      List<Map<String, Object>> workflowOutPut = new LinkedList<>();
-      List<Output> output = workflow.getOutput();
-
-      for (Output map : output) {
-
-        String fieldName = map.getName();
-        String value = map.getValue();
-
-        if (map.getValueType().equals(ValueType.JQ_EXPRESSION)) {
-          JsonQuery jsonQuery = JsonQuery.compile(value, Version.LATEST);
-          JsonNode in = MAPPER.readTree(jsonObject.toString());
-
-          Scope childScope = Scope.newChildScope(rootScope);
-
-          jsonQuery.apply(childScope, in, jsonNode -> {
-            Map<String, Object> field = new HashMap<>();
-            if (jsonNode.getNodeType().equals(JsonNodeType.STRING)) {
-              field.put(fieldName, jsonNode.asText());
-            }
-            if (jsonNode.getNodeType().equals(JsonNodeType.OBJECT)) {
-              ObjectMapper mapper = new ObjectMapper();
-              Map<String, Object> result = mapper.convertValue(jsonNode, new TypeReference<>() {
-              });
-              field.put(fieldName, result);
-            }
-            if (jsonNode.getNodeType().equals(JsonNodeType.NUMBER)) {
-              field.put(fieldName, jsonNode.asLong());
-            }
-            if (jsonNode.getNodeType().equals(JsonNodeType.BOOLEAN)) {
-              field.put(fieldName, jsonNode.asBoolean());
-            }
-
-            workflowOutPut.add(field);
-
-          });
-
-        } else if (map.getValueType().equals(ValueType.STRING)) {
-          Map<String, Object> field = new HashMap<>();
-          field.put(map.getName(), map.getValue());
-          workflowOutPut.add(field);
-
-        }
-
+      String workflowOutput;
+      try {
+        workflowOutput = getWorkflowOutput(workflow.getOutput(), jsonObject.toString());
+      } catch (Exception e) {
+        throw new WorkflowException(String.format("Unable to get output from workflow %s ", workflow.getId()), e);
       }
+
       //handle risk
 
       if (workflow instanceof GeneralContext) {
@@ -188,10 +154,10 @@ public class WorkflowRunner {
         var resPriWorkflow = (GeneralContext) workflow;
         riskConfig = resPriWorkflow.getRiskConfig();
         workflowOutputWithRisk
-            .setRisk(getRisk(riskConfig, workflowOutputWithRisk, simpleOutput));
+            .setRisk(getRisk(riskConfig, workflowOutputWithRisk, simpleOutputJson));
       }
 
-      workflowOutputWithRisk.setOutput(getSimpleOutput(workflowOutPut, workflow));
+      workflowOutputWithRisk.setOutput(getSimpleOutput(workflowOutput, workflow));
       return Optional.of(workflowOutputWithRisk);
 
 
@@ -200,18 +166,56 @@ public class WorkflowRunner {
     return Optional.empty();
   }
 
-  private Map<String, Object> getSimpleOutput(List<Map<String, Object>> workflowOutPut, Workflow workflow) {
+
+  private String getWorkflowOutput(List<Output> output, String jsonStr)
+      throws JsonProcessingException {
+
+    JSONObject jsonObject = new JSONObject();
+
+    for (Output map : output) {
+
+      String fieldName = map.getName();
+      String value = map.getValue();
+
+      if (map.getValueType().equals(ValueType.JQ_EXPRESSION)) {
+        JsonQuery jsonQuery = JsonQuery.compile(value, Version.LATEST);
+        JsonNode in = MAPPER.readTree(jsonStr);
+
+        Scope childScope = Scope.newChildScope(rootScope);
+
+        jsonQuery.apply(childScope, in, jsonNode -> {
+          Object o = gson.fromJson(jsonNode.toString(), Object.class);
+          jsonObject.put(fieldName, o);
+        });
+
+      } else if (map.getValueType().equals(ValueType.STRING)) {
+        jsonObject.put(map.getName(), map.getValue());
+      }
+
+    }
+
+    return jsonObject.toString();
+  }
+
+
+  /**
+   * simpleoutput refers to the output of the workflow. It converts the YAML array that you define at the bottom of the
+   * workflows to a JSON object
+   */
+  private Map<String, Object> getSimpleOutput(String workflowOutPutJsonStr, Workflow workflow) {
+
+    JSONObject workflowOutPutJsonObj = new JSONObject(workflowOutPutJsonStr);
+    Map<String, Object> stringObjectMap = workflowOutPutJsonObj.toMap();
 
     Map<String, Object> simpleOutput = new HashMap<>();
     for (Output output : workflow.getOutput()) {
 
-      String name = output.getName();
+      for (Entry<String, Object> entry : stringObjectMap.entrySet()) {
+        String s = entry.getKey();
+        Object o = entry.getValue();
 
-      for (Map<String, Object> fieldToValueMap : workflowOutPut) {
-
-        if (fieldToValueMap.containsKey(name)) {
-          Object o = fieldToValueMap.get(name);
-          simpleOutput.put(name, o);
+        if (output.getName().contentEquals(s)) {
+          simpleOutput.put(s, o);
         }
 
       }
@@ -222,12 +226,11 @@ public class WorkflowRunner {
   }
 
   private Risk getRisk(RiskConfig riskConfig, WorkflowOutput workflowOutput,
-      Map<String, Object> simpleOutput) {
-    String normalizedJson = gson.toJson(simpleOutput);
+      String simpleOutputJson) {
     JSONObject requestJsonObjForRiskCalc = new JSONObject();
 
     //the normalized fields should be available for risk rules in addition to the fields returned by steps
-    Map<String, Object> normalizedJsonMap = new JSONObject(normalizedJson).toMap();
+    Map<String, Object> normalizedJsonMap = new JSONObject(simpleOutputJson).toMap();
     normalizedJsonMap.forEach((s, o) -> requestJsonObjForRiskCalc.put(s, o));
 
     for (Map<String, Object> map : workflowOutput.getStepOutput()) {
@@ -271,6 +274,10 @@ public class WorkflowRunner {
         Scope childScope = Scope.newChildScope(rootScope);
         jsonQuery.apply(childScope, in, out -> {
 
+          if (out.getNodeType().equals(JsonNodeType.ARRAY)) {
+            fieldJsonObj.put(name, new JSONArray(out.toString()));
+          }
+
           if (out.getNodeType().equals(JsonNodeType.STRING)) {
             fieldJsonObj.put(name, out.asText());
           }
@@ -299,9 +306,8 @@ public class WorkflowRunner {
   }
 
 
-  private String runStep(Workflow workflow, Step step, String payLoad,
-      Map<String, Object> simpleOutput) throws Exception {
-    return stepRunnerApi.runStep(workflow, step, payLoad, simpleOutput).getResponse();
+  private String runStep(Workflow workflow, Step step, String payLoad, String workflowOutput) throws Exception {
+    return stepRunnerApi.runStep(workflow, step, payLoad, workflowOutput).getResponse();
 
   }
 

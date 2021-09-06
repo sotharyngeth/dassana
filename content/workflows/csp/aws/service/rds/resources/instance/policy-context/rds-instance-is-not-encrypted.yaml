@@ -22,6 +22,14 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("rds-storage-encrypted"))
+  - vendor: prisma-cloud
+    policies:
+      - "34fa9efb-d18f-41e4-b93f-2f7e5378752c"
+      - "bddaae74-c3ad-474d-858f-982fecac5f1b"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "34fa9efb-d18f-41e4-b93f-2f7e5378752c"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "bddaae74-c3ad-474d-858f-982fecac5f1b"
 
 risk-config:
   default-risk: medium

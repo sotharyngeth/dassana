@@ -24,6 +24,16 @@ filters:
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-account-level-public-access-blocks"))
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-bucket-level-public-access-prohibited"))
+  - vendor: prisma-cloud
+    policies:
+      - "34064d53-1fd1-42e6-b075-45dce495caca"
+      - "630d3779-d932-4fbf-9cce-6e8d793c6916"
+      - "b76ad441-e715-4fd0-bbc3-cd3b2bee34bf"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "34064d53-1fd1-42e6-b075-45dce495caca"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "630d3779-d932-4fbf-9cce-6e8d793c6916"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "b76ad441-e715-4fd0-bbc3-cd3b2bee34bf"
 
 risk-config:
   default-risk: ""

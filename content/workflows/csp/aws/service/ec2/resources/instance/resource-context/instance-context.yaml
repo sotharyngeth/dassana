@@ -17,8 +17,10 @@ steps:
   - id: ec2Exposure
     uses: WhatIsEc2Exposure
     with:
-      - name: instanceArn
-        value: .canonicalId
+      - name: instanceId
+        value: .resourceId
+      - name: region
+        value: .region
 
 risk-config:
   default-risk: ""

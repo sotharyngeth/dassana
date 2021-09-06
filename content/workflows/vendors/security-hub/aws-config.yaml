@@ -6,12 +6,19 @@ id: aws-config-via-security-hub
 filters:
   - match-type: all
     rules:
-      - |
-        .detail and .detail.findings and (.detail.findings[].ProductFields.StandardsGuideArn or .detail.findings[].ProductFields.StandardsArn )
+      - .detail and .detail.findings and (.detail.findings[].ProductFields.StandardsGuideArn or .detail.findings[].ProductFields.StandardsArn )
 
 steps:
   - id: resource-info
     uses: SecurityHubResExtractor
+
+  - id: getTags # SecurityHub findings for aws config rules doesn't not contain tags many a times so we have an action which takes care of that
+    uses: GetTags
+    with:
+      - name: arn
+        value: .steps."resource-info".arn #notice that when you want to refer to the output of a previous step, you refer to it via JQ expression .step as the previous steps output is available under the `step` JSON key
+      - name: region
+        value: .steps."resource-info".region
 
 output:
   - name: vendorId
@@ -19,8 +26,6 @@ output:
     value-type: STRING
   - name: alertId
     value: ."resource-info".alertId
-  - name: canonicalId
-    value: ."resource-info".arn
   - name: vendorPolicy
     value: ."resource-info".policyId
   - name: csp
@@ -35,6 +40,8 @@ output:
     value: ."resource-info".resourceType
   - name: resourceId
     value: ."resource-info".resourceId
+  - name: tags
+    value: ."getTags"
 
 post-processor:
   steps:

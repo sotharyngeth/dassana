@@ -16,6 +16,12 @@ category: visibility
 subcategory: logging
 
 filters:
+  - vendor: prisma-cloud
+    policies:
+      - "ca5c571e-6930-44af-a47b-ebde3ac20ca5"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "ca5c571e-6930-44af-a47b-ebde3ac20ca5"
 
 risk-config:
   default-risk: medium

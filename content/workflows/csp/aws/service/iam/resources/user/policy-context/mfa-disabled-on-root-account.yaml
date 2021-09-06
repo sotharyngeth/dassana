@@ -22,6 +22,12 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("root-account-mfa-enabled"))
+  - vendor: prisma-cloud
+    policies:
+      - "478434a1-ff6c-492e-b411-c427c06291d9"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "478434a1-ff6c-492e-b411-c427c06291d9"
 
 risk-config:
   default-risk: critical

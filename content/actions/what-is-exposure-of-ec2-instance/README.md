@@ -16,7 +16,8 @@ On a high level, the action identifies the following questions for an instance:
 
 ```json
 {
-  "instanceArn": "arn:aws:ec2:us-east-1:123456789012:instance/i-09f3989e7c911111"
+  "instanceId": "i-09f3989e7c911111",
+  "region": "us- east-1"
 }
 ```
 

@@ -9,15 +9,16 @@ with open('input.json', 'r') as schema:
     schema = load(schema)
     dassana_aws = DassanaAwsObject()
 
+
 @validator(inbound_schema=schema)
 def handle(event: Dict[str, Any], context: LambdaContext):
-    arn = parse_arn(event.get('canonicalId'))
-    client = dassana_aws.create_aws_client(context, 'ec2', arn.get('region'))
+    group_id = event.get('groupId')
+    client = dassana_aws.create_aws_client(context, 'ec2', event.get('region'))
 
     result = client.describe_network_interfaces(Filters=[
         {
             'Name': 'group-id',
-            'Values': [arn.get('resource')]
+            'Values': [group_id]
         }
     ]
     )
