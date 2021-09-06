@@ -41,9 +41,8 @@ class Exposure(BaseModel):
 @logger.inject_lambda_context
 @validator(inbound_schema=schema)
 def handle(event: Dict[str, Any], context: LambdaContext):
-    arn = parse_arn(event.get('instanceArn'))
-    region = arn.get('region')
-    resource = arn.get('resource')
+    instance_id = event.get('instanceId')
+    region = event.get('region')
     event_exceptions = event.get('exceptions', [])
 
     ec2_client = dassana_aws.create_aws_client(context, 'ec2', region)
@@ -193,8 +192,13 @@ def handle(event: Dict[str, Any], context: LambdaContext):
         public_ip_address = instance_resp.get('Reservations')[0].get('Instances')[0].get(
             'PublicIpAddress')
 
+        if(public_ip_address != None):
+            publicIp = IPv4Address(public_ip_address)
+        else:
+            publicIp = ''
+
         exp.direct = {
-            'publicIp': IPv4Address(public_ip_address),
+            'publicIp': publicIp,
             'allowedVia': {
                 'sg': open_groups
             },
@@ -203,8 +207,8 @@ def handle(event: Dict[str, Any], context: LambdaContext):
 
         return True
 
-    if evaluate_direct(resource):
-        evaluate_app_layer(resource, event_exceptions)
+    if evaluate_direct(instance_id):
+        evaluate_app_layer(instance_id, event_exceptions)
 
     # Clean up / post handler
     # If traffic going to instance is unauthenticated, we do not care about the config.

@@ -232,7 +232,7 @@ public class ApiSqsHandlerTest {
 
     @Override
     public StepRunResponse runStep(Workflow workflow, Step step, String inputJson,
-        Map<String, Object> simpleOutput) throws Exception {
+        String simpleOutputJsonStr) throws Exception {
       StepRunResponse stepRunResponse = new StepRunResponse();
       if (step.getId().contentEquals("resource-info")) {
 

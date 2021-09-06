@@ -16,6 +16,12 @@ category: networking
 subcategory: firewall
 
 filters:
+  - vendor: prisma-cloud
+    policies:
+      - "8d403b9b-794b-4516-84fa-e9415155fb27"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "8d403b9b-794b-4516-84fa-e9415155fb27"
 
 risk-config:
   default-risk: high

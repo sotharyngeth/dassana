@@ -38,6 +38,8 @@ public class PostProcessor {
         .getWorkflowIdToWorkflowMap(request)
         .get(normalizationResult.getWorkflowId());
 
+    String normalizedJsonStr = new JSONObject(normalizationResult.getOutput()).toString();
+
     //we now run post processors of the normalization workflow, if any.
     Map<String, Object> stepIdToResponse = new HashMap<>();
     if (!request.isSkipPostProcessor()) {
@@ -47,7 +49,7 @@ public class PostProcessor {
             .runStep(normalizerWorkflow,
                 step,
                 processedAlertWithS3key,
-                normalizationResult.getOutput())
+                normalizedJsonStr)
             .getResponse();
         //we expect the post processor to provide either a json obj or an array, failing which we simply consider
         // it as a string

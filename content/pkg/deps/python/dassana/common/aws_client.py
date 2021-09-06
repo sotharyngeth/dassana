@@ -5,6 +5,8 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools.utilities.typing.lambda_client_context import LambdaClientContext
 from boto3 import Session, client
 
+from dassana.common.models import ArnComponent
+
 
 class LambdaTestContext(LambdaContext):
     class LambdaTestClientContext(LambdaClientContext):
@@ -28,7 +30,8 @@ class DassanaAwsObject(object):
         self._session = Session()
 
     def create_aws_client(self, context: LambdaContext, service, region: str) -> client:
-        if context is None or context.client_context is None or context.client_context.custom is None or len(context.client_context.custom) == 0:
+        if context is None or context.client_context is None or context.client_context.custom is None or len(
+                context.client_context.custom) == 0:
             return self._session.client(service, region)
         else:
             access_key = context.client_context.custom.get('AWS_ACCESS_KEY_ID')
@@ -39,7 +42,7 @@ class DassanaAwsObject(object):
                                         aws_session_token=session_token)
 
 
-def parse_arn(arn):
+def parse_arn(arn: str):
     elements = arn.split(':', 5)
     result = {
         'arn': elements[0],
@@ -54,4 +57,12 @@ def parse_arn(arn):
         result['resource_type'], result['resource'] = result['resource'].split('/', 1)
     elif ':' in result['resource']:
         result['resource_type'], result['resource'] = result['resource'].split(':', 1)
-    return result
+    return ArnComponent(
+        arn=result.get('arn', None),
+        partition=result.get('partition'),
+        service=result.get('service', None),
+        region=result.get('region'),
+        account=result.get('account'),
+        resource=result.get('resource', None),
+        resource_type=result.get('resource_type', None)
+    )

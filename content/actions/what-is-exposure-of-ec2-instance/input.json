@@ -3,7 +3,10 @@
   "title": "WhatIsExposureOfEc2Instance",
   "type": "object",
   "properties": {
-    "instanceArn": {
+    "instanceId": {
+      "type": "string"
+    },
+    "region": {
       "type": "string"
     },
     "exceptions": {
@@ -14,6 +17,7 @@
     }
   },
   "required": [
-    "instanceArn"
+    "instanceId",
+    "region"
   ]
 }

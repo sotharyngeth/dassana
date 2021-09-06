@@ -22,6 +22,12 @@ filters:
     match-type: any
     rules:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("access-keys-rotated"))
+  - vendor: prisma-cloud
+    policies:
+      - "6ea06abf-bfd3-49f2-9332-9aee02c31d58"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "6ea06abf-bfd3-49f2-9332-9aee02c31d58"
 
 risk-config:
   default-risk: medium

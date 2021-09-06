@@ -229,7 +229,9 @@ Resources:
                   - sqs:ReceiveMessage
                   - sqs:DeleteMessage
                   - sqs:GetQueueAttributes
-                Resource: !GetAtt DassanaInboundQueue.Arn
+                Resource:
+                  - !GetAtt DassanaInboundQueue.Arn
+                  - !GetAtt DassanaDeadLetterQueue.Arn
 
   DassanaInboundQueuePolicyForEventHub:
     Type: AWS::SQS::QueuePolicy
@@ -479,6 +481,12 @@ Resources:
       LayerName: MMDBLayer
       Description:
       ContentUri: deps/mmdb
+  DassanaWorkflowLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: WorkflowLayer
+      Description:
+      ContentUri: ../workflows/csp
   DassanaActionsRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -552,18 +560,32 @@ Resources:
         Fn::GetAtt: [DassanaActionsRole, Arn]
       Timeout: 60
 
-  # PrismaCloudExtractor:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     Handler: src/handler.handle
-  #     Runtime: python3.8
-  #     MemorySize: 128
-  #     Layers:
-  #       - !Ref DassanaActionsPythonLayer
-  #     CodeUri: ../actions/prisma-cloud-normalizer
-  #     Role:
-  #       Fn::GetAtt: [DassanaActionsRole, Arn]
-  #     Timeout: 60
+  PrismaCloudExtractor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handler.handle
+      Runtime: python3.8
+      MemorySize: 128
+      Layers:
+        - !Ref DassanaActionsPythonLayer
+      CodeUri: ../actions/prisma-cloud-normalizer
+      Role:
+        Fn::GetAtt: [DassanaActionsRole, Arn]
+      Timeout: 60
+
+  NormalizerLookup:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handler.handle
+      Runtime: python3.8
+      MemorySize: 128
+      Layers:
+        - !Ref DassanaActionsPythonLayer
+        - !Ref DassanaWorkflowLayer
+      CodeUri: ../actions/normalizer-lookup
+      Role:
+        Fn::GetAtt: [DassanaActionsRole, Arn]
+      Timeout: 60
 
   GuardDutyExtractor:
     Type: AWS::Serverless::Function

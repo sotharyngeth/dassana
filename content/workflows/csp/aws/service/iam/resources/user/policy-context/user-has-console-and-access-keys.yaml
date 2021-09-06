@@ -19,3 +19,9 @@ risk-config:
   default-risk: medium
 
 filters:
+  - vendor: prisma-cloud
+    policies:
+      - "6a34af3f-21ae-8008-0850-229761d01081"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "6a34af3f-21ae-8008-0850-229761d01081"

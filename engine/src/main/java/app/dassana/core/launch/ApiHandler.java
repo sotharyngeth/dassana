@@ -127,16 +127,16 @@ public class ApiHandler extends
         //todo: generify this
         if (workflow.getClass().getName().contentEquals(NormalizerWorkflow.class.getName())) {
           workflowOutputWithRisk = workflowRunner
-              .runWorkFlow(NormalizerWorkflow.class, request, new JSONObject(request.getInputJson()).toMap());
+              .runWorkFlow(NormalizerWorkflow.class, request, request.getInputJson());
         } else if (workflow.getClass().getName().contentEquals(GeneralContext.class.getName())) {
           workflowOutputWithRisk = workflowRunner.runWorkFlow(GeneralContext.class, request,
-              new JSONObject(request.getInputJson()).toMap());
+              request.getInputJson());
         } else if (workflow.getClass().getName().contentEquals(ResourceContext.class.getName())) {
           workflowOutputWithRisk = workflowRunner.runWorkFlow(ResourceContext.class, request,
-              new JSONObject(request.getInputJson()).toMap());
+              request.getInputJson());
         } else if (workflow.getClass().getName().contentEquals(PolicyContext.class.getName())) {
           workflowOutputWithRisk = workflowRunner.runWorkFlow(PolicyContext.class, request,
-              new JSONObject(request.getInputJson()).toMap());
+              request.getInputJson());
         }
 
         if (workflowOutputWithRisk.isPresent()) {

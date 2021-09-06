@@ -18,7 +18,6 @@ import app.dassana.core.workflow.WorkflowRunner;
 import app.dassana.core.workflow.model.NormalizerException;
 import app.dassana.core.workflow.model.Workflow;
 import app.dassana.core.workflow.model.WorkflowOutputWithRisk;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -84,7 +84,7 @@ public class RequestProcessor {
     Optional<WorkflowOutputWithRisk> generalContext = Optional.empty();
 
     normalizationResult = workflowRunner
-        .runWorkFlow(NormalizerWorkflow.class, request, new HashMap<>());
+        .runWorkFlow(NormalizerWorkflow.class, request, "");
 
     List<Future<Optional<WorkflowOutputWithRisk>>> futureList = new LinkedList<>();
 
@@ -94,24 +94,26 @@ public class RequestProcessor {
       WorkflowOutputWithRisk normalizedWorkflowOutput = normalizationResult.get();
       validateNormalizerOutput(normalizedWorkflowOutput);
 
+      String normalizedWorkflowJsonStr = new JSONObject(normalizedWorkflowOutput.getOutput()).toString();
+
       if (!request.isSkipGeneralContext()) {
         futureList.add(executorCompletionService
             .submit(() ->
                 workflowRunner
-                    .runWorkFlow(GeneralContext.class, request, normalizedWorkflowOutput.getOutput())));
+                    .runWorkFlow(GeneralContext.class, request, normalizedWorkflowJsonStr)));
       }
       if (!request.isSkipResourceContext()) {
         futureList.add(executorCompletionService
             .submit(() ->
                 workflowRunner
-                    .runWorkFlow(ResourceContext.class, request, normalizedWorkflowOutput.getOutput())));
+                    .runWorkFlow(ResourceContext.class, request, normalizedWorkflowJsonStr)));
       }
 
       if (!request.isSkipPolicyContext()) {
         futureList.add(executorCompletionService
             .submit(() ->
                 workflowRunner
-                    .runWorkFlow(PolicyContext.class, request, normalizedWorkflowOutput.getOutput())));
+                    .runWorkFlow(PolicyContext.class, request, normalizedWorkflowJsonStr)));
       }
 
       for (Future<Optional<WorkflowOutputWithRisk>> ignored : futureList) {
@@ -165,7 +167,7 @@ public class RequestProcessor {
 
     checkArgsToBeTrue("vendorId", normalizerOutput);
     checkArgsToBeTrue("alertId", normalizerOutput);
-   //checkArgsToBeTrue("canonicalId", normalizerOutput);
+    //checkArgsToBeTrue("canonicalId", normalizerOutput);
     checkArgsToBeTrue("vendorPolicy", normalizerOutput);
     checkArgsToBeTrue("csp", normalizerOutput);
     checkArgsToBeTrue("resourceContainer", normalizerOutput);

@@ -26,15 +26,26 @@ filters:
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-bucket-blacklisted-actions-prohibited"))
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-bucket-public-read-prohibited"))
       - .vendorId == "aws-config" and (.vendorPolicy |contains ("s3-bucket-public-write-prohibited"))
-
+  - vendor: prisma-cloud
+    policies:
+      - "085de1e7-7eb5-4fde-9a14-56f563c54ed3"
+      - "98340798-8e9f-4b4e-8c34-b001307fda3a"
+      - "f0235acc-737d-4a54-8d2c-a05da32663bd"
+      - "e0b4379d-6692-41ab-bd33-10cbac836b1e"
+    match-type: any
+    rules:
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "085de1e7-7eb5-4fde-9a14-56f563c54ed3"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "98340798-8e9f-4b4e-8c34-b001307fda3a"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "f0235acc-737d-4a54-8d2c-a05da32663bd"
+      - .vendorId == "prisma-cloud" and .vendorPolicy == "e0b4379d-6692-41ab-bd33-10cbac836b1e"
 
 steps:
   - id: website-info
     uses: WebsiteContext
     with:
-      - name: bucketArn
-        value: .canonicalId
-      - name: awsRegion
+      - name: bucketName
+        value: .resourceId
+      - name: region
         value: .region
 
 risk-config:

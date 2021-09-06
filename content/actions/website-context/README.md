@@ -5,8 +5,8 @@ Identifies if a S3 Bucket is associated with a website.
 ### Sample Input:
 ```json
 {
-  "bucketArn": "arn:aws:s3:::foobar",
-  "awsRegion": "us-east-1"
+  "bucketName": "foobar",
+  "region": "us-east-1"
 }
 ```
 
