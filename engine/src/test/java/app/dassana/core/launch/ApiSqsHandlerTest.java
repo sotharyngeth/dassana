@@ -10,8 +10,9 @@ import static app.dassana.core.util.JsonyThings.MESSAGE;
 import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
 
 import app.dassana.core.api.DassanaWorkflowValidationException;
-import app.dassana.core.contentmanager.RemoteContentDownloadApi;
+import app.dassana.core.contentmanager.RemoteWorkflows;
 import app.dassana.core.contentmanager.infra.S3Downloader;
+import app.dassana.core.launch.model.Request;
 import app.dassana.core.workflow.StepRunnerApi;
 import app.dassana.core.workflow.infra.LambdaStepRunner;
 import app.dassana.core.workflow.model.Step;
@@ -22,12 +23,14 @@ import app.dassana.core.workflow.processor.S3Manager;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.apache.commons.io.IOUtils;
@@ -51,7 +54,8 @@ public class ApiSqsHandlerTest {
     Map<String, String> queryParams = new HashMap<>();
     queryParams = helper.getQueryParams(false);
     String executeRunApi = helper.executeRunApi(helper.getFileContent(file), queryParams);
-    Assertions.assertTrue(executeRunApi.contains("Sorry but the normalizer aws-config-via-security-hub threw error csp is expected to be not empty"));
+    Assertions.assertTrue(executeRunApi.contains(
+        "Sorry but the normalizer aws-config-via-security-hub threw error csp is expected to be not empty"));
 
 
   }
@@ -130,7 +134,7 @@ public class ApiSqsHandlerTest {
     queryParams.put(WORKFLOW_ID, "foo-cloud-normalize");
     String executeRunApiResponse = helper.executeRunApi(helper.getFileContent("inputs/validSecurityHubAlert.json"),
         queryParams);
-    Assertions.assertTrue(executeRunApiResponse.contentEquals("{}"));
+    Assertions.assertTrue(executeRunApiResponse.contentEquals("{}"),executeRunApiResponse);
 
   }
 
@@ -207,17 +211,22 @@ public class ApiSqsHandlerTest {
 
 
   @Singleton
-  @Replaces(RemoteContentDownloadApi.class)
+  @Replaces(RemoteWorkflows.class)
   public static class FakeS3Downloader extends S3Downloader {
 
 
-    public FakeS3Downloader(S3Client s3Client) {
-      super(s3Client);
+    @Override
+    public Set<Workflow> getWorkflowSet(Request input) throws ExecutionException {
+      return new HashSet<>();
     }
 
     @Override
-    public Optional<File> downloadContent(Long lastDownloaded) {
-      return Optional.empty();
+    public String getWorkflowById(String workflowId) {
+      return "";
+    }
+
+    public FakeS3Downloader(S3Client s3Client) {
+      super(s3Client);
     }
   }
 

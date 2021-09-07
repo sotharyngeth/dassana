@@ -1,10 +1,12 @@
 package app.dassana.core.launch;
 
+import static app.dassana.core.contentmanager.ContentManager.DASSANA_MANAGEMENT_BUCKET;
 import static app.dassana.core.contentmanager.ContentManager.GENERAL_CONTEXT;
 import static app.dassana.core.contentmanager.ContentManager.NORMALIZE;
 import static app.dassana.core.contentmanager.ContentManager.POLICY_CONTEXT;
 import static app.dassana.core.contentmanager.ContentManager.RESOURCE_CONTEXT;
 import static app.dassana.core.contentmanager.ContentManager.WORKFLOW_ID;
+import static app.dassana.core.contentmanager.infra.S3Downloader.CONTENT_LAST_UPDATED_CACHE_KEY;
 import static app.dassana.core.contentmanager.infra.S3Downloader.WORKFLOW_PATH_IN_S3;
 import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
 
@@ -13,6 +15,7 @@ import app.dassana.core.api.PingHandler;
 import app.dassana.core.api.VersionHandler;
 import app.dassana.core.api.WorkflowValidator;
 import app.dassana.core.contentmanager.ContentManager;
+import app.dassana.core.contentmanager.ContentReader;
 import app.dassana.core.launch.model.Message;
 import app.dassana.core.launch.model.ProcessingResponse;
 import app.dassana.core.launch.model.Request;
@@ -80,6 +83,7 @@ public class ApiHandler extends
   @Inject private WorkflowValidator workflowValidator;
   @Inject private WorkflowRunner workflowRunner;
   @Inject private VersionHandler versionHandler;
+  @Inject ContentReader contentReader;
 
 
   @Inject ContentManager contentManager; //todo: not a good idea to inject an implementation
@@ -104,13 +108,11 @@ public class ApiHandler extends
   }
 
   String handleGet(Request request, String workFlowId) throws Exception {
-
-    for (Workflow workflow : contentManager.getWorkflowSet(request)) {
-      if (workflow.getId().contentEquals(workFlowId)) {
-        return contentManager.getWorkflowIdToYamlContext().get(workFlowId);
-      }
+    String workflowYamlById = contentManager.getWorkflowYamlById(workFlowId, request);
+    if (StringUtils.isEmpty(workflowYamlById)) {
+      throw new WorkflowNotFundException(String.format("Workflow %s not found", workFlowId));
     }
-    throw new WorkflowNotFundException("That workflow id wasn't found :(");
+    return workflowYamlById;
 
   }
 
@@ -236,11 +238,14 @@ public class ApiHandler extends
   }
 
   private void handleSaveToS3(String body) throws JsonProcessingException {
-    String dassanaBucket = System.getenv().get("dassanaBucket");
-    Workflow workflow = contentManager.getWorkflow(new JSONObject(StringyThings.getJsonFromYaml(body)));
+    String dassanaBucket = System.getenv().get(DASSANA_MANAGEMENT_BUCKET);
+    Workflow workflow = contentReader.getWorkflow(new JSONObject(StringyThings.getJsonFromYaml(body)));
     String key = WORKFLOW_PATH_IN_S3.concat(workflow.getId());
     PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(dassanaBucket).key(key).build();
     s3Client.putObject(putObjectRequest, RequestBody.fromString(body, Charset.defaultCharset()));
+    s3Client.putObject(
+        PutObjectRequest.builder().bucket(dassanaBucket).key(CONTENT_LAST_UPDATED_CACHE_KEY)
+            .build(), RequestBody.empty());
 
   }
 
@@ -282,7 +287,7 @@ public class ApiHandler extends
 
             for (String workflowYamlStr : request.getAdditionalWorkflowYamls()) {
               String workflowJson = StringyThings.getJsonFromYaml(workflowYamlStr);
-              Workflow workflow = contentManager.getWorkflow(new JSONObject(workflowJson));
+              Workflow workflow = contentReader.getWorkflow(new JSONObject(workflowJson));
               String workflowType = workflowResponse.getString("workflowType");
               if (workflowType.contentEquals(workflow.getType())) {
                 if (!workflow.getId().contentEquals(workflowResponse.getString(WORKFLOW_ID))) {
