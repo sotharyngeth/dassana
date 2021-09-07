@@ -2,40 +2,2911 @@ csp:
   - id: aws
     name: Amazon Web Services
     services:
-      - id: cloudfront
+      - id: amg
+        name: AMG
         resource-types:
-          - id: distribution
-      - id: cloudtrail
+          - id: workspace
+            name: workspace
+      - id: amp
+        name: AMP
         resource-types:
-          - id: trail
-      - id: config
+          - id: workspace
+            name: workspace
+      - id: apiGateway
+        name: API Gateway
         resource-types:
-          - id: config-recorder
-      - id: ec2
+          - id: Account
+            name: Account
+          - id: ApiKey
+            name: ApiKey
+          - id: ApiKeys
+            name: ApiKeys
+          - id: Authorizer
+            name: Authorizer
+          - id: Authorizers
+            name: Authorizers
+          - id: BasePathMapping
+            name: BasePathMapping
+          - id: BasePathMappings
+            name: BasePathMappings
+          - id: ClientCertificate
+            name: ClientCertificate
+          - id: ClientCertificates
+            name: ClientCertificates
+          - id: Deployment
+            name: Deployment
+          - id: Deployments
+            name: Deployments
+          - id: DocumentationPart
+            name: DocumentationPart
+          - id: DocumentationParts
+            name: DocumentationParts
+          - id: DocumentationVersion
+            name: DocumentationVersion
+          - id: DocumentationVersions
+            name: DocumentationVersions
+          - id: DomainName
+            name: DomainName
+          - id: DomainNames
+            name: DomainNames
+          - id: GatewayResponse
+            name: GatewayResponse
+          - id: GatewayResponses
+            name: GatewayResponses
+          - id: Integration
+            name: Integration
+          - id: IntegrationResponse
+            name: IntegrationResponse
+          - id: Method
+            name: Method
+          - id: MethodResponse
+            name: MethodResponse
+          - id: Model
+            name: Model
+          - id: Models
+            name: Models
+          - id: RequestValidator
+            name: RequestValidator
+          - id: RequestValidators
+            name: RequestValidators
+          - id: Resource
+            name: Resource
+          - id: Resources
+            name: Resources
+          - id: RestApi
+            name: RestApi
+          - id: RestApis
+            name: RestApis
+          - id: Sdk
+            name: Sdk
+          - id: Stage
+            name: Stage
+          - id: Stages
+            name: Stages
+          - id: Template
+            name: Template
+          - id: UsagePlan
+            name: UsagePlan
+          - id: UsagePlanKey
+            name: UsagePlanKey
+          - id: UsagePlanKeys
+            name: UsagePlanKeys
+          - id: UsagePlans
+            name: UsagePlans
+          - id: VpcLink
+            name: VpcLink
+          - id: VpcLinks
+            name: VpcLinks
+      - id: apiGatewayV2
+        name: API Gateway V2
         resource-types:
-          - id: instance
-          - id: route-table
-          - id: security-group
-          - id: snapshot
-          - id: volume
-          - id: vpc-flow-log
-      - id: elasticloadbalancing
+          - id: AccessLogSettings
+            name: AccessLogSettings
+          - id: Api
+            name: Api
+          - id: ApiMapping
+            name: ApiMapping
+          - id: ApiMappings
+            name: ApiMappings
+          - id: Apis
+            name: Apis
+          - id: Authorizer
+            name: Authorizer
+          - id: Authorizers
+            name: Authorizers
+          - id: AuthorizersCache
+            name: AuthorizersCache
+          - id: Cors
+            name: Cors
+          - id: Deployment
+            name: Deployment
+          - id: Deployments
+            name: Deployments
+          - id: ExportedAPI
+            name: ExportedAPI
+          - id: Integration
+            name: Integration
+          - id: IntegrationResponse
+            name: IntegrationResponse
+          - id: IntegrationResponses
+            name: IntegrationResponses
+          - id: Integrations
+            name: Integrations
+          - id: Model
+            name: Model
+          - id: ModelTemplate
+            name: ModelTemplate
+          - id: Models
+            name: Models
+          - id: Route
+            name: Route
+          - id: RouteRequestParameter
+            name: RouteRequestParameter
+          - id: RouteResponse
+            name: RouteResponse
+          - id: RouteResponses
+            name: RouteResponses
+          - id: RouteSettings
+            name: RouteSettings
+          - id: Routes
+            name: Routes
+          - id: Stage
+            name: Stage
+          - id: Stages
+            name: Stages
+      - id: accessAnalyzer
+        name: Access Analyzer
         resource-types:
-          - id: loadbalancer
-      - id: iam
+          - id: Analyzer
+            name: Analyzer
+          - id: ArchiveRule
+            name: ArchiveRule
+      - id: account
+        name: Account
+        resource-types: []
+      - id: activate
+        name: Activate
+        resource-types: []
+      - id: alexaForBusiness
+        name: Alexa for Business
         resource-types:
-          - id: policy
+          - id: addressbook
+            name: addressbook
+          - id: conferenceprovider
+            name: conferenceprovider
+          - id: contact
+            name: contact
+          - id: device
+            name: device
+          - id: gateway
+            name: gateway
+          - id: gatewaygroup
+            name: gatewaygroup
+          - id: networkprofile
+            name: networkprofile
+          - id: profile
+            name: profile
+          - id: room
+            name: room
+          - id: schedule
+            name: schedule
+          - id: skillgroup
+            name: skillgroup
           - id: user
-      - id: kms
+            name: user
+      - id: amplify
+        name: Amplify
         resource-types:
-          - id: cmk
-      - id: rds
+          - id: apps
+            name: apps
+          - id: branches
+            name: branches
+          - id: domains
+            name: domains
+          - id: jobs
+            name: jobs
+      - id: amplifyAdmin
+        name: Amplify Admin
         resource-types:
-          - id: instance
-          - id: snapshot
-      - id: redshift
+          - id: api
+            name: api
+          - id: auth
+            name: auth
+          - id: backend
+            name: backend
+          - id: environment
+            name: environment
+          - id: job
+            name: job
+      - id: apacheKafkaApisForMsk
+        name: Apache Kafka APIs for MSK
         resource-types:
           - id: cluster
-      - id: s3
+            name: cluster
+          - id: group
+            name: group
+          - id: topic
+            name: topic
+          - id: transactional-id
+            name: transactional-id
+      - id: appMesh
+        name: App Mesh
         resource-types:
+          - id: gatewayRoute
+            name: gatewayRoute
+          - id: mesh
+            name: mesh
+          - id: route
+            name: route
+          - id: virtualGateway
+            name: virtualGateway
+          - id: virtualNode
+            name: virtualNode
+          - id: virtualRouter
+            name: virtualRouter
+          - id: virtualService
+            name: virtualService
+      - id: appMeshPreview
+        name: App Mesh Preview
+        resource-types:
+          - id: gatewayRoute
+            name: gatewayRoute
+          - id: mesh
+            name: mesh
+          - id: route
+            name: route
+          - id: virtualGateway
+            name: virtualGateway
+          - id: virtualNode
+            name: virtualNode
+          - id: virtualRouter
+            name: virtualRouter
+          - id: virtualService
+            name: virtualService
+      - id: appconfig
+        name: AppConfig
+        resource-types:
+          - id: application
+            name: application
+          - id: configurationprofile
+            name: configurationprofile
+          - id: deployment
+            name: deployment
+          - id: deploymentstrategy
+            name: deploymentstrategy
+          - id: environment
+            name: environment
+          - id: hostedconfigurationversion
+            name: hostedconfigurationversion
+      - id: appflow
+        name: AppFlow
+        resource-types:
+          - id: connectorprofile
+            name: connectorprofile
+          - id: flow
+            name: flow
+      - id: appintegrations
+        name: AppIntegrations
+        resource-types:
+          - id: event-integration
+            name: event-integration
+          - id: event-integration-association
+            name: event-integration-association
+      - id: appstream 2.0
+        name: AppStream 2.0
+        resource-types:
+          - id: fleet
+            name: fleet
+          - id: image
+            name: image
+          - id: image-builder
+            name: image-builder
+          - id: stack
+            name: stack
+      - id: appsync
+        name: AppSync
+        resource-types:
+          - id: field
+            name: field
+          - id: graphqlapi
+            name: graphqlapi
+      - id: applicationAutoScaling
+        name: Application Auto Scaling
+        resource-types: []
+      - id: applicationDiscovery
+        name: Application Discovery
+        resource-types: []
+      - id: applicationDiscoveryArsenal
+        name: Application Discovery Arsenal
+        resource-types: []
+      - id: artifact
+        name: Artifact
+        resource-types:
+          - id: agreement
+            name: agreement
+          - id: customer-agreement
+            name: customer-agreement
+          - id: report-package
+            name: report-package
+      - id: athena
+        name: Athena
+        resource-types:
+          - id: datacatalog
+            name: datacatalog
+          - id: workgroup
+            name: workgroup
+      - id: auditManager
+        name: Audit Manager
+        resource-types:
+          - id: assessment
+            name: assessment
+          - id: assessmentControlSet
+            name: assessmentControlSet
+          - id: assessmentFramework
+            name: assessmentFramework
+          - id: control
+            name: control
+      - id: autoScaling
+        name: Auto Scaling
+        resource-types: []
+      - id: backup
+        name: Backup
+        resource-types:
+          - id: backupPlan
+            name: backupPlan
+          - id: backupVault
+            name: backupVault
+          - id: recoveryPoint
+            name: recoveryPoint
+      - id: backupStorage
+        name: Backup Storage
+        resource-types: []
+      - id: batch
+        name: Batch
+        resource-types:
+          - id: compute-environment
+            name: compute-environment
+          - id: job
+            name: job
+          - id: job-definition
+            name: job-definition
+          - id: job-queue
+            name: job-queue
+      - id: billing
+        name: Billing
+        resource-types: []
+      - id: braket
+        name: Braket
+        resource-types:
+          - id: quantum-task
+            name: quantum-task
+      - id: budget
+        name: Budget
+        resource-types:
+          - id: budget
+            name: budget
+          - id: budgetAction
+            name: budgetAction
+      - id: cas
+        name: CAS
+        resource-types: []
+      - id: certificateManager
+        name: Certificate Manager
+        resource-types:
+          - id: certificate
+            name: certificate
+      - id: certificateManagerPrivateCertificateAuthority
+        name: Certificate Manager Private Certificate Authority
+        resource-types:
+          - id: certificate-authority
+            name: certificate-authority
+      - id: chatbot
+        name: Chatbot
+        resource-types: []
+      - id: chime
+        name: Chime
+        resource-types:
+          - id: app-instance
+            name: app-instance
+          - id: app-instance-user
+            name: app-instance-user
+          - id: channel
+            name: channel
+          - id: meeting
+            name: meeting
+      - id: cloudDirectory
+        name: Cloud Directory
+        resource-types:
+          - id: appliedSchema
+            name: appliedSchema
+          - id: developmentSchema
+            name: developmentSchema
+          - id: directory
+            name: directory
+          - id: publishedSchema
+            name: publishedSchema
+      - id: cloudMap
+        name: Cloud Map
+        resource-types:
+          - id: namespace
+            name: namespace
+          - id: service
+            name: service
+      - id: cloud9
+        name: Cloud9
+        resource-types:
+          - id: environment
+            name: environment
+      - id: cloudformation
+        name: CloudFormation
+        resource-types:
+          - id: stack
+            name: stack
+          - id: stackset
+            name: stackset
+          - id: stackset-target
+            name: stackset-target
+          - id: type
+            name: type
+      - id: cloudfront
+        name: CloudFront
+        resource-types:
+          - id: distribution
+            name: distribution
+          - id: origin-access-identity
+            name: origin-access-identity
+          - id: streaming-distribution
+            name: streaming-distribution
+      - id: cloudhsm
+        name: CloudHSM
+        resource-types:
+          - id: backup
+            name: backup
+          - id: cluster
+            name: cluster
+      - id: cloudsearch
+        name: CloudSearch
+        resource-types:
+          - id: domain
+            name: domain
+      - id: cloudshell
+        name: CloudShell
+        resource-types:
+          - id: Environment
+            name: Environment
+      - id: cloudtrail
+        name: CloudTrail
+        resource-types:
+          - id: trail
+            name: trail
+      - id: cloudwatch
+        name: CloudWatch
+        resource-types:
+          - id: alarm
+            name: alarm
+          - id: dashboard
+            name: dashboard
+          - id: insight-rule
+            name: insight-rule
+          - id: metric-stream
+            name: metric-stream
+      - id: cloudwatchApplicationInsights
+        name: CloudWatch Application Insights
+        resource-types: []
+      - id: cloudwatchLogs
+        name: CloudWatch Logs
+        resource-types:
+          - id: log-group
+            name: log-group
+          - id: log-stream
+            name: log-stream
+      - id: cloudwatchSynthetics
+        name: CloudWatch Synthetics
+        resource-types:
+          - id: canary
+            name: canary
+      - id: codeartifact
+        name: CodeArtifact
+        resource-types:
+          - id: domain
+            name: domain
+          - id: package
+            name: package
+          - id: repository
+            name: repository
+      - id: codebuild
+        name: CodeBuild
+        resource-types:
+          - id: project
+            name: project
+          - id: report-group
+            name: report-group
+      - id: codecommit
+        name: CodeCommit
+        resource-types:
+          - id: repository
+            name: repository
+      - id: codedeploy
+        name: CodeDeploy
+        resource-types:
+          - id: application
+            name: application
+          - id: deploymentconfig
+            name: deploymentconfig
+          - id: deploymentgroup
+            name: deploymentgroup
+          - id: instance
+            name: instance
+      - id: codeguru
+        name: CodeGuru
+        resource-types: []
+      - id: codeguruProfiler
+        name: CodeGuru Profiler
+        resource-types:
+          - id: ProfilingGroup
+            name: ProfilingGroup
+      - id: codeguruReviewer
+        name: CodeGuru Reviewer
+        resource-types:
+          - id: association
+            name: association
+          - id: connection
+            name: connection
+          - id: repository
+            name: repository
+      - id: codepipeline
+        name: CodePipeline
+        resource-types:
+          - id: action
+            name: action
+          - id: actiontype
+            name: actiontype
+          - id: pipeline
+            name: pipeline
+          - id: stage
+            name: stage
+          - id: webhook
+            name: webhook
+      - id: codestar
+        name: CodeStar
+        resource-types:
+          - id: project
+            name: project
+          - id: user
+            name: user
+      - id: codestarConnections
+        name: CodeStar Connections
+        resource-types:
+          - id: Connection
+            name: Connection
+          - id: Host
+            name: Host
+      - id: codestarNotifications
+        name: CodeStar Notifications
+        resource-types:
+          - id: notificationrule
+            name: notificationrule
+      - id: cognitoIdentity
+        name: Cognito Identity
+        resource-types:
+          - id: identitypool
+            name: identitypool
+      - id: cognitoSync
+        name: Cognito Sync
+        resource-types:
+          - id: dataset
+            name: dataset
+          - id: identity
+            name: identity
+          - id: identitypool
+            name: identitypool
+      - id: cognitoUserPools
+        name: Cognito User Pools
+        resource-types:
+          - id: userpool
+            name: userpool
+      - id: comprehend
+        name: Comprehend
+        resource-types:
+          - id: document-classifier
+            name: document-classifier
+          - id: document-classifier-endpoint
+            name: document-classifier-endpoint
+          - id: entity-recognizer
+            name: entity-recognizer
+          - id: entity-recognizer-endpoint
+            name: entity-recognizer-endpoint
+      - id: comprehendmedical
+        name: ComprehendMedical
+        resource-types: []
+      - id: computeOptimizer
+        name: Compute Optimizer
+        resource-types: []
+      - id: config
+        name: Config
+        resource-types:
+          - id: AggregationAuthorization
+            name: AggregationAuthorization
+          - id: ConfigRule
+            name: ConfigRule
+          - id: ConfigurationAggregator
+            name: ConfigurationAggregator
+          - id: ConformancePack
+            name: ConformancePack
+          - id: RemediationConfiguration
+            name: RemediationConfiguration
+          - id: StoredQuery
+            name: StoredQuery
+      - id: connect
+        name: Connect
+        resource-types:
+          - id: contact
+            name: contact
+          - id: contact-flow
+            name: contact-flow
+          - id: hierarchy-group
+            name: hierarchy-group
+          - id: hours-of-operation
+            name: hours-of-operation
+          - id: instance
+            name: instance
+          - id: integration-association
+            name: integration-association
+          - id: phone-number
+            name: phone-number
+          - id: queue
+            name: queue
+          - id: quick-connect
+            name: quick-connect
+          - id: routing-profile
+            name: routing-profile
+          - id: security-profile
+            name: security-profile
+          - id: use-case
+            name: use-case
+          - id: user
+            name: user
+      - id: connectorService
+        name: Connector Service
+        resource-types: []
+      - id: controlTower
+        name: Control Tower
+        resource-types: []
+      - id: costExplorerService
+        name: Cost Explorer Service
+        resource-types: []
+      - id: costAndUsageReport
+        name: Cost and Usage Report
+        resource-types:
+          - id: cur
+            name: cur
+      - id: dbqms
+        name: DBQMS
+        resource-types: []
+      - id: dms
+        name: DMS
+        resource-types:
+          - id: Certificate
+            name: Certificate
+          - id: Endpoint
+            name: Endpoint
+          - id: EventSubscription
+            name: EventSubscription
+          - id: ReplicationInstance
+            name: ReplicationInstance
+          - id: ReplicationSubnetGroup
+            name: ReplicationSubnetGroup
+          - id: ReplicationTask
+            name: ReplicationTask
+          - id: ReplicationTaskAssessmentRun
+            name: ReplicationTaskAssessmentRun
+      - id: dataExchange
+        name: Data Exchange
+        resource-types:
+          - id: assets
+            name: assets
+          - id: data-sets
+            name: data-sets
+          - id: jobs
+            name: jobs
+          - id: revisions
+            name: revisions
+      - id: dataLifecycleManager
+        name: Data Lifecycle Manager
+        resource-types:
+          - id: policy
+            name: policy
+      - id: dataPipeline
+        name: Data Pipeline
+        resource-types: []
+      - id: databrew
+        name: DataBrew
+        resource-types:
+          - id: Dataset
+            name: Dataset
+          - id: Job
+            name: Job
+          - id: Project
+            name: Project
+          - id: Recipe
+            name: Recipe
+          - id: Schedule
+            name: Schedule
+      - id: datasync
+        name: DataSync
+        resource-types:
+          - id: agent
+            name: agent
+          - id: location
+            name: location
+          - id: task
+            name: task
+          - id: taskexecution
+            name: taskexecution
+      - id: deepcomposer
+        name: DeepComposer
+        resource-types:
+          - id: audio
+            name: audio
+          - id: composition
+            name: composition
+          - id: model
+            name: model
+      - id: deeplens
+        name: DeepLens
+        resource-types:
+          - id: device
+            name: device
+          - id: model
+            name: model
+          - id: project
+            name: project
+      - id: deepracer
+        name: DeepRacer
+        resource-types:
+          - id: evaluation_job
+            name: evaluation_job
+          - id: leaderboard
+            name: leaderboard
+          - id: reinforcement_learning_model
+            name: reinforcement_learning_model
+          - id: track
+            name: track
+          - id: training_job
+            name: training_job
+      - id: detective
+        name: Detective
+        resource-types:
+          - id: Graph
+            name: Graph
+      - id: devopsGuru
+        name: DevOps Guru
+        resource-types:
+          - id: topic
+            name: topic
+      - id: deviceFarm
+        name: Device Farm
+        resource-types:
+          - id: device
+            name: device
+          - id: deviceinstance
+            name: deviceinstance
+          - id: devicepool
+            name: devicepool
+          - id: instanceprofile
+            name: instanceprofile
+          - id: job
+            name: job
+          - id: networkprofile
+            name: networkprofile
+          - id: project
+            name: project
+          - id: run
+            name: run
+          - id: session
+            name: session
+          - id: suite
+            name: suite
+          - id: test
+            name: test
+          - id: testgrid-project
+            name: testgrid-project
+          - id: testgrid-session
+            name: testgrid-session
+          - id: upload
+            name: upload
+          - id: vpceconfiguration
+            name: vpceconfiguration
+      - id: directConnect
+        name: Direct Connect
+        resource-types:
+          - id: dx-gateway
+            name: dx-gateway
+          - id: dxcon
+            name: dxcon
+          - id: dxlag
+            name: dxlag
+          - id: dxvif
+            name: dxvif
+      - id: directoryService
+        name: Directory Service
+        resource-types:
+          - id: directory
+            name: directory
+      - id: dynamodb
+        name: DynamoDB
+        resource-types:
+          - id: backup
+            name: backup
+          - id: export
+            name: export
+          - id: global-table
+            name: global-table
+          - id: index
+            name: index
+          - id: stream
+            name: stream
+          - id: table
+            name: table
+      - id: dynamodbaccelerator
+        name: DynamoDBAccelerator
+        resource-types:
+          - id: application
+            name: application
+      - id: ec2
+        name: EC2
+        resource-types:
+          - id: capacity-reservation
+            name: capacity-reservation
+          - id: carrier-gateway
+            name: carrier-gateway
+          - id: certificate
+            name: certificate
+          - id: client-vpn-endpoint
+            name: client-vpn-endpoint
+          - id: customer-gateway
+            name: customer-gateway
+          - id: dedicated-host
+            name: dedicated-host
+          - id: dhcp-options
+            name: dhcp-options
+          - id: egress-only-internet-gateway
+            name: egress-only-internet-gateway
+          - id: elastic-gpu
+            name: elastic-gpu
+          - id: elastic-inference
+            name: elastic-inference
+          - id: elastic-ip
+            name: elastic-ip
+          - id: export-image-task
+            name: export-image-task
+          - id: export-instance-task
+            name: export-instance-task
+          - id: fleet
+            name: fleet
+          - id: fpga-image
+            name: fpga-image
+          - id: host-reservation
+            name: host-reservation
+          - id: image
+            name: image
+          - id: import-image-task
+            name: import-image-task
+          - id: import-snapshot-task
+            name: import-snapshot-task
+          - id: instance
+            name: instance
+          - id: internet-gateway
+            name: internet-gateway
+          - id: ipv4pool-ec2
+            name: ipv4pool-ec2
+          - id: ipv6pool-ec2
+            name: ipv6pool-ec2
+          - id: key-pair
+            name: key-pair
+          - id: launch-template
+            name: launch-template
+          - id: local-gateway
+            name: local-gateway
+          - id: local-gateway-route-table
+            name: local-gateway-route-table
+          - id: local-gateway-route-table-virtual-interface-group-association
+            name: local-gateway-route-table-virtual-interface-group-association
+          - id: local-gateway-route-table-vpc-association
+            name: local-gateway-route-table-vpc-association
+          - id: local-gateway-virtual-interface
+            name: local-gateway-virtual-interface
+          - id: local-gateway-virtual-interface-group
+            name: local-gateway-virtual-interface-group
+          - id: natgateway
+            name: natgateway
+          - id: network-acl
+            name: network-acl
+          - id: network-insights-analysis
+            name: network-insights-analysis
+          - id: network-insights-path
+            name: network-insights-path
+          - id: network-interface
+            name: network-interface
+          - id: placement-group
+            name: placement-group
+          - id: prefix-list
+            name: prefix-list
+          - id: reserved-instances
+            name: reserved-instances
+          - id: role
+            name: role
+          - id: route-table
+            name: route-table
+          - id: security-group
+            name: security-group
+          - id: snapshot
+            name: snapshot
+          - id: spot-fleet-request
+            name: spot-fleet-request
+          - id: spot-instances-request
+            name: spot-instances-request
+          - id: subnet
+            name: subnet
+          - id: traffic-mirror-filter
+            name: traffic-mirror-filter
+          - id: traffic-mirror-filter-rule
+            name: traffic-mirror-filter-rule
+          - id: traffic-mirror-session
+            name: traffic-mirror-session
+          - id: traffic-mirror-target
+            name: traffic-mirror-target
+          - id: transit-gateway
+            name: transit-gateway
+          - id: transit-gateway-attachment
+            name: transit-gateway-attachment
+          - id: transit-gateway-connect-peer
+            name: transit-gateway-connect-peer
+          - id: transit-gateway-multicast-domain
+            name: transit-gateway-multicast-domain
+          - id: transit-gateway-route-table
+            name: transit-gateway-route-table
+          - id: volume
+            name: volume
+          - id: vpc
+            name: vpc
+          - id: vpc-endpoint
+            name: vpc-endpoint
+          - id: vpc-endpoint-service
+            name: vpc-endpoint-service
+          - id: vpc-flow-log
+            name: vpc-flow-log
+          - id: vpc-peering-connection
+            name: vpc-peering-connection
+          - id: vpn-connection
+            name: vpn-connection
+          - id: vpn-gateway
+            name: vpn-gateway
+      - id: ec2AutoScaling
+        name: EC2 Auto Scaling
+        resource-types:
+          - id: autoScalingGroup
+            name: autoScalingGroup
+          - id: launchConfiguration
+            name: launchConfiguration
+      - id: ec2ImageBuilder
+        name: EC2 Image Builder
+        resource-types:
+          - id: component
+            name: component
+          - id: componentVersion
+            name: componentVersion
+          - id: containerRecipe
+            name: containerRecipe
+          - id: distributionConfiguration
+            name: distributionConfiguration
+          - id: image
+            name: image
+          - id: imagePipeline
+            name: imagePipeline
+          - id: imageRecipe
+            name: imageRecipe
+          - id: imageVersion
+            name: imageVersion
+          - id: infrastructureConfiguration
+            name: infrastructureConfiguration
+          - id: kmsKey
+            name: kmsKey
+      - id: ec2InstanceConnect
+        name: EC2 Instance Connect
+        resource-types:
+          - id: instance
+            name: instance
+      - id: ec2Messages
+        name: EC2 Messages
+        resource-types: []
+      - id: efs
+        name: EFS
+        resource-types:
+          - id: access-point
+            name: access-point
+          - id: file-system
+            name: file-system
+      - id: ei
+        name: EI
+        resource-types:
+          - id: accelerator
+            name: accelerator
+      - id: eks
+        name: EKS
+        resource-types:
+          - id: addon
+            name: addon
+          - id: cluster
+            name: cluster
+          - id: fargateprofile
+            name: fargateprofile
+          - id: identityproviderconfig
+            name: identityproviderconfig
+          - id: nodegroup
+            name: nodegroup
+      - id: elb
+        name: ELB
+        resource-types:
+          - id: loadbalancer
+            name: loadbalancer
+      - id: elbV2
+        name: ELB v2
+        resource-types:
+          - id: listener-rule/app
+            name: listener-rule/app
+          - id: listener-rule/net
+            name: listener-rule/net
+          - id: listener/app
+            name: listener/app
+          - id: listener/net
+            name: listener/net
+          - id: loadbalancer/app/
+            name: loadbalancer/app/
+          - id: loadbalancer/net/
+            name: loadbalancer/net/
+          - id: targetgroup
+            name: targetgroup
+      - id: emr
+        name: EMR
+        resource-types:
+          - id: cluster
+            name: cluster
+          - id: editor
+            name: editor
+          - id: notebook-execution
+            name: notebook-execution
+          - id: studio
+            name: studio
+      - id: emrContainers
+        name: EMR Containers
+        resource-types:
+          - id: jobRun
+            name: jobRun
+          - id: managedEndpoint
+            name: managedEndpoint
+          - id: virtualCluster
+            name: virtualCluster
+      - id: elasticache
+        name: ElastiCache
+        resource-types:
+          - id: cluster
+            name: cluster
+          - id: globalreplicationgroup
+            name: globalreplicationgroup
+          - id: parametergroup
+            name: parametergroup
+          - id: replicationgroup
+            name: replicationgroup
+          - id: reserved-instance
+            name: reserved-instance
+          - id: securitygroup
+            name: securitygroup
+          - id: snapshot
+            name: snapshot
+          - id: subnetgroup
+            name: subnetgroup
+          - id: user
+            name: user
+          - id: usergroup
+            name: usergroup
+      - id: elasticBeanstalk
+        name: Elastic Beanstalk
+        resource-types:
+          - id: application
+            name: application
+          - id: applicationversion
+            name: applicationversion
+          - id: configurationtemplate
+            name: configurationtemplate
+          - id: environment
+            name: environment
+          - id: platform
+            name: platform
+          - id: solutionstack
+            name: solutionstack
+      - id: elasticBlockStore
+        name: Elastic Block Store
+        resource-types:
+          - id: snapshot
+            name: snapshot
+      - id: elasticContainerRegistry
+        name: Elastic Container Registry
+        resource-types:
+          - id: repository
+            name: repository
+      - id: elasticContainerRegistryPublic
+        name: Elastic Container Registry Public
+        resource-types:
+          - id: registry
+            name: registry
+          - id: repository
+            name: repository
+      - id: elasticContainerService
+        name: Elastic Container Service
+        resource-types:
+          - id: capacity-provider
+            name: capacity-provider
+          - id: cluster
+            name: cluster
+          - id: container-instance
+            name: container-instance
+          - id: service
+            name: service
+          - id: task
+            name: task
+          - id: task-definition
+            name: task-definition
+          - id: task-set
+            name: task-set
+      - id: elasticTranscoder
+        name: Elastic Transcoder
+        resource-types:
+          - id: job
+            name: job
+          - id: pipeline
+            name: pipeline
+          - id: preset
+            name: preset
+      - id: elasticsearchService
+        name: Elasticsearch Service
+        resource-types:
+          - id: domain
+            name: domain
+      - id: elementalActivations
+        name: Elemental Activations
+        resource-types:
+          - id: activation
+            name: activation
+      - id: elementalAppliancesAndSoftware
+        name: Elemental Appliances and Software
+        resource-types:
+          - id: quote
+            name: quote
+      - id: elementalSupportCases
+        name: Elemental Support Cases
+        resource-types: []
+      - id: elementalSupportContent
+        name: Elemental Support Content
+        resource-types: []
+      - id: eventbridge
+        name: EventBridge
+        resource-types:
+          - id: api-destination
+            name: api-destination
+          - id: archive
+            name: archive
+          - id: connection
+            name: connection
+          - id: event-bus
+            name: event-bus
+          - id: event-source
+            name: event-source
+          - id: replay
+            name: replay
+          - id: rule
+            name: rule
+      - id: eventbridgeschemas
+        name: EventBridgeSchemas
+        resource-types:
+          - id: discoverer
+            name: discoverer
+          - id: registry
+            name: registry
+          - id: schema
+            name: schema
+      - id: executeapi
+        name: ExecuteAPI
+        resource-types:
+          - id: execute-api-general
+            name: execute-api-general
+      - id: fis
+        name: FIS
+        resource-types:
+          - id: action
+            name: action
+          - id: experiment
+            name: experiment
+          - id: experiment-template
+            name: experiment-template
+      - id: fsx
+        name: FSx
+        resource-types:
+          - id: backup
+            name: backup
+          - id: file-system
+            name: file-system
+          - id: task
+            name: task
+      - id: firehose
+        name: Firehose
+        resource-types:
+          - id: deliverystream
+            name: deliverystream
+      - id: firewallManager
+        name: Firewall Manager
+        resource-types:
+          - id: applications-list
+            name: applications-list
+          - id: policy
+            name: policy
+          - id: protocols-list
+            name: protocols-list
+      - id: forecast
+        name: Forecast
+        resource-types:
+          - id: dataset
+            name: dataset
+          - id: datasetGroup
+            name: datasetGroup
+          - id: datasetImportJob
+            name: datasetImportJob
+          - id: forecast
+            name: forecast
+          - id: forecastExport
+            name: forecastExport
+          - id: predictor
+            name: predictor
+          - id: predictorBacktestExportJob
+            name: predictorBacktestExportJob
+      - id: fraudDetector
+        name: Fraud Detector
+        resource-types:
+          - id: batch-prediction
+            name: batch-prediction
+          - id: detector
+            name: detector
+          - id: detector-version
+            name: detector-version
+          - id: entity-type
+            name: entity-type
+          - id: event-type
+            name: event-type
+          - id: external-model
+            name: external-model
+          - id: label
+            name: label
+          - id: model
+            name: model
+          - id: model-version
+            name: model-version
+          - id: outcome
+            name: outcome
+          - id: rule
+            name: rule
+          - id: variable
+            name: variable
+      - id: freertos
+        name: FreeRTOS
+        resource-types:
+          - id: configuration
+            name: configuration
+      - id: gamelift
+        name: GameLift
+        resource-types:
+          - id: alias
+            name: alias
+          - id: build
+            name: build
+          - id: fleet
+            name: fleet
+          - id: gameServerGroup
+            name: gameServerGroup
+          - id: gameSessionQueue
+            name: gameSessionQueue
+          - id: matchmakingConfiguration
+            name: matchmakingConfiguration
+          - id: matchmakingRuleSet
+            name: matchmakingRuleSet
+          - id: script
+            name: script
+      - id: glacier
+        name: Glacier
+        resource-types:
+          - id: vault
+            name: vault
+      - id: globalaccelerator
+        name: GlobalAccelerator
+        resource-types:
+          - id: accelerator
+            name: accelerator
+          - id: endpointgroup
+            name: endpointgroup
+          - id: listener
+            name: listener
+      - id: glue
+        name: Glue
+        resource-types:
+          - id: catalog
+            name: catalog
+          - id: connection
+            name: connection
+          - id: crawler
+            name: crawler
+          - id: database
+            name: database
+          - id: devendpoint
+            name: devendpoint
+          - id: job
+            name: job
+          - id: mlTransform
+            name: mlTransform
+          - id: registry
+            name: registry
+          - id: schema
+            name: schema
+          - id: table
+            name: table
+          - id: tableversion
+            name: tableversion
+          - id: trigger
+            name: trigger
+          - id: userdefinedfunction
+            name: userdefinedfunction
+          - id: workflow
+            name: workflow
+      - id: groundStation
+        name: Ground Station
+        resource-types:
+          - id: Config
+            name: Config
+          - id: Contact
+            name: Contact
+          - id: DataflowEndpointGroup
+            name: DataflowEndpointGroup
+          - id: MissionProfile
+            name: MissionProfile
+          - id: Satellite
+            name: Satellite
+      - id: groundtruthLabeling
+        name: GroundTruth Labeling
+        resource-types: []
+      - id: guardduty
+        name: GuardDuty
+        resource-types:
+          - id: detector
+            name: detector
+          - id: filter
+            name: filter
+          - id: ipset
+            name: ipset
+          - id: publishingDestination
+            name: publishingDestination
+          - id: threatintelset
+            name: threatintelset
+      - id: health
+        name: Health
+        resource-types:
+          - id: event
+            name: event
+      - id: healthlake
+        name: HealthLake
+        resource-types:
+          - id: datastore
+            name: datastore
+      - id: honeycode
+        name: Honeycode
+        resource-types:
+          - id: screen
+            name: screen
+          - id: screen-automation
+            name: screen-automation
+          - id: table
+            name: table
+          - id: workbook
+            name: workbook
+      - id: iam
+        name: IAM
+        resource-types:
+          - id: access-report
+            name: access-report
+          - id: group
+            name: group
+          - id: instance-profile
+            name: instance-profile
+          - id: mfa
+            name: mfa
+          - id: oidc-provider
+            name: oidc-provider
+          - id: policy
+            name: policy
+          - id: role
+            name: role
+          - id: saml-provider
+            name: saml-provider
+          - id: server-certificate
+            name: server-certificate
+          - id: sms-mfa
+            name: sms-mfa
+          - id: user
+            name: user
+      - id: iq
+        name: IQ
+        resource-types: []
+      - id: iqPermission
+        name: IQ Permission
+        resource-types: []
+      - id: identityStore
+        name: Identity Store
+        resource-types: []
+      - id: import/export
+        name: Import/Export
+        resource-types: []
+      - id: incidentManager
+        name: Incident Manager
+        resource-types:
+          - id: incident-record
+            name: incident-record
+          - id: replication-set
+            name: replication-set
+          - id: response-plan
+            name: response-plan
+      - id: incidentManagerContacts
+        name: Incident Manager Contacts
+        resource-types:
+          - id: contact
+            name: contact
+          - id: contactchannel
+            name: contactchannel
+          - id: engagement
+            name: engagement
+          - id: page
+            name: page
+      - id: inspector
+        name: Inspector
+        resource-types: []
+      - id: interactiveVideoService
+        name: Interactive Video Service
+        resource-types:
+          - id: Channel
+            name: Channel
+          - id: Playback-Key-Pair
+            name: Playback-Key-Pair
+          - id: Recording-Configuration
+            name: Recording-Configuration
+          - id: Stream-Key
+            name: Stream-Key
+      - id: iot
+        name: IoT
+        resource-types:
+          - id: authorizer
+            name: authorizer
+          - id: billinggroup
+            name: billinggroup
+          - id: cacert
+            name: cacert
+          - id: cert
+            name: cert
+          - id: client
+            name: client
+          - id: custommetric
+            name: custommetric
+          - id: destination
+            name: destination
+          - id: dimension
+            name: dimension
+          - id: domainconfiguration
+            name: domainconfiguration
+          - id: dynamicthinggroup
+            name: dynamicthinggroup
+          - id: fleetmetric
+            name: fleetmetric
+          - id: index
+            name: index
+          - id: job
+            name: job
+          - id: mitigationaction
+            name: mitigationaction
+          - id: otaupdate
+            name: otaupdate
+          - id: policy
+            name: policy
+          - id: provisioningtemplate
+            name: provisioningtemplate
+          - id: rolealias
+            name: rolealias
+          - id: rule
+            name: rule
+          - id: scheduledaudit
+            name: scheduledaudit
+          - id: securityprofile
+            name: securityprofile
+          - id: stream
+            name: stream
+          - id: thing
+            name: thing
+          - id: thinggroup
+            name: thinggroup
+          - id: thingtype
+            name: thingtype
+          - id: topic
+            name: topic
+          - id: topicfilter
+            name: topicfilter
+          - id: tunnel
+            name: tunnel
+      - id: iot 1Click
+        name: IoT 1-Click
+        resource-types:
+          - id: device
+            name: device
+          - id: project
+            name: project
+      - id: iotAnalytics
+        name: IoT Analytics
+        resource-types:
+          - id: channel
+            name: channel
+          - id: dataset
+            name: dataset
+          - id: datastore
+            name: datastore
+          - id: pipeline
+            name: pipeline
+      - id: iotDeviceAdvisor
+        name: IoT Device Advisor
+        resource-types:
+          - id: suitedefinition
+            name: suitedefinition
+          - id: suiterun
+            name: suiterun
+      - id: iotDeviceTester
+        name: IoT Device Tester
+        resource-types: []
+      - id: iotEvents
+        name: IoT Events
+        resource-types:
+          - id: alarmModel
+            name: alarmModel
+          - id: detectorModel
+            name: detectorModel
+          - id: input
+            name: input
+      - id: iotFleetHub
+        name: IoT Fleet Hub
+        resource-types:
+          - id: application
+            name: application
+      - id: iotGreengrass
+        name: IoT Greengrass
+        resource-types:
+          - id: bulkDeployment
+            name: bulkDeployment
+          - id: certificateAuthority
+            name: certificateAuthority
+          - id: connectivityInfo
+            name: connectivityInfo
+          - id: connectorDefinition
+            name: connectorDefinition
+          - id: connectorDefinitionVersion
+            name: connectorDefinitionVersion
+          - id: coreDefinition
+            name: coreDefinition
+          - id: coreDefinitionVersion
+            name: coreDefinitionVersion
+          - id: deployment
+            name: deployment
+          - id: deviceDefinition
+            name: deviceDefinition
+          - id: deviceDefinitionVersion
+            name: deviceDefinitionVersion
+          - id: functionDefinition
+            name: functionDefinition
+          - id: functionDefinitionVersion
+            name: functionDefinitionVersion
+          - id: group
+            name: group
+          - id: groupVersion
+            name: groupVersion
+          - id: loggerDefinition
+            name: loggerDefinition
+          - id: loggerDefinitionVersion
+            name: loggerDefinitionVersion
+          - id: resourceDefinition
+            name: resourceDefinition
+          - id: resourceDefinitionVersion
+            name: resourceDefinitionVersion
+          - id: subscriptionDefinition
+            name: subscriptionDefinition
+          - id: subscriptionDefinitionVersion
+            name: subscriptionDefinitionVersion
+          - id: thing
+            name: thing
+          - id: thingRuntimeConfig
+            name: thingRuntimeConfig
+      - id: iotGreengrassV2
+        name: IoT Greengrass V2
+        resource-types:
+          - id: component
+            name: component
+          - id: componentVersion
+            name: componentVersion
+          - id: coreDevice
+            name: coreDevice
+          - id: deployment
+            name: deployment
+      - id: iotSitewise
+        name: IoT SiteWise
+        resource-types:
+          - id: access-policy
+            name: access-policy
+          - id: asset
+            name: asset
+          - id: asset-model
+            name: asset-model
+          - id: dashboard
+            name: dashboard
+          - id: gateway
+            name: gateway
+          - id: portal
+            name: portal
+          - id: project
+            name: project
+      - id: iotThingsGraph
+        name: IoT Things Graph
+        resource-types:
+          - id: System
+            name: System
+          - id: SystemInstance
+            name: SystemInstance
+          - id: Workflow
+            name: Workflow
+      - id: iotWireless
+        name: IoT Wireless
+        resource-types:
+          - id: Destination
+            name: Destination
+          - id: DeviceProfile
+            name: DeviceProfile
+          - id: ServiceProfile
+            name: ServiceProfile
+          - id: SidewalkAccount
+            name: SidewalkAccount
+          - id: WirelessDevice
+            name: WirelessDevice
+          - id: WirelessGateway
+            name: WirelessGateway
+          - id: WirelessGatewayTaskDefinition
+            name: WirelessGatewayTaskDefinition
+          - id: cert
+            name: cert
+          - id: thing
+            name: thing
+      - id: kms
+        name: KMS
+        resource-types:
+          - id: alias
+            name: alias
+          - id: key
+            name: key
+      - id: kendra
+        name: Kendra
+        resource-types:
+          - id: data-source
+            name: data-source
+          - id: faq
+            name: faq
+          - id: index
+            name: index
+          - id: thesaurus
+            name: thesaurus
+      - id: keyspaces
+        name: Keyspaces
+        resource-types:
+          - id: keyspace
+            name: keyspace
+          - id: table
+            name: table
+      - id: kinesis
+        name: Kinesis
+        resource-types:
+          - id: consumer
+            name: consumer
+          - id: kmsKey
+            name: kmsKey
+          - id: stream
+            name: stream
+      - id: kinesisAnalytics
+        name: Kinesis Analytics
+        resource-types:
+          - id: application
+            name: application
+      - id: kinesisAnalyticsV2
+        name: Kinesis Analytics V2
+        resource-types:
+          - id: application
+            name: application
+      - id: kinesisVideoStreams
+        name: Kinesis Video Streams
+        resource-types:
+          - id: channel
+            name: channel
+          - id: stream
+            name: stream
+      - id: lakeFormation
+        name: Lake Formation
+        resource-types: []
+      - id: lambda
+        name: Lambda
+        resource-types:
+          - id: code signing config
+            name: code signing config
+          - id: eventSourceMapping
+            name: eventSourceMapping
+          - id: function
+            name: function
+          - id: function alias
+            name: function alias
+          - id: function version
+            name: function version
+          - id: layer
+            name: layer
+          - id: layerVersion
+            name: layerVersion
+      - id: launchWizard
+        name: Launch Wizard
+        resource-types: []
+      - id: lex
+        name: Lex
+        resource-types:
+          - id: bot
+            name: bot
+          - id: bot alias
+            name: bot alias
+          - id: bot version
+            name: bot version
+          - id: channel
+            name: channel
+          - id: intent version
+            name: intent version
+          - id: slottype version
+            name: slottype version
+      - id: lexV2
+        name: Lex V2
+        resource-types:
+          - id: bot
+            name: bot
+          - id: bot alias
+            name: bot alias
+      - id: licenseManager
+        name: License Manager
+        resource-types:
+          - id: grant
+            name: grant
+          - id: license
+            name: license
+          - id: license-configuration
+            name: license-configuration
+      - id: lightsail
+        name: Lightsail
+        resource-types:
+          - id: Alarm
+            name: Alarm
+          - id: Certificate
+            name: Certificate
+          - id: CloudFormationStackRecord
+            name: CloudFormationStackRecord
+          - id: ContactMethod
+            name: ContactMethod
+          - id: ContainerService
+            name: ContainerService
+          - id: Disk
+            name: Disk
+          - id: DiskSnapshot
+            name: DiskSnapshot
+          - id: Distribution
+            name: Distribution
+          - id: Domain
+            name: Domain
+          - id: ExportSnapshotRecord
+            name: ExportSnapshotRecord
+          - id: Instance
+            name: Instance
+          - id: InstanceSnapshot
+            name: InstanceSnapshot
+          - id: KeyPair
+            name: KeyPair
+          - id: LoadBalancer
+            name: LoadBalancer
+          - id: RelationalDatabase
+            name: RelationalDatabase
+          - id: RelationalDatabaseSnapshot
+            name: RelationalDatabaseSnapshot
+          - id: StaticIp
+            name: StaticIp
+      - id: location
+        name: Location
+        resource-types:
+          - id: geofence-collection
+            name: geofence-collection
+          - id: map
+            name: map
+          - id: place-index
+            name: place-index
+          - id: tracker
+            name: tracker
+      - id: lookoutMetrics
+        name: Lookout Metrics
+        resource-types:
+          - id: Alert
+            name: Alert
+          - id: AnomalyDetector
+            name: AnomalyDetector
+          - id: MetricSet
+            name: MetricSet
+      - id: lookoutVision
+        name: Lookout Vision
+        resource-types:
+          - id: model
+            name: model
+          - id: project
+            name: project
+      - id: lookoutForEquipment
+        name: Lookout for Equipment
+        resource-types:
+          - id: dataset
+            name: dataset
+          - id: inference-scheduler
+            name: inference-scheduler
+          - id: model
+            name: model
+      - id: mgn
+        name: MGN
+        resource-types:
+          - id: JobResource
+            name: JobResource
+          - id: ReplicationConfigurationTemplateResource
+            name: ReplicationConfigurationTemplateResource
+          - id: SourceServerResource
+            name: SourceServerResource
+      - id: mq
+        name: MQ
+        resource-types:
+          - id: brokers
+            name: brokers
+          - id: configurations
+            name: configurations
+      - id: msk
+        name: MSK
+        resource-types:
+          - id: cluster
+            name: cluster
+      - id: mwaa
+        name: MWAA
+        resource-types:
+          - id: environment
+            name: environment
+          - id: rbac-role
+            name: rbac-role
+      - id: machineLearning
+        name: Machine Learning
+        resource-types:
+          - id: batchprediction
+            name: batchprediction
+          - id: datasource
+            name: datasource
+          - id: evaluation
+            name: evaluation
+          - id: mlmodel
+            name: mlmodel
+      - id: macie
+        name: Macie
+        resource-types:
+          - id: ClassificationJob
+            name: ClassificationJob
+          - id: CustomDataIdentifier
+            name: CustomDataIdentifier
+          - id: FindingsFilter
+            name: FindingsFilter
+          - id: Member
+            name: Member
+      - id: macieClassic
+        name: Macie Classic
+        resource-types: []
+      - id: managedBlockchain
+        name: Managed Blockchain
+        resource-types:
+          - id: invitation
+            name: invitation
+          - id: member
+            name: member
+          - id: network
+            name: network
+          - id: node
+            name: node
+          - id: proposal
+            name: proposal
+      - id: marketplace
+        name: Marketplace
+        resource-types: []
+      - id: marketplaceCatalog
+        name: Marketplace Catalog
+        resource-types: []
+      - id: marketplaceEntitlement
+        name: Marketplace Entitlement
+        resource-types: []
+      - id: marketplaceImageBuild
+        name: Marketplace Image Build
+        resource-types: []
+      - id: marketplaceMetering
+        name: Marketplace Metering
+        resource-types: []
+      - id: marketplacePortal
+        name: Marketplace Portal
+        resource-types: []
+      - id: marketplaceProcurementIntegration
+        name: Marketplace Procurement Integration
+        resource-types: []
+      - id: mechanicalturk
+        name: MechanicalTurk
+        resource-types: []
+      - id: mediaconnect
+        name: MediaConnect
+        resource-types: []
+      - id: mediaconvert
+        name: MediaConvert
+        resource-types:
+          - id: Job
+            name: Job
+          - id: JobTemplate
+            name: JobTemplate
+          - id: Preset
+            name: Preset
+          - id: Queue
+            name: Queue
+      - id: medialive
+        name: MediaLive
+        resource-types:
+          - id: channel
+            name: channel
+          - id: input
+            name: input
+          - id: input-device
+            name: input-device
+          - id: input-security-group
+            name: input-security-group
+          - id: multiplex
+            name: multiplex
+          - id: offering
+            name: offering
+          - id: reservation
+            name: reservation
+      - id: mediapackage
+        name: MediaPackage
+        resource-types:
+          - id: channels
+            name: channels
+          - id: harvest_jobs
+            name: harvest_jobs
+          - id: origin_endpoints
+            name: origin_endpoints
+      - id: mediapackageVod
+        name: MediaPackage VOD
+        resource-types:
+          - id: assets
+            name: assets
+          - id: packaging-configurations
+            name: packaging-configurations
+          - id: packaging-groups
+            name: packaging-groups
+      - id: mediastore
+        name: MediaStore
+        resource-types: []
+      - id: mediatailor
+        name: MediaTailor
+        resource-types:
+          - id: playbackConfiguration
+            name: playbackConfiguration
+      - id: migrationHub
+        name: Migration Hub
+        resource-types:
+          - id: migrationTask
+            name: migrationTask
+          - id: progressUpdateStream
+            name: progressUpdateStream
+      - id: mobileAnalytics
+        name: Mobile Analytics
+        resource-types: []
+      - id: mobileHub
+        name: Mobile Hub
+        resource-types:
+          - id: project
+            name: project
+      - id: monitron
+        name: Monitron
+        resource-types:
+          - id: project
+            name: project
+      - id: neptune
+        name: Neptune
+        resource-types:
+          - id: database
+            name: database
+      - id: networkFirewall
+        name: Network Firewall
+        resource-types:
+          - id: Firewall
+            name: Firewall
+          - id: FirewallPolicy
+            name: FirewallPolicy
+          - id: StatefulRuleGroup
+            name: StatefulRuleGroup
+          - id: StatelessRuleGroup
+            name: StatelessRuleGroup
+      - id: networkManager
+        name: Network Manager
+        resource-types:
+          - id: connection
+            name: connection
+          - id: device
+            name: device
+          - id: global-network
+            name: global-network
+          - id: link
+            name: link
+          - id: site
+            name: site
+      - id: nimbleStudio
+        name: Nimble Studio
+        resource-types:
+          - id: eula
+            name: eula
+          - id: eula-acceptance
+            name: eula-acceptance
+          - id: launch-profile
+            name: launch-profile
+          - id: streaming-image
+            name: streaming-image
+          - id: streaming-session
+            name: streaming-session
+          - id: studio
+            name: studio
+          - id: studio-component
+            name: studio-component
+      - id: opsworks
+        name: OpsWorks
+        resource-types:
+          - id: stack
+            name: stack
+      - id: opsworkscm
+        name: OpsworksCM
+        resource-types: []
+      - id: organizations
+        name: Organizations
+        resource-types:
+          - id: account
+            name: account
+          - id: handshake
+            name: handshake
+          - id: organizationalunit
+            name: organizationalunit
+          - id: policy
+            name: policy
+          - id: root
+            name: root
+      - id: outposts
+        name: Outposts
+        resource-types: []
+      - id: panorama
+        name: Panorama
+        resource-types:
+          - id: app
+            name: app
+          - id: appVersion
+            name: appVersion
+          - id: dataSource
+            name: dataSource
+          - id: device
+            name: device
+          - id: model
+            name: model
+      - id: performanceInsights
+        name: Performance Insights
+        resource-types:
+          - id: metric-resource
+            name: metric-resource
+      - id: personalize
+        name: Personalize
+        resource-types:
+          - id: algorithm
+            name: algorithm
+          - id: batchInferenceJob
+            name: batchInferenceJob
+          - id: campaign
+            name: campaign
+          - id: dataset
+            name: dataset
+          - id: datasetGroup
+            name: datasetGroup
+          - id: datasetImportJob
+            name: datasetImportJob
+          - id: eventTracker
+            name: eventTracker
+          - id: featureTransformation
+            name: featureTransformation
+          - id: filter
+            name: filter
+          - id: recipe
+            name: recipe
+          - id: schema
+            name: schema
+          - id: solution
+            name: solution
+      - id: pinpoint
+        name: Pinpoint
+        resource-types:
+          - id: apps
+            name: apps
+          - id: campaigns
+            name: campaigns
+          - id: journeys
+            name: journeys
+          - id: phone-number-validate
+            name: phone-number-validate
+          - id: recommenders
+            name: recommenders
+          - id: segments
+            name: segments
+          - id: templates
+            name: templates
+      - id: pinpointEmail
+        name: Pinpoint Email
+        resource-types:
+          - id: configuration-set
+            name: configuration-set
+          - id: dedicated-ip-pool
+            name: dedicated-ip-pool
+          - id: deliverability-test-report
+            name: deliverability-test-report
+          - id: identity
+            name: identity
+      - id: pinpointSmsVoice
+        name: Pinpoint SMS Voice
+        resource-types: []
+      - id: polly
+        name: Polly
+        resource-types:
+          - id: lexicon
+            name: lexicon
+      - id: priceList
+        name: Price List
+        resource-types: []
+      - id: privateMarketplace
+        name: Private Marketplace
+        resource-types: []
+      - id: profile
+        name: Profile
+        resource-types:
+          - id: domains
+            name: domains
+          - id: integrations
+            name: integrations
+          - id: object-types
+            name: object-types
+      - id: proton
+        name: Proton
+        resource-types:
+          - id: environment
+            name: environment
+          - id: environment-template
+            name: environment-template
+          - id: environment-template-major-version
+            name: environment-template-major-version
+          - id: environment-template-minor-version
+            name: environment-template-minor-version
+          - id: service
+            name: service
+          - id: service-instance
+            name: service-instance
+          - id: service-template
+            name: service-template
+          - id: service-template-major-version
+            name: service-template-major-version
+          - id: service-template-minor-version
+            name: service-template-minor-version
+      - id: purchaseOrders
+        name: Purchase Orders
+        resource-types: []
+      - id: qldb
+        name: QLDB
+        resource-types:
+          - id: ledger
+            name: ledger
+          - id: stream
+            name: stream
+      - id: quicksight
+        name: QuickSight
+        resource-types:
+          - id: analysis
+            name: analysis
+          - id: assignment
+            name: assignment
+          - id: customization
+            name: customization
+          - id: dashboard
+            name: dashboard
+          - id: dataset
+            name: dataset
+          - id: datasource
+            name: datasource
+          - id: group
+            name: group
+          - id: ingestion
+            name: ingestion
+          - id: namespace
+            name: namespace
+          - id: template
+            name: template
+          - id: theme
+            name: theme
+          - id: user
+            name: user
+      - id: rds
+        name: RDS
+        resource-types:
+          - id: cluster
+            name: cluster
+          - id: cluster-endpoint
+            name: cluster-endpoint
+          - id: cluster-pg
+            name: cluster-pg
+          - id: cluster-snapshot
+            name: cluster-snapshot
+          - id: db
+            name: db
+          - id: es
+            name: es
+          - id: global-cluster
+            name: global-cluster
+          - id: og
+            name: og
+          - id: pg
+            name: pg
+          - id: proxy
+            name: proxy
+          - id: proxy-endpoint
+            name: proxy-endpoint
+          - id: ri
+            name: ri
+          - id: secgrp
+            name: secgrp
+          - id: snapshot
+            name: snapshot
+          - id: subgrp
+            name: subgrp
+          - id: target-group
+            name: target-group
+      - id: rdsDataApi
+        name: RDS Data API
+        resource-types:
+          - id: cluster
+            name: cluster
+      - id: rdsIamAuthentication
+        name: RDS IAM Authentication
+        resource-types:
+          - id: db-user
+            name: db-user
+      - id: redshift
+        name: Redshift
+        resource-types:
+          - id: cluster
+            name: cluster
+          - id: dbgroup
+            name: dbgroup
+          - id: dbname
+            name: dbname
+          - id: dbuser
+            name: dbuser
+          - id: eventsubscription
+            name: eventsubscription
+          - id: hsmclientcertificate
+            name: hsmclientcertificate
+          - id: hsmconfiguration
+            name: hsmconfiguration
+          - id: parametergroup
+            name: parametergroup
+          - id: securitygroup
+            name: securitygroup
+          - id: securitygroupingress-cidr
+            name: securitygroupingress-cidr
+          - id: securitygroupingress-ec2securitygroup
+            name: securitygroupingress-ec2securitygroup
+          - id: snapshot
+            name: snapshot
+          - id: snapshotcopygrant
+            name: snapshotcopygrant
+          - id: snapshotschedule
+            name: snapshotschedule
+          - id: subnetgroup
+            name: subnetgroup
+          - id: usagelimit
+            name: usagelimit
+      - id: redshiftDataApi
+        name: Redshift Data API
+        resource-types: []
+      - id: rekognition
+        name: Rekognition
+        resource-types:
+          - id: collection
+            name: collection
+          - id: project
+            name: project
+          - id: projectversion
+            name: projectversion
+          - id: streamprocessor
+            name: streamprocessor
+      - id: resourceAccessManager
+        name: Resource Access Manager
+        resource-types:
+          - id: permission
+            name: permission
+          - id: resource-share
+            name: resource-share
+          - id: resource-share-invitation
+            name: resource-share-invitation
+      - id: resourceGroupTagging
+        name: Resource Group Tagging
+        resource-types: []
+      - id: resourceGroups
+        name: Resource Groups
+        resource-types:
+          - id: group
+            name: group
+      - id: robomaker
+        name: RoboMaker
+        resource-types:
+          - id: deploymentFleet
+            name: deploymentFleet
+          - id: deploymentJob
+            name: deploymentJob
+          - id: robot
+            name: robot
+          - id: robotApplication
+            name: robotApplication
+          - id: simulationApplication
+            name: simulationApplication
+          - id: simulationJob
+            name: simulationJob
+          - id: simulationJobBatch
+            name: simulationJobBatch
+          - id: world
+            name: world
+          - id: worldExportJob
+            name: worldExportJob
+          - id: worldGenerationJob
+            name: worldGenerationJob
+          - id: worldTemplate
+            name: worldTemplate
+      - id: route 53
+        name: Route 53
+        resource-types:
+          - id: change
+            name: change
+          - id: delegationset
+            name: delegationset
+          - id: healthcheck
+            name: healthcheck
+          - id: hostedzone
+            name: hostedzone
+          - id: queryloggingconfig
+            name: queryloggingconfig
+          - id: trafficpolicy
+            name: trafficpolicy
+          - id: trafficpolicyinstance
+            name: trafficpolicyinstance
+          - id: vpc
+            name: vpc
+      - id: route 53Domains
+        name: Route 53 Domains
+        resource-types: []
+      - id: route 53Resolver
+        name: Route 53 Resolver
+        resource-types:
+          - id: firewall-config
+            name: firewall-config
+          - id: firewall-domain-list
+            name: firewall-domain-list
+          - id: firewall-rule-group
+            name: firewall-rule-group
+          - id: firewall-rule-group-association
+            name: firewall-rule-group-association
+          - id: resolver-dnssec-config
+            name: resolver-dnssec-config
+          - id: resolver-endpoint
+            name: resolver-endpoint
+          - id: resolver-query-log-config
+            name: resolver-query-log-config
+          - id: resolver-rule
+            name: resolver-rule
+      - id: s3
+        name: S3
+        resource-types:
+          - id: accesspoint
+            name: accesspoint
           - id: bucket
+            name: bucket
+          - id: job
+            name: job
+          - id: object
+            name: object
+          - id: objectlambdaaccesspoint
+            name: objectlambdaaccesspoint
+          - id: storagelensconfiguration
+            name: storagelensconfiguration
+      - id: s3ObjectLambda
+        name: S3 Object Lambda
+        resource-types:
+          - id: objectlambdaaccesspoint
+            name: objectlambdaaccesspoint
+      - id: s3Outposts
+        name: S3 Outposts
+        resource-types:
+          - id: accesspoint
+            name: accesspoint
+          - id: bucket
+            name: bucket
+          - id: endpoint
+            name: endpoint
+          - id: object
+            name: object
+      - id: ses
+        name: SES
+        resource-types:
+          - id: identity
+            name: identity
+      - id: sesV2
+        name: SES v2
+        resource-types:
+          - id: configuration-set
+            name: configuration-set
+          - id: contact-list
+            name: contact-list
+          - id: custom-verification-email-template
+            name: custom-verification-email-template
+          - id: dedicated-ip-pool
+            name: dedicated-ip-pool
+          - id: deliverability-test-report
+            name: deliverability-test-report
+          - id: identity
+            name: identity
+          - id: import-job
+            name: import-job
+          - id: template
+            name: template
+      - id: sns
+        name: SNS
+        resource-types:
+          - id: topic
+            name: topic
+      - id: sqs
+        name: SQS
+        resource-types:
+          - id: queue
+            name: queue
+      - id: ssmMessages
+        name: SSM Messages
+        resource-types: []
+      - id: sso
+        name: SSO
+        resource-types:
+          - id: Account
+            name: Account
+          - id: Instance
+            name: Instance
+          - id: PermissionSet
+            name: PermissionSet
+      - id: ssoDirectory
+        name: SSO Directory
+        resource-types: []
+      - id: sts
+        name: STS
+        resource-types:
+          - id: role
+            name: role
+          - id: user
+            name: user
+      - id: swf
+        name: SWF
+        resource-types:
+          - id: domain
+            name: domain
+      - id: sagemaker
+        name: SageMaker
+        resource-types:
+          - id: action
+            name: action
+          - id: algorithm
+            name: algorithm
+          - id: app
+            name: app
+          - id: app-image-config
+            name: app-image-config
+          - id: artifact
+            name: artifact
+          - id: automl-job
+            name: automl-job
+          - id: code-repository
+            name: code-repository
+          - id: compilation-job
+            name: compilation-job
+          - id: context
+            name: context
+          - id: data-quality-job-definition
+            name: data-quality-job-definition
+          - id: device
+            name: device
+          - id: device-fleet
+            name: device-fleet
+          - id: domain
+            name: domain
+          - id: edge-packaging-job
+            name: edge-packaging-job
+          - id: endpoint
+            name: endpoint
+          - id: endpoint-config
+            name: endpoint-config
+          - id: experiment
+            name: experiment
+          - id: experiment-trial
+            name: experiment-trial
+          - id: experiment-trial-component
+            name: experiment-trial-component
+          - id: feature-group
+            name: feature-group
+          - id: flow-definition
+            name: flow-definition
+          - id: human-loop
+            name: human-loop
+          - id: human-task-ui
+            name: human-task-ui
+          - id: hyper-parameter-tuning-job
+            name: hyper-parameter-tuning-job
+          - id: image
+            name: image
+          - id: image-version
+            name: image-version
+          - id: labeling-job
+            name: labeling-job
+          - id: model
+            name: model
+          - id: model-bias-job-definition
+            name: model-bias-job-definition
+          - id: model-explainability-job-definition
+            name: model-explainability-job-definition
+          - id: model-package
+            name: model-package
+          - id: model-package-group
+            name: model-package-group
+          - id: model-quality-job-definition
+            name: model-quality-job-definition
+          - id: monitoring-schedule
+            name: monitoring-schedule
+          - id: notebook-instance
+            name: notebook-instance
+          - id: notebook-instance-lifecycle-config
+            name: notebook-instance-lifecycle-config
+          - id: pipeline
+            name: pipeline
+          - id: pipeline-execution
+            name: pipeline-execution
+          - id: processing-job
+            name: processing-job
+          - id: project
+            name: project
+          - id: training-job
+            name: training-job
+          - id: transform-job
+            name: transform-job
+          - id: user-profile
+            name: user-profile
+          - id: workforce
+            name: workforce
+          - id: workteam
+            name: workteam
+      - id: savingsPlans
+        name: Savings Plans
+        resource-types:
+          - id: savingsplan
+            name: savingsplan
+      - id: secretsManager
+        name: Secrets Manager
+        resource-types:
+          - id: Secret
+            name: Secret
+      - id: securityhub
+        name: SecurityHub
+        resource-types:
+          - id: hub
+            name: hub
+          - id: product
+            name: product
+      - id: servermigrationservice
+        name: ServerMigrationService
+        resource-types: []
+      - id: serverlessApplicationRepository
+        name: Serverless Application Repository
+        resource-types:
+          - id: applications
+            name: applications
+      - id: serviceCatalog
+        name: Service Catalog
+        resource-types:
+          - id: Application
+            name: Application
+          - id: AttributeGroup
+            name: AttributeGroup
+          - id: Portfolio
+            name: Portfolio
+          - id: Product
+            name: Product
+      - id: serviceQuotas
+        name: Service Quotas
+        resource-types:
+          - id: quota
+            name: quota
+      - id: shield
+        name: Shield
+        resource-types:
+          - id: attack
+            name: attack
+          - id: protection
+            name: protection
+          - id: protection-group
+            name: protection-group
+      - id: signer
+        name: Signer
+        resource-types:
+          - id: signing-job
+            name: signing-job
+          - id: signing-profile
+            name: signing-profile
+      - id: simpledb
+        name: SimpleDB
+        resource-types:
+          - id: domain
+            name: domain
+      - id: snowball
+        name: Snowball
+        resource-types: []
+      - id: stepFunctions
+        name: Step Functions
+        resource-types:
+          - id: activity
+            name: activity
+          - id: execution
+            name: execution
+          - id: statemachine
+            name: statemachine
+      - id: storageGateway
+        name: Storage Gateway
+        resource-types:
+          - id: device
+            name: device
+          - id: fs-association
+            name: fs-association
+          - id: gateway
+            name: gateway
+          - id: share
+            name: share
+          - id: tape
+            name: tape
+          - id: tapepool
+            name: tapepool
+          - id: target
+            name: target
+          - id: volume
+            name: volume
+      - id: sumerian
+        name: Sumerian
+        resource-types:
+          - id: project
+            name: project
+      - id: support
+        name: Support
+        resource-types: []
+      - id: systemsManager
+        name: Systems Manager
+        resource-types:
+          - id: association
+            name: association
+          - id: automation-definition
+            name: automation-definition
+          - id: bucket
+            name: bucket
+          - id: document
+            name: document
+          - id: instance
+            name: instance
+          - id: maintenancewindow
+            name: maintenancewindow
+          - id: managed-instance
+            name: managed-instance
+          - id: opsmetadata
+            name: opsmetadata
+          - id: parameter
+            name: parameter
+          - id: patchbaseline
+            name: patchbaseline
+          - id: resourcedatasync
+            name: resourcedatasync
+          - id: servicesetting
+            name: servicesetting
+          - id: session
+            name: session
+          - id: task
+            name: task
+      - id: tagEditor
+        name: Tag Editor
+        resource-types: []
+      - id: textract
+        name: Textract
+        resource-types: []
+      - id: timestream
+        name: Timestream
+        resource-types:
+          - id: database
+            name: database
+          - id: table
+            name: table
+      - id: tiros
+        name: Tiros
+        resource-types: []
+      - id: transcribe
+        name: Transcribe
+        resource-types: []
+      - id: transfer
+        name: Transfer
+        resource-types:
+          - id: server
+            name: server
+          - id: user
+            name: user
+      - id: translate
+        name: Translate
+        resource-types: []
+      - id: trustedAdvisor
+        name: Trusted Advisor
+        resource-types:
+          - id: checks
+            name: checks
+      - id: waf
+        name: WAF
+        resource-types:
+          - id: bytematchset
+            name: bytematchset
+          - id: geomatchset
+            name: geomatchset
+          - id: ipset
+            name: ipset
+          - id: ratebasedrule
+            name: ratebasedrule
+          - id: regexmatchset
+            name: regexmatchset
+          - id: regexpatternset
+            name: regexpatternset
+          - id: rule
+            name: rule
+          - id: rulegroup
+            name: rulegroup
+          - id: sizeconstraintset
+            name: sizeconstraintset
+          - id: sqlinjectionmatchset
+            name: sqlinjectionmatchset
+          - id: webacl
+            name: webacl
+          - id: xssmatchset
+            name: xssmatchset
+      - id: wafRegional
+        name: WAF Regional
+        resource-types:
+          - id: bytematchset
+            name: bytematchset
+          - id: geomatchset
+            name: geomatchset
+          - id: ipset
+            name: ipset
+          - id: loadbalancer/app/
+            name: loadbalancer/app/
+          - id: ratebasedrule
+            name: ratebasedrule
+          - id: regexmatchset
+            name: regexmatchset
+          - id: regexpatternset
+            name: regexpatternset
+          - id: rule
+            name: rule
+          - id: rulegroup
+            name: rulegroup
+          - id: sizeconstraintset
+            name: sizeconstraintset
+          - id: sqlinjectionmatchset
+            name: sqlinjectionmatchset
+          - id: webacl
+            name: webacl
+          - id: xssmatchset
+            name: xssmatchset
+      - id: wafV2
+        name: WAF V2
+        resource-types:
+          - id: apigateway
+            name: apigateway
+          - id: appsync
+            name: appsync
+          - id: ipset
+            name: ipset
+          - id: loadbalancer/app/
+            name: loadbalancer/app/
+          - id: regexpatternset
+            name: regexpatternset
+          - id: rulegroup
+            name: rulegroup
+          - id: webacl
+            name: webacl
+      - id: wam
+        name: WAM
+        resource-types: []
+      - id: wellArchitectedTool
+        name: Well-Architected Tool
+        resource-types:
+          - id: workload
+            name: workload
+      - id: workdocs
+        name: WorkDocs
+        resource-types: []
+      - id: worklink
+        name: WorkLink
+        resource-types:
+          - id: fleet
+            name: fleet
+      - id: workmail
+        name: WorkMail
+        resource-types:
+          - id: organization
+            name: organization
+      - id: workmailMessageFlow
+        name: WorkMail Message Flow
+        resource-types:
+          - id: RawMessage
+            name: RawMessage
+      - id: workspaces
+        name: WorkSpaces
+        resource-types:
+          - id: connectionalias
+            name: connectionalias
+          - id: directoryid
+            name: directoryid
+          - id: workspacebundle
+            name: workspacebundle
+          - id: workspaceid
+            name: workspaceid
+          - id: workspaceimage
+            name: workspaceimage
+          - id: workspaceipgroup
+            name: workspaceipgroup
+      - id: xRay
+        name: X-Ray
+        resource-types:
+          - id: group
+            name: group
+          - id: sampling-rule
+            name: sampling-rule
