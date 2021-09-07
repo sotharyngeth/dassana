@@ -906,7 +906,7 @@ csp:
       - id: identityStore
         name: Identity Store
       - id: importExport
-        name: Import/Export
+        name: Import-Export
       - id: incidentManager
         name: Incident Manager
         resource-types:
