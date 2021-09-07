@@ -302,6 +302,7 @@
                   <directory>${project.basedir}/../content</directory>
                   <filtering>true</filtering>
                   <include>**/*.yaml</include>
+                  <include>**/*.svg</include>
                   <include>**/*schema*.json</include>
                   <exclude>pkg/**</exclude>
                 </resource>

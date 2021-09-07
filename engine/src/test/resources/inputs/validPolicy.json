@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "type": "policy-context",
+  "id": "cmk-rotation-not-enabled",
+  "name": "CMK rotation not enabled",
+  "labels": ["contextualization"],
+  "csp": "aws",
+  "service": "kms",
+  "resource-type": "cmk",
+  "class": "risk",
+  "subclass": "config",
+  "category": "credential-management",
+  "subcategory": "secrets",
+  "filters": [{
+    "vendor": "aws-config",
+    "policies": ["cmk-backing-key-rotation-enabled"],
+    "match-type": "any",
+    "rules": [".vendorId == \"aws-config\" and (.vendorPolicy |contains (\"cmk-backing-key-rotation-enabled\"))"]
+  }],
+  "steps": [{
+    "id": "resource-info",
+    "uses": "GetTags"
+  }],
+  "risk-config": {
+    "default-risk": "medium"
+  }
+}
