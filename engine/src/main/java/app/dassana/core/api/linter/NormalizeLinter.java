@@ -11,7 +11,7 @@ public class NormalizeLinter extends BaseLinter{
 
 	public final static String vendorListYamlPath = "/schemas/vendors/vendor-list.yaml";
 	private final static String[] requiredFields = new String[]{"vendorId", "alertId", "vendorPolicy", "csp", "resourceContainer",
-					"region", "service", "resourceType", "resourceId", "canonicalId"};
+					"region", "service", "resourceType", "resourceId"};
 	private Gson gson = new Gson();
 	private Set<String> vendors = new HashSet<>();
 	private Set<String> required = new HashSet<>();
@@ -40,7 +40,7 @@ public class NormalizeLinter extends BaseLinter{
 			issues.add(requiredStatus.toJson());
 		}
 
-		return getIssuesAsJson(issues);
+		return issues;
 	}
 
 	@Override

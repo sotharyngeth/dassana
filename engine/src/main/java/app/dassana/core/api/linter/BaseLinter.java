@@ -22,18 +22,6 @@ public abstract class BaseLinter {
 
 	public abstract void init() throws IOException;
 
-	public List<String> getIssuesAsJson(List<String> issues){
-		return issues;
-	}
-
-	protected boolean isPolicyContext(Map<String, Object> data){
-		return ContentManager.POLICY_CONTEXT.equals(data.get(ContentManager.FIELDS.TYPE.getName()));
-	}
-
-	protected boolean isResourceContext(Map<String, Object> data){
-		return ContentManager.RESOURCE_CONTEXT.equals(data.get(ContentManager.FIELDS.TYPE.getName()));
-	}
-
 	protected StatusMsg validateNormVendor(ContentManager.FIELDS field, Map<String, Object> data, Set<String> template){
 		String msg  = null;
 		String name = field.getName();

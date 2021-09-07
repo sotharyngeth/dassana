@@ -40,7 +40,7 @@ public class GeneralLinter extends BaseLinter{
 			issues.add(actionStatus.toJson());
 		}
 
-		return getIssuesAsJson(issues);
+		return issues;
 	}
 
 	@Override
