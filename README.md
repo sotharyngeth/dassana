@@ -13,7 +13,7 @@
 
 
 <p align="center">
-Dassana helps you beat alert fatigure by enriching alerts with context and prioritizing them with contextual risk.
+Dassana helps you beat alert fatigue by enriching alerts with context and prioritizing them with contextual risk.
 </p>
 
 
