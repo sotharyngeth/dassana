@@ -26,15 +26,7 @@ public class Decorator {
 
   @Inject
   ContentManagerApi contentManagerApi;
-  public static final String DASSANA_KEY = "dassana";
-  public static final String TIME_TAKEN_KEY = "timeTakenInSec";
-  public static final String WORKFLOW_TYPE_KEY = "workflowType";
-  public static final String OUTPUT_KEY = "output";
-  public static final String STEP_OUTPUT_KEY = "step-output";
-  public static final String RISK_VALUE_KEY = "riskValue";
-  public static final String CONDITION_KEY = "condition";
-  public static final String RISK_NAME_KEY = "name";
-  public static final String RISK_KEY = "risk";
+  public static final String DASSANA_KEY="dassana";
 
   //todo: refactor to make it readable and maintainable
   public String getDassanaDecoratedJson(Request request,
@@ -51,27 +43,25 @@ public class Decorator {
     //handle normalization decoration
     JSONObject jsonObjectForNormalization = new JSONObject();
     if (request.isIncludeStepOutput()) {
-      jsonObjectForNormalization.put(STEP_OUTPUT_KEY, normalizationOutput.getStepOutput());
+      jsonObjectForNormalization.put("step-output", normalizationOutput.getStepOutput());
     }
-    jsonObjectForNormalization.put(OUTPUT_KEY, normalizationOutput.getOutput());
+    jsonObjectForNormalization.put("output", normalizationOutput.getOutput());
     jsonObjectForNormalization.put(WORKFLOW_ID, normalizationOutput.getWorkflowId());
-    jsonObjectForNormalization.put(WORKFLOW_TYPE_KEY, NORMALIZE);
-    jsonObjectForNormalization.put(TIME_TAKEN_KEY, normalizationOutput.getTimeTaken() / 1000);
+    jsonObjectForNormalization.put("workflowType",NORMALIZE);
     dassanaMap.put("normalize", jsonObjectForNormalization);
     if (generalContextWorkflowOutput.isPresent()) {
       JSONObject generalContextJsonObj = new JSONObject();
       generalContextJsonObj.put(WORKFLOW_ID, generalContextWorkflowOutput.get().getWorkflowId());
-      generalContextJsonObj.put(WORKFLOW_TYPE_KEY, GENERAL_CONTEXT);
-      generalContextJsonObj.put(OUTPUT_KEY, generalContextWorkflowOutput.get().getOutput());
+      generalContextJsonObj.put("workflowType",GENERAL_CONTEXT);
+      generalContextJsonObj.put("output", generalContextWorkflowOutput.get().getOutput());
       if (request.isIncludeStepOutput()) {
-        generalContextJsonObj.put(STEP_OUTPUT_KEY, generalContextWorkflowOutput.get().getStepOutput());
+        generalContextJsonObj.put("step-output", generalContextWorkflowOutput.get().getStepOutput());
       }
       Map<String, Object> riskObj = new HashMap<>();
-      riskObj.put(RISK_VALUE_KEY, generalContextWorkflowOutput.get().getRisk().getRiskValue());
-      riskObj.put(CONDITION_KEY, generalContextWorkflowOutput.get().getRisk().getCondition());
-      riskObj.put(RISK_NAME_KEY, generalContextWorkflowOutput.get().getRisk().getName());
-      generalContextJsonObj.put(RISK_KEY, riskObj);
-      generalContextJsonObj.put(TIME_TAKEN_KEY, generalContextWorkflowOutput.get().getTimeTaken() / 1000);
+      riskObj.put("riskValue", generalContextWorkflowOutput.get().getRisk().getRiskValue());
+      riskObj.put("condition", generalContextWorkflowOutput.get().getRisk().getCondition());
+      riskObj.put("name", generalContextWorkflowOutput.get().getRisk().getName());
+      generalContextJsonObj.put("risk", riskObj);
       dassanaMap.put(GENERAL_CONTEXT, generalContextJsonObj);
       combinedRisk.setGeneralContextRisk(generalContextWorkflowOutput.get().getRisk());
     }
@@ -82,20 +72,19 @@ public class Decorator {
 
       JSONObject jsonObject = new JSONObject();
       jsonObject.put(WORKFLOW_ID, policyContext.getId());
-      jsonObject.put(WORKFLOW_TYPE_KEY, POLICY_CONTEXT);
+      jsonObject.put("workflowType",POLICY_CONTEXT);
       jsonObject.put(POLICY_CONTEXT_CAT, policyContext.getCategory());
       jsonObject.put(POLICY_CONTEXT_SUB_CAT, policyContext.getSubCategory());
-      jsonObject.put(OUTPUT_KEY, policyContextWorkflowOutput.get().getOutput());
+      jsonObject.put("output", policyContextWorkflowOutput.get().getOutput());
       if (request.isIncludeStepOutput()) {
-        jsonObject.put(STEP_OUTPUT_KEY, policyContextWorkflowOutput.get().getStepOutput());
+        jsonObject.put("step-output", policyContextWorkflowOutput.get().getStepOutput());
       }
 
       Map<String, Object> riskObj = new HashMap<>();
-      riskObj.put(RISK_VALUE_KEY, policyContextWorkflowOutput.get().getRisk().getRiskValue());
-      riskObj.put(CONDITION_KEY, policyContextWorkflowOutput.get().getRisk().getCondition());
-      riskObj.put(RISK_NAME_KEY, policyContextWorkflowOutput.get().getRisk().getName());
-      jsonObject.put(RISK_KEY, riskObj);
-      jsonObject.put(TIME_TAKEN_KEY, policyContextWorkflowOutput.get().getTimeTaken() / 1000);
+      riskObj.put("riskValue", policyContextWorkflowOutput.get().getRisk().getRiskValue());
+      riskObj.put("condition", policyContextWorkflowOutput.get().getRisk().getCondition());
+      riskObj.put("name", policyContextWorkflowOutput.get().getRisk().getName());
+      jsonObject.put("risk", riskObj);
       dassanaMap.put(POLICY_CONTEXT, jsonObject);
       combinedRisk.setGeneralContextRisk(policyContextWorkflowOutput.get().getRisk());
 
@@ -107,7 +96,7 @@ public class Decorator {
 
       JSONObject jsonObject = new JSONObject();
       jsonObject.put(WORKFLOW_ID, resourceContext.getId());
-      jsonObject.put("workflowType", RESOURCE_CONTEXT);
+      jsonObject.put("workflowType",RESOURCE_CONTEXT);
       jsonObject.put("output", resourceContextWorkflowOutput.get().getOutput());
       if (request.isIncludeStepOutput()) {
         jsonObject.put("step-output", resourceContextWorkflowOutput.get().getStepOutput());
@@ -118,7 +107,6 @@ public class Decorator {
       riskObj.put("condition", resourceContextWorkflowOutput.get().getRisk().getCondition());
       riskObj.put("name", resourceContextWorkflowOutput.get().getRisk().getName());
       jsonObject.put("risk", riskObj);
-      jsonObject.put("timeTakenInSec", resourceContextWorkflowOutput.get().getTimeTaken() / 1000);
       dassanaMap.put(RESOURCE_CONTEXT, jsonObject);
       combinedRisk.setResourceContextRisk(resourceContextWorkflowOutput.get().getRisk());
 

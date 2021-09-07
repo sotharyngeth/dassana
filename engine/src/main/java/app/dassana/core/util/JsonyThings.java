@@ -16,7 +16,7 @@ public class JsonyThings {
 
 
   @Singleton
-  public Gson getGson() {
+  Gson getGson() {
     return new Gson();
   }
 

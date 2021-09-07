@@ -1,6 +1,5 @@
 package app.dassana.core.workflow.processor;
 
-import static app.dassana.core.contentmanager.ContentManager.DASSANA_MANAGEMENT_BUCKET;
 import static app.dassana.core.workflow.processor.Decorator.DASSANA_KEY;
 
 import app.dassana.core.workflow.model.WorkflowOutputWithRisk;
@@ -20,7 +19,7 @@ public class S3Manager {
 
   @Inject private S3Client s3Client;
 
-  private final String dassanaBucket = System.getenv().get(DASSANA_MANAGEMENT_BUCKET);
+  private final String dassanaBucket = System.getenv().get("dassanaBucket");
 
   public String uploadedToS3(Optional<WorkflowOutputWithRisk> normalizationResult,
       String jsonToUpload) {

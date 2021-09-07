@@ -6,20 +6,19 @@
     <if condition='isDefined("LOCAL_DEV_LOGGING")'>
       <then>
         <encoder>
-          <pattern>%date{yyyy-MM-dd HH:mm:ss}  [%thread]  %-5level - %logger{0}:%line: %msg %n
+          <pattern>%date{yyyy-MM-dd HH:mm:ss} %-5level - %logger{0}:%line: %msg %n
           </pattern>
         </encoder>
       </then>
       <else>
         <encoder>
-          <pattern>%date{yyyy-MM-dd HH:mm:ss} [%thread]  %-5level - %logger{0}:%line: %msg %replace(%ex){'\n', '&#xd;'}%nopex%n
-          </pattern>
+          <pattern>%date{yyyy-MM-dd HH:mm:ss} %-5level - %logger{0}:%line: %msg %replace(%ex){'\n', '&#xd;'}%nopex%n</pattern>
         </encoder>
       </else>
     </if>
   </appender>
 
-  <logger name="app.dassana.core" level="${LOG_LEVEL:-INFO}"/>
+  <logger name="app.dassana.core" level="INFO" />
 
   <root level="INFO">
     <appender-ref ref="STDOUT"/>

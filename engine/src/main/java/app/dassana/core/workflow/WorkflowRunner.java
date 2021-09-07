@@ -52,8 +52,9 @@ public class WorkflowRunner {
   @Inject private FilterMatch filterMatch;
   @Inject private ContentManagerApi contentManagerApi;
   @Inject private RiskEvaluator riskEvaluator;
-  Gson gson = new Gson();
 
+
+  Gson gson = new Gson();
 
   Scope rootScope = Scope.newEmptyScope();
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -65,8 +66,6 @@ public class WorkflowRunner {
   public Optional<WorkflowOutputWithRisk> runWorkFlow(Class<? extends Workflow> workflowType,
       Request request,
       String simpleOutputJson) throws Exception {
-
-    long start = System.currentTimeMillis();
 
     String jsonToUse;
     if (workflowType.getName().contentEquals(NormalizerWorkflow.class.getName())) {
@@ -83,7 +82,7 @@ public class WorkflowRunner {
       workflowSet.add(contentManagerApi.getWorkflowIdToWorkflowMap(request).get(request.getWorkflowId()));
 
     } else {
-      workflowSet = request.getWorkflowSet();
+      workflowSet = contentManagerApi.getWorkflowSet(request);
     }
 
     Map<String, Object> stepToOutPutMap = new HashMap<>();
@@ -159,8 +158,6 @@ public class WorkflowRunner {
       }
 
       workflowOutputWithRisk.setOutput(getSimpleOutput(workflowOutput, workflow));
-      long end = System.currentTimeMillis();
-      workflowOutputWithRisk.setTimeTaken(end - start);
       return Optional.of(workflowOutputWithRisk);
 
 
