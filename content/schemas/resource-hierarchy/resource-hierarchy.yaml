@@ -1090,11 +1090,11 @@ csp:
       - id: lambda
         name: Lambda
         resource-types:
-          - id: code signing config
+          - id: code-signing-config
           - id: eventSourceMapping
           - id: function
-          - id: function alias
-          - id: function version
+          - id: function-alias
+          - id: function-version
           - id: layer
           - id: layerVersion
       - id: launchWizard
@@ -1103,16 +1103,16 @@ csp:
         name: Lex
         resource-types:
           - id: bot
-          - id: bot alias
-          - id: bot version
+          - id: bot-alias
+          - id: bot-version
           - id: channel
-          - id: intent version
-          - id: slottype version
+          - id: intent-version
+          - id: slottype-version
       - id: lexV2
         name: Lex V2
         resource-types:
           - id: bot
-          - id: bot alias
+          - id: bot-alias
       - id: licenseManager
         name: License Manager
         resource-types:
