@@ -1,6 +1,7 @@
 package app.dassana.core.api;
 
 import app.dassana.core.contentmanager.ContentManager;
+import app.dassana.core.contentmanager.ContentReader;
 import app.dassana.core.normalize.model.NormalizerWorkflow;
 import app.dassana.core.policycontext.model.PolicyContext;
 import app.dassana.core.resource.model.GeneralContext;
@@ -26,6 +27,7 @@ public class WorkflowValidator {
 
   @Inject ContentManager contentManager;
   @Inject RuleMatch ruleMatch;
+  @Inject ContentReader contentReader;
   private SchemaLoader schemaLoader;
 
 
@@ -54,7 +56,7 @@ public class WorkflowValidator {
     Workflow workflow;
     try {
       JSONObject jsonObject = new JSONObject(workflowAsJson);
-      workflow = contentManager.getWorkflow(jsonObject);
+      workflow = contentReader.getWorkflow(jsonObject);
     } catch (JSONException e) {
       DassanaWorkflowValidationException dassanaWorkflowValidationException = new DassanaWorkflowValidationException();
       List<String> messages = new LinkedList<>();

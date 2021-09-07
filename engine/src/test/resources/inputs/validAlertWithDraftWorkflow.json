@@ -1,6 +1,6 @@
 {
   "badThingJustHappened": {
-    "description": "fubar"
+    "description": "X"
   },
   "test-hint": {
     "resource-info": "responses/just-normalization.json"

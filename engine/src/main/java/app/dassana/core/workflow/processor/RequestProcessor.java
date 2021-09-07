@@ -83,6 +83,8 @@ public class RequestProcessor {
     Optional<WorkflowOutputWithRisk> resourceContext = Optional.empty();
     Optional<WorkflowOutputWithRisk> generalContext = Optional.empty();
 
+    request.setWorkflowSet(contentManagerApi.getWorkflowSet(request));
+
     normalizationResult = workflowRunner
         .runWorkFlow(NormalizerWorkflow.class, request, "");
 
@@ -122,7 +124,7 @@ public class RequestProcessor {
 
         if (workflowOutputWithRisk.isPresent()) {
           String workflowId = workflowOutputWithRisk.get().getWorkflowId();
-          for (Workflow workflow : contentManagerApi.getWorkflowSet(request)) {
+          for (Workflow workflow : request.getWorkflowSet()) {
             if (workflow.getId().contentEquals(workflowId)) {
               if (workflow.getType().contentEquals(POLICY_CONTEXT)) {
                 policyContext = workflowOutputWithRisk;
@@ -161,19 +163,17 @@ public class RequestProcessor {
 
   }
 
+
   //just a basic test for now
   //todo: use schema based validation and also perform deep validation where even values are tested.
   private void validateNormalizerOutput(WorkflowOutputWithRisk normalizerOutput) {
 
     checkArgsToBeTrue("vendorId", normalizerOutput);
     checkArgsToBeTrue("alertId", normalizerOutput);
-//    checkArgsToBeTrue("canonicalId", normalizerOutput);
     checkArgsToBeTrue("vendorPolicy", normalizerOutput);
     checkArgsToBeTrue("csp", normalizerOutput);
     checkArgsToBeTrue("resourceContainer", normalizerOutput);
     checkArgsToBeTrue("region", normalizerOutput);
-    checkArgsToBeTrue("service", normalizerOutput);
-    checkArgsToBeTrue("resourceType", normalizerOutput);
     checkArgsToBeTrue("resourceId", normalizerOutput);
   }
 

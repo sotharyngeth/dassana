@@ -1,11 +1,23 @@
 package app.dassana.core.launch.model;
 
+import app.dassana.core.workflow.model.Workflow;
 import java.util.List;
+import java.util.Set;
 
 public class Request {
 
   private final String inputJson;
 
+
+  Set<Workflow> workflowSet;
+
+  public Set<Workflow> getWorkflowSet() {
+    return workflowSet;
+  }
+
+  public void setWorkflowSet(Set<Workflow> workflowSet) {
+    this.workflowSet = workflowSet;
+  }
 
   boolean includeStepOutput;
   boolean includeAlertInOutput;

@@ -14,6 +14,15 @@ public class Workflow {
   List<Filter> filters = new LinkedList<>();
   private List<Step> steps = new LinkedList<>();
   private List<Output> output = new LinkedList<>();
+  String path;
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
 
   public Integer getSchema() {
     return schema;

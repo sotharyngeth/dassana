@@ -37,13 +37,13 @@ public class PolicyValidator {
             if(file.getCanonicalPath().contains("policy-context")) {
                 Map<String, Object> map = yaml.load(new FileInputStream(file));
                 if(!isValidYaml(map)){
-                    throw new ValidationException("Not a valid policy file: " + file.getName());
+                    throw new ValidationException("Not a valid policy file: " + file.getAbsolutePath());
                 }
             }
         }
     }
 
-    private boolean isValidYaml(Map<String, Object> map) throws FileNotFoundException {
+    private boolean isValidYaml(Map<String, Object> map) {
         return hasAllFields(map) && hasValidFields(map);
     }
 
