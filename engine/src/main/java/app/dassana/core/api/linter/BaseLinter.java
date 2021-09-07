@@ -11,7 +11,7 @@ import java.util.Set;
 
 public abstract class BaseLinter {
 
-	private final static String helpLink = "https://www.google.com";
+	private final static String helpLink = "https://docs.dassana.io/docs/intro";
 	protected String content = Thread.currentThread().getContextClassLoader().getResource("content").getFile();
 
 	protected Yaml yaml = new Yaml();
